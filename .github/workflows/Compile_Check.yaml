@@ -16,6 +16,9 @@ jobs:
     - name: Pull Docker image
       run: docker pull ghcr.io/solarcaratuva/rivanna2-env
 
+    - name: List contents of workspace directory
+      run: ls -la ${{ github.workspace }}
+
     - name: Run setup and compile commands in Docker container
       run: |
         docker run --rm -v ${{ github.workspace }}:/Rivanna2:Z ghcr.io/solarcaratuva/rivanna2-env /bin/bash -c "
