@@ -60,12 +60,14 @@ Windows Users: install this software on WSL
 For Windows Users only: Install [ST-Tools](https://github.com/stlink-org/stlink) on windows directly (instead of WSL). Note that the `upload.py` script wasn't made for this, so you will need to run the upload commands directly instead. 
 
 **Actually Uploading**
+
 `cd` into this repo, then run `py upload.py board`
 - replace `board` with the name of the board you wish to upload to
 - the script does NOT check if you are uploading to the correct board
 - you may need to use `python` or `python3` instead of `py`
 
 **What is actually happening**
+
 1. Windows Users: The ST-Link is "attached" to WSL, allowing WSL to access the device
 2. the upload script runs the appropriate `st-flash` upload command for the board
     - in reality, the command just writes to memory on the STM32 chip set aside for booting
