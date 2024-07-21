@@ -1,0 +1,17 @@
+{
+    "UVA_SOLAR_CAR": {
+        "inherits": [
+            "MCU_STM32G473xE"
+        ],
+        "overrides": {
+            "lpticker_delay_ticks": 0,
+            "lse_available": 0,
+            "hse_value": 8000000,
+            "clock_source": "USE_PLL_HSE_EXTC | USE_PLL_HSI"
+        },
+        "detect_code": [
+            "0841"
+        ],
+        "device_name": "STM32G473CETx"
+    }
+}

@@ -1,0 +1,3 @@
+[submodule "Common/src/dbc/messages"]
+	path = Common/src/dbc/messages
+	url = https://github.com/solarcaratuva/CAN-messages.git
