@@ -20,6 +20,7 @@ jobs:
       run: |
         docker run --rm -v ${{ github.workspace }}:/Rivanna2:Z ghcr.io/solarcaratuva/rivanna2-env /bin/bash -c "
           set -e
+          ls
           mbed-tools deploy
           ./compile.sh
         "
