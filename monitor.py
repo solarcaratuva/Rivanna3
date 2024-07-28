@@ -1,6 +1,10 @@
-from serial import Serial
-import serial.tools.list_ports
 import sys
+try:
+    from serial import Serial
+    import serial.tools.list_ports
+except ImportError:
+    print("ERROR: \"pyserial\" must be installed. See the Readme for instructions.")
+    exit(1)
 
 
 def get_correct_port() -> str:
