@@ -5,7 +5,7 @@ This code was made by and for the Solar Car Team at UVA. Use elsewhere is not re
 
 ## Onboarding Script (optional)
 
-To easily install and configure all required programs, run the [Onboarding Script](TODO). This is optional, but allows you to skip the software installation and configuration mentioned below. 
+To easily install and configure all required programs, run the [Onboarding Script](https://github.com/solarcaratuva/Onboarding_Installer). This is optional, but allows you to skip the software installation and configuration mentioned below. 
 
 ## Compiling
 
