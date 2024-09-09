@@ -8,6 +8,7 @@ BOARD_MAP = {
     "battery": "st-flash --connect-under-reset --reset write cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/BatteryBoard/BatteryBoard.bin 0x8000000",
     "motor": "st-flash --connect-under-reset --reset write cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/Motor/Motor.bin 0x8000000",
     "test": "echo 'This is a connectivity test, not a real board'; lsusb"}
+os = platform.system()
 
 def windows_stlink_attach() -> str:
     usb_id = None
@@ -43,18 +44,23 @@ def main() -> None:
     if len(sys.argv) != 2:
         print("1 command line argument required: name of the board to upload to")
         sys.exit(1)
+    if os == "Windows":
+        print("ERROR: This script must be run in WSL")
+        sys.exit(1)
     board = sys.argv[1].lower().replace("board", "")
     if board not in BOARD_MAP:
         print(f"ERROR: Invalid board name given. Valid board names are: {', '.join(BOARD_MAP.keys())}")
         sys.exit(1)
 
-    usb_id = windows_stlink_attach()
-    time.sleep(1) # new USB connections need some time to be recognized
+    if os == "Linux": # WSL
+        usb_id = windows_stlink_attach()
+        time.sleep(1) # new USB connections need some time to be recognized
 
     cmd = BOARD_MAP[board]
     process = subprocess.run(cmd, shell=True)
 
-    windows_stlink_detach(usb_id)
+    if os == "Linux": # WSL
+        windows_stlink_detach(usb_id)
     
     exit(process.returncode)
 
