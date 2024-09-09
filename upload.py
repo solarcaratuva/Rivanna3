@@ -42,7 +42,7 @@ def windows_stlink_detach(usb_id: str) -> None:
 
 def main() -> None:
     if len(sys.argv) != 2:
-        print("1 command line argument required: name of the board to upload to")
+        print("ERROR: 1 command line argument required: name of the board to upload to")
         sys.exit(1)
     if os == "Windows":
         print("ERROR: This script must be run in WSL")
