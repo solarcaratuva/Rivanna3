@@ -9,14 +9,20 @@ BOARD_MAP = {
     "motor": {"cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/Motor/Motor.bin 0x8000000"}}
 op_sys = platform.system()
 
-def create_net_map():
+def create_net_map() -> None:
+    """
+    Runs the `net` command in Windows (yes even in WSL) to mount the WSL filesystem path as a network drive in Windows, named `W:`
+    """
     cmd = "powershell.exe -Command \"net.exe use W: \\\\\\\\wsl$\\\\Ubuntu\""
     process = subprocess.run(cmd, shell=True, check=False)
     if process.returncode != 0:
         print("Create net map error")
-        exit(1)
+        sys.exit(1)
 
-def delete_net_map():
+def delete_net_map() -> None:
+    """
+    Deletes the network drive mount `W:`
+    """
     cmd = "powershell.exe -Command \"net.exe use W: /delete \""
     process = subprocess.run(cmd, shell=True, check=False)
     if process.returncode != 0:
@@ -34,17 +40,19 @@ def main() -> None:
 
     if op_sys == "Linux": # WSL, actually Windows
         create_net_map()
+
         cmdlts = BOARD_MAP[board]
         cmd = f"{cmdlts['cmd']}.exe {cmdlts['args']} W:{os.getcwd()}/{cmdlts['path']}".replace("/", "\\")
         process = subprocess.run(cmd, shell=True, check=False)
+
         delete_net_map()
-        exit(process.returncode)
+        sys.exit(process.returncode)
 
     elif op_sys == "Darwin": # Mac
         cmdlts = BOARD_MAP[board]
         cmd = f"{cmdlts['cmd']} {cmdlts['args']} {cmdlts['path']}"
         process = subprocess.run(cmd, shell=True, check=False)
-        exit(process.returncode)
+        sys.exit(process.returncode)
 
     elif op_sys == "Windows":
         print("ERROR: This script must be run in WSL")
