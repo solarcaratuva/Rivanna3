@@ -62,12 +62,55 @@ AnalogIn aux_battery(AUX);
 // Need to update powercaninterface
 PowerCANInterface vehicle_can_interface(UART5_RX, UART5_TX, DEBUG_SWITCH);
 
+// Placeholders for DigitalIn pins
+bool leftTurnSignalFlash = false;
+bool rightTurnSignalFlash = false;
+bool hazardsFlash = false;
+
 void signalFlashHandler() {
     while (true) {
         // Note: Casting from a `DigitalOut` to a `bool` gives the most recently
         // written value
         if (bms_error || contact_12_error) {
             bms_strobe = !bms_strobe;
+        }
+
+        // hazards were flashed
+        if (hazardsFlash) {
+            // if both signals are on, turn them off
+            if (left_turn_signal.read() && right_turn_signal.read()) {
+                left_turn_signal.write(0);
+                right_turn_signal.write(0);
+            }
+            // otherwise, turn them on (hazards on)
+            else {
+                left_turn_signal.write(1);
+                right_turn_signal.write(1);
+            }
+        }
+        // left turn signal flashed
+        else if (leftTurnSignalFlash) {
+            // if left signal is on, turn it off
+            if (left_turn_signal.read()) {
+                left_turn_signal.write(0);
+            }
+            // otherwise, turn it on and turn right signal off
+            else {
+                left_turn_signal.write(1);
+                right_turn_signal.write(0);
+            }
+        }
+        // right turn signal flashed
+        else if (rightTurnSignalFlash) {
+            // if right turn signal is on, turn it off
+            if (right_turn_signal.read()) {
+                right_turn_signal.write(0);
+            }
+            // otherwise, turn it on and turn left signal off
+            else {
+                right_turn_signal.write(1);
+                left_turn_signal.write(0);
+            }
         }
 
         // Read DigitalIn pins' values directly here and change DigitalOut pins
