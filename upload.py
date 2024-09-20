@@ -13,7 +13,7 @@ def create_net_map() -> None:
     """
     Runs the `net` command in Windows (yes even in WSL) to mount the WSL filesystem path as a network drive in Windows, named `W:`
     """
-    cmd = "powershell.exe -Command \"net.exe use W: \\\\\\\\wsl$\\\\Ubuntu\""
+    cmd = f"powershell.exe -Command \"net.exe use W: \\\\\\\\wsl$\\\\{os.getenv('WSL_DISTRO_NAME')}\""
     process = subprocess.run(cmd, shell=True, check=False)
     if process.returncode != 0:
         print("Create net map error")
