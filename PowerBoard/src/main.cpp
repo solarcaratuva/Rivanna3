@@ -23,18 +23,9 @@
 const bool PIN_ON = true;
 const bool PIN_OFF = false;
 
-// bool flashHazards, flashLSignal, flashRSignal = false;
-// bool regenEnabled = false;
-// bool rpmPositive = false;
-// bool strobeEnabled = false;
-// bool brakeLightsEnabled = false;
-// bool regenActive = false;
 bool bms_error = false;
 bool contact_12_error = false;
-// bool left_turn_state = false;
-// bool right_turn_state = true;
-// Thread signalFlashThread;
-// Thread motor_thread;
+
 
 // Where does Accel pins go?
 DigitalOut bms_strobe(STROBE_EN);
