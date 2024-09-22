@@ -7,25 +7,9 @@
 #include <rtos.h>
 
 #define LOG_LEVEL                    LOG_ERROR
-#define MAIN_LOOP_PERIOD             1s
-#define MOTOR_LOOP_PERIOD            10ms
-#define ERROR_CHECK_PERIOD           100ms
-#define FLASH_PERIOD                 500ms
-#define IDLE_PERIOD                  100ms
-#define THROTTLE_LOW_VOLTAGE         0.66
-#define THROTTLE_LOW_VOLTAGE_BUFFER  0.20
-#define THROTTLE_HIGH_VOLTAGE        3.08
-#define THROTTLE_HIGH_VOLTAGE_BUFFER 0.10
-#define UPDATE_SPEED                 5
-#define MIN_SPEED                    0
-#define MAX_SPEED                    50
 
 const bool PIN_ON = true;
 const bool PIN_OFF = false;
-
-bool bms_error = false;
-bool contact_12_error = false;
-
 
 // Where does Accel pins go?
 DigitalOut bms_strobe(STROBE_EN);
@@ -53,6 +37,8 @@ PowerCANInterface vehicle_can_interface(UART5_RX, UART5_TX, DEBUG_SWITCH);
 bool flashLeftTurnSignal = false;
 bool flashRightTurnSignal = false;
 bool flashHazards = false;
+bool bms_error = false;
+bool contact_12_error = false;
 
 /**
  * Function that handles the turn signals and hazard lights.
