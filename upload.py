@@ -42,7 +42,7 @@ def main() -> None:
         create_net_map()
 
         cmdlts = BOARD_MAP[board]
-        cmd = f"{cmdlts['cmd']}.exe {cmdlts['args']} W:{os.getcwd()}/{cmdlts['path']}".replace("/", "\\")
+        cmd = f"powershell.exe -Command \"{cmdlts['cmd']}.exe {cmdlts['args']} W:{os.getcwd()}/{cmdlts['path']}\"".replace("/", "\\\\")
         process = subprocess.run(cmd, shell=True, check=False)
 
         delete_net_map()
