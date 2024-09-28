@@ -14,9 +14,12 @@ def create_net_map() -> None:
     Runs the `net` command in Windows (yes even in WSL) to mount the WSL filesystem path as a network drive in Windows, named `W:`
     """
     cmd = f"powershell.exe -Command \"net.exe use W: \\\\\\\\wsl$\\\\{os.getenv('WSL_DISTRO_NAME')}\""
-    process = subprocess.run(cmd, shell=True, check=False)
+    process = subprocess.run(cmd, shell=True, check=False, capture_output=True)
     if process.returncode != 0:
-        print("Create net map error")
+        if process.stdout:
+            print(process.stdout.decode())
+        if process.stderr:
+            print(process.stderr.decode())
         sys.exit(1)
 
 def delete_net_map() -> None:
@@ -24,9 +27,12 @@ def delete_net_map() -> None:
     Deletes the network drive mount `W:`
     """
     cmd = "powershell.exe -Command \"net.exe use W: /delete \""
-    process = subprocess.run(cmd, shell=True, check=False)
+    process = subprocess.run(cmd, shell=True, check=False, capture_output=True)
     if process.returncode != 0:
-        print("Delete net map error")
+        if process.stdout:
+            print(process.stdout.decode())
+        if process.stderr:
+            print(process.stderr.decode())
 
 def main() -> None:
     if len(sys.argv) != 2:
