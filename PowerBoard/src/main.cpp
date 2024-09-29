@@ -1,4 +1,4 @@
-#include "ECUCANStructs.h"
+// #include "ECUCANStructs.h"
 #include "Printing.h"
 #include "ThisThread.h"
 #include "log.h"
@@ -64,9 +64,9 @@ bool flashRightTurnSignal = false;
 bool flashHazards = false;
 
 /**
- * Function that handles the turn signals and hazard lights.
- * Reads and writes directly from and to the DigitalIn and DigitalOut pins for
- * the left and right turn signals.
+ * Function that handles the flashing of the turn signals and hazard lights.
+ * Reads in the values of the DigitalIn pins from CAN Messages.
+ * Writes directly to the DigitalOut pins for the left and right turn signals.
  */
 void signalFlashHandler() {
     if (bms_error || contact_12_error) {
