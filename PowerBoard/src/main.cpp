@@ -9,6 +9,11 @@
 
 #define LOG_LEVEL                    LOG_ERROR
 
+#define THROTTLE_LOW_VOLTAGE         0.66
+#define THROTTLE_LOW_VOLTAGE_BUFFER  0.20
+#define THROTTLE_HIGH_VOLTAGE        3.08
+#define THROTTLE_HIGH_VOLTAGE_BUFFER 0.10
+
 const bool PIN_ON = true;
 const bool PIN_OFF = false;
 
@@ -26,13 +31,13 @@ DigitalOut discharge(DIS_CHARGE_EN);
 // DigitalIn regen_sda(REGEN_SDA);
 // DigitalIn regen_scl(REGEN_SCL);
 
-AnalogIn throttle_pedal(THROTTLE_WIPER);
-AnalogIn brake_pedal(BRAKE_WIPER);
+AnalogIn throttle_pedal(THROTTLE_WIPER, 5.0f);
+AnalogIn brake_pedal(BRAKE_WIPER, 5.0f);
 AnalogIn contactor(CONT_12);
 AnalogIn aux_battery(AUX);
 
 // Need to update powercaninterface
-//PowerCANInterface vehicle_can_interface(UART5_RX, UART5_TX, DEBUG_SWITCH);
+// PowerCANInterface vehicle_can_interface(UART5_RX, UART5_TX, DEBUG_SWITCH);
 
 // Placeholders for DigitalIn pins
 bool flashLeftTurnSignal = false;
@@ -40,6 +45,11 @@ bool flashRightTurnSignal = false;
 bool flashHazards = false;
 bool bms_error = false;
 bool contact_12_error = false;
+
+// Placeholders
+int throttle = 0;
+int regen = 0;
+bool has_faulted = false;
 
 /**
  * Function that handles the flashing of the turn signals and hazard lights.
@@ -63,6 +73,36 @@ void signalFlashHandler() {
     } else {
         left_turn_signal.write(PIN_OFF);
         right_turn_signal.write(PIN_OFF);
+    }
+}
+
+uint16_t readThrottle() {
+    float adjusted_throttle_input =
+        ((throttle_pedal.read_voltage() - THROTTLE_LOW_VOLTAGE -
+          THROTTLE_LOW_VOLTAGE_BUFFER) /
+         (THROTTLE_HIGH_VOLTAGE - THROTTLE_HIGH_VOLTAGE_BUFFER -
+          THROTTLE_LOW_VOLTAGE - THROTTLE_LOW_VOLTAGE_BUFFER));
+    if (adjusted_throttle_input <= 0.0f) {
+        return 0;
+    } else if (adjusted_throttle_input >= 1.0f) {
+        return 256;
+    } else {
+        return (uint16_t)(adjusted_throttle_input * 256.0);
+    }
+}
+
+uint16_t readBrake() {
+    float adjusted_brake_input =
+        ((brake_pedal.read_voltage() - THROTTLE_LOW_VOLTAGE -
+          THROTTLE_LOW_VOLTAGE_BUFFER) /
+         (THROTTLE_HIGH_VOLTAGE - THROTTLE_HIGH_VOLTAGE_BUFFER -
+          THROTTLE_LOW_VOLTAGE - THROTTLE_LOW_VOLTAGE_BUFFER));
+    if (adjusted_brake_input <= 0.0f) {
+        return 0;
+    } else if (adjusted_brake_input >= 1.0f) {
+        return 256;
+    } else {
+        return (uint16_t)(adjusted_brake_input * 256.0);
     }
 }
 
