@@ -1,4 +1,5 @@
 // #include "ECUCANStructs.h"
+#include "PowerCANInterface.h"
 #include "Printing.h"
 #include "ThisThread.h"
 #include "log.h"
@@ -12,18 +13,18 @@ const bool PIN_ON = true;
 const bool PIN_OFF = false;
 
 // Where does Accel pins go?
-DigitalOut bms_strobe(STROBE_EN);
-DigitalOut brake_lights(BRAKE_LIGHT_EN);
+// DigitalOut bms_strobe(STROBE_EN);
+// DigitalOut brake_lights(BRAKE_LIGHT_EN);
 DigitalOut right_turn_signal(RIGHT_TURN_EN);
 DigitalOut left_turn_signal(LEFT_TURN_EN);
 DigitalOut drl(DRL_EN);
-DigitalOut mppt_precharge(MPPT_PRE_EN);
+// DigitalOut mppt_precharge(MPPT_PRE_EN);
 DigitalOut charge(CHARGE_EN);
 DigitalOut motor_precharge(MTR_PRE_EN);
 DigitalOut discharge(DIS_CHARGE_EN);
 
-DigitalIn regen_sda(REGEN_SDA);
-DigitalIn regen_scl(REGEN_SCL);
+// DigitalIn regen_sda(REGEN_SDA);
+// DigitalIn regen_scl(REGEN_SCL);
 
 AnalogIn throttle_pedal(THROTTLE_WIPER);
 AnalogIn brake_pedal(BRAKE_WIPER);
@@ -31,7 +32,7 @@ AnalogIn contactor(CONT_12);
 AnalogIn aux_battery(AUX);
 
 // Need to update powercaninterface
-PowerCANInterface vehicle_can_interface(UART5_RX, UART5_TX, DEBUG_SWITCH);
+//PowerCANInterface vehicle_can_interface(UART5_RX, UART5_TX, DEBUG_SWITCH);
 
 // Placeholders for DigitalIn pins
 bool flashLeftTurnSignal = false;
@@ -47,7 +48,7 @@ bool contact_12_error = false;
  */
 void signalFlashHandler() {
     if (bms_error || contact_12_error) {
-        bms_strobe.write(!bms_strobe.read());
+        // bms_strobe.write(!bms_strobe.read());
     }
 
     if (flashHazards) {
@@ -64,3 +65,5 @@ void signalFlashHandler() {
         right_turn_signal.write(PIN_OFF);
     }
 }
+
+int main() {}

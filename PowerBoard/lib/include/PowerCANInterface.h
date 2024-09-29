@@ -1,10 +1,10 @@
 #ifndef POWER_CAN_INTERFACE_H
 #define POWER_CAN_INTERFACE_H
 
-// #include "BPSCANStructs.h"
+#include "BPSCANStructs.h"
 #include "CANInterface.h"
-// #include "ECUCANStructs.h"
-// #include "MotorControllerCANStructs.h"
+#include "ECUCANStructs.h"
+#include "MotorControllerCANStructs.h"
 
 class PowerCANInterface : public CANInterface {
   public:
