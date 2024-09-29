@@ -1,5 +1,6 @@
 add_library(PowerBoard-lib
     src/PowerCANInterface.cpp
+    src/MotorInterface.cpp
 )
 
 target_include_directories(PowerBoard-lib PUBLIC include)
