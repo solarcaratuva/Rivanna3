@@ -21,6 +21,7 @@ add_subdirectory(Common)
 add_subdirectory(Motor)
 add_subdirectory(BatteryBoard)
 add_subdirectory(DriverBoard)
+add_subdirectory(PowerBoard)
 
 option(VERBOSE_BUILD "Have a verbose build process")
 if(VERBOSE_BUILD)
