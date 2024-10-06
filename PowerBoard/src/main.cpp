@@ -56,7 +56,7 @@ bool has_faulted = false;
  * Reads in the values of the DigitalIn pins from CAN Messages.
  * Writes directly to the DigitalOut pins for the left and right turn signals.
  */
-void signalFlashHandler() {
+void signal_flash_handler() {
     if (bms_error || contact_12_error) {
         // bms_strobe.write(!bms_strobe.read());
     }
@@ -76,7 +76,7 @@ void signalFlashHandler() {
     }
 }
 
-uint16_t readThrottle() {
+uint16_t read_throttle() {
     float adjusted_throttle_input =
         ((throttle_pedal.read_voltage() - THROTTLE_LOW_VOLTAGE -
           THROTTLE_LOW_VOLTAGE_BUFFER) /
@@ -91,7 +91,7 @@ uint16_t readThrottle() {
     }
 }
 
-uint16_t readBrake() {
+uint16_t read_brake() {
     float adjusted_brake_input =
         ((brake_pedal.read_voltage() - THROTTLE_LOW_VOLTAGE -
           THROTTLE_LOW_VOLTAGE_BUFFER) /
