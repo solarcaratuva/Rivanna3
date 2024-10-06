@@ -6,6 +6,7 @@
 #include "pindef.h"
 #include <mbed.h>
 #include <rtos.h>
+#include <MotorInterface.h>
 
 #define LOG_LEVEL                    LOG_ERROR
 
@@ -13,6 +14,8 @@
 #define THROTTLE_LOW_VOLTAGE_BUFFER  0.20
 #define THROTTLE_HIGH_VOLTAGE        3.08
 #define THROTTLE_HIGH_VOLTAGE_BUFFER 0.10
+
+#define MAX_REGEN 256
 
 const bool PIN_ON = true;
 const bool PIN_OFF = false;
@@ -36,6 +39,11 @@ AnalogIn brake_pedal(BRAKE_WIPER, 5.0f);
 AnalogIn contactor(CONT_12);
 AnalogIn aux_battery(AUX);
 
+I2C throttle(SDA_ACCEL, SCL_ACCEL);
+I2C regen(SDA_REGEN, SCL_REGEN);
+
+MotorInterface motor_interface(throttle, regen);
+
 // Need to update powercaninterface
 // PowerCANInterface vehicle_can_interface(UART5_RX, UART5_TX, DEBUG_SWITCH);
 
@@ -47,9 +55,9 @@ bool bms_error = false;
 bool contact_12_error = false;
 
 // Placeholders
-int throttle = 0;
-int regen = 0;
 bool has_faulted = false;
+bool regen_enabled = false;
+bool cruise_control_enabled = false;
 
 /**
  * Function that handles the flashing of the turn signals and hazard lights.
@@ -76,6 +84,7 @@ void signal_flash_handler() {
     }
 }
 
+// Reads the throttle pedal value and returns a uint16_t
 uint16_t read_throttle() {
     float adjusted_throttle_input =
         ((throttle_pedal.read_voltage() - THROTTLE_LOW_VOLTAGE -
@@ -91,6 +100,7 @@ uint16_t read_throttle() {
     }
 }
 
+// Reads the brake pedal value and returns a uint16_t
 uint16_t read_brake() {
     float adjusted_brake_input =
         ((brake_pedal.read_voltage() - THROTTLE_LOW_VOLTAGE -
@@ -104,6 +114,56 @@ uint16_t read_brake() {
     } else {
         return (uint16_t)(adjusted_brake_input * 256.0);
     }
+}
+
+/**
+ * Function that polls the throttle and brake pedals and sets throttle and regen values
+ * Checks if the system has faulted, breaks are enabled, cruise control is enabled, or regen is 
+ * enabled and sets the throttle and regen values accordingly
+ */
+void set_motor_status() {
+    if (has_faulted) {
+        motor_interface.sendThrottle(0);
+        motor_interface.sendRegen(0);
+    } else if (read_brake() > 0) {
+        motor_interface.sendThrottle(0);
+        if (regen_enabled) {
+            motor_interface.sendRegen(MAX_REGEN);
+        } else {
+            motor_interface.sendRegen(0);
+        }
+    } else if (cruise_control_enabled){
+        return;
+    } else if(regen_enabled){
+        regen_drive();
+    } else {
+        motor_interface.sendThrottle(read_throttle());
+        motor_interface.sendRegen(0);
+    }
+
+}
+
+/**
+ * Sets the throttle and regen values based on the regen and throttle formula 
+ */
+void regen_drive(){
+    uint16_t pedalValue = read_throttle();
+    uint16_t throttleValue;
+    uint16_t regenValue;
+
+    if (pedalValue <= 50) {
+        throttleValue = 0;
+        regenValue = 79.159 * pow(50 - pedalValue, 0.3);
+    } else if (pedalValue < 100) {
+        throttleValue = 0;
+        regenValue = 0;
+    } else {
+        throttleValue = -56.27610464 * pow(156 - (pedalValue - 100), 0.3) + 256;
+        regenValue = 0;
+    }
+
+    motor_interface.sendThrottle(throttleValue);
+    motor_interface.sendRegen(regenValue);
 }
 
 int main() {}
