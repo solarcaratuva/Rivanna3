@@ -7,6 +7,7 @@
 #include <mbed.h>
 #include <rtos.h>
 #include <MotorInterface.h>
+#include <events/EventQueue.h>
 
 #define LOG_LEVEL                    LOG_ERROR
 
@@ -16,6 +17,10 @@
 #define THROTTLE_HIGH_VOLTAGE_BUFFER 0.10
 
 #define MAX_REGEN 256
+
+#define MOTOR_STATUS_LOOP_PERIOD 10ms
+
+EventQueue queue;
 
 const bool PIN_ON = true;
 const bool PIN_OFF = false;
@@ -166,4 +171,7 @@ void regen_drive(){
     motor_interface.sendRegen(regenValue);
 }
 
-int main() {}
+int main() {
+    queue.call_every(MOTOR_STATUS_LOOP_PERIOD, set_motor_status);
+    queue.dispatch();
+}
