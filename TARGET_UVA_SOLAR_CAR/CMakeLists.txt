@@ -11,4 +11,5 @@ target_include_directories(mbed-uva-solar-car
         .
 )
 
-target_link_libraries(mbed-uva-solar-car INTERFACE mbed-stm32g473xe)
+target_link_libraries(mbed-uva-solar-car INTERFACE mbed-stm32f413xh)
+                                                   

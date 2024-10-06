@@ -1,7 +1,7 @@
 {
     "UVA_SOLAR_CAR": {
         "inherits": [
-            "MCU_STM32G473xE"
+            "NUCLEO_F413ZH"
         ],
         "overrides": {
             "lpticker_delay_ticks": 0,
@@ -10,8 +10,8 @@
             "clock_source": "USE_PLL_HSE_EXTC | USE_PLL_HSI"
         },
         "detect_code": [
-            "0841"
+            "0799"
         ],
-        "device_name": "STM32G473CETx"
+        "device_name": "STM32F413ZHT6U"
     }
 }
