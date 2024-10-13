@@ -20,7 +20,7 @@
 
 #define MOTOR_STATUS_LOOP_PERIOD 10ms
 
-EventQueue queue;
+EventQueue queue(32 * EVENTS_EVENT_SIZE);
 
 const bool PIN_ON = true;
 const bool PIN_OFF = false;
@@ -173,5 +173,5 @@ void regen_drive(){
 
 int main() {
     queue.call_every(MOTOR_STATUS_LOOP_PERIOD, set_motor_status);
-    queue.dispatch();
+    queue.dispatch_forever();
 }
