@@ -97,6 +97,15 @@
 #define DISCHARGE_ENABLE    NC
 #define CHARGE_ENABLE       NC
 
+//ADDED TEMPORARILY FOR NUCLEO TESTING NUCLEOADD2024
+#define CAN_RX             PB_12 // Rx for MCU
+#define CAN_TX             PB_13
+#define CAN_STBY           PB_9 // Digital Output
+
+#define BMS_CAN1_TX         PA_12
+#define BMS_CAN1_RX         PA_11
+#define BMS_CAN1_STBY       PA_10
+
 #endif
 
 #endif // PINDEF_H

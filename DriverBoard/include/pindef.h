@@ -43,23 +43,49 @@
 
 #else
 
+//ADDED ALL THIS copied just to get code to complile for testing: NUCLEOADD2024
 #define CRUISE_ENABLED PB_14
 #define CRUISE_INC PB_13
-#define CRUISE_DEC PB_12
+#define CRUISE_DEC PA_7
 
-#define LEFT_TURN_IN NC
-#define RIGHT_TURN_IN NC
-#define HAZARDS_IN NC
-#define MECHANICAL_BRAKE_IN NC
-#define REGEN_IN NC
-#define THROTTLE_VALUE_IN NC
-#define FORWARD_REVERSE_IN NC
 
-#define LEFT_TURN_OUT NC
-#define RIGHT_TURN_OUT NC
-#define BRAKE_LIGHTS_OUT NC
-#define DRO_OUT NC
-#define BMS_STROBE_OUT NC
+#define LEFT_TURN_IN PA_10
+#define RIGHT_TURN_IN PA_9
+#define HAZARDS_IN PB_0
+#define MECHANICAL_BRAKE_IN PA_8
+#define REGEN_IN PB_11
+#define THROTTLE_VALUE_IN PB_2
+#define FORWARD_REVERSE_IN NC  // only one not done
+
+#define LEFT_TURN_OUT PA_2
+#define RIGHT_TURN_OUT PA_1
+#define BRAKE_LIGHTS_OUT PA_4
+
+#define DRL_OUT PA_0
+#define BMS_STROBE_OUT PA_3
+
+#define CAN_RX PA_11
+#define CAN_TX PA_12
+#define CAN_STBY PB_10
+
+//CHANGED THIS BACK LATER WHEN REAL NUCLEO BOARD PINS SET  
+// #define CRUISE_ENABLED PB_14
+// #define CRUISE_INC PB_13
+// #define CRUISE_DEC PB_12
+
+// #define LEFT_TURN_IN NC
+// #define RIGHT_TURN_IN NC
+// #define HAZARDS_IN NC
+// #define MECHANICAL_BRAKE_IN NC
+// #define REGEN_IN NC
+// #define THROTTLE_VALUE_IN NC
+// #define FORWARD_REVERSE_IN NC
+
+// #define LEFT_TURN_OUT NC
+// #define RIGHT_TURN_OUT NC
+// #define BRAKE_LIGHTS_OUT NC
+// #define DRO_OUT NC
+// #define BMS_STROBE_OUT NC
 
 #endif
 

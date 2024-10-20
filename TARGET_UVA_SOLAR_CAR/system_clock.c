@@ -32,7 +32,7 @@
  * RCC_OscInitStruct.PLL.PLLM from RCC_PLLM_DIV6 to RCC_PLLM_DIV2.
  */
 
-#include "stm32g4xx.h"
+// #include "stm32g4xx.h"
 #include "mbed_error.h"
 
 #define USE_PLL_HSE_EXTC     0x8  // Use external clock (ST Link MCO)
