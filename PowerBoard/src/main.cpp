@@ -26,26 +26,23 @@ const bool PIN_ON = true;
 const bool PIN_OFF = false;
 
 // Where does Accel pins go?
-// DigitalOut bms_strobe(STROBE_EN);
-// DigitalOut brake_lights(BRAKE_LIGHT_EN);
+DigitalOut bms_strobe(NC);
+DigitalOut brake_lights(NC);
 DigitalOut right_turn_signal(RIGHT_TURN_EN);
 DigitalOut left_turn_signal(LEFT_TURN_EN);
 DigitalOut drl(DRL_EN);
-// DigitalOut mppt_precharge(MPPT_PRE_EN);
+DigitalOut mppt_precharge(NC);
 DigitalOut charge(CHARGE_EN);
 DigitalOut motor_precharge(MTR_PRE_EN);
 DigitalOut discharge(DIS_CHARGE_EN);
-
-// DigitalIn regen_sda(REGEN_SDA);
-// DigitalIn regen_scl(REGEN_SCL);
 
 AnalogIn throttle_pedal(THROTTLE_WIPER, 5.0f);
 AnalogIn brake_pedal(BRAKE_WIPER, 5.0f);
 AnalogIn contactor(CONT_12);
 AnalogIn aux_battery(AUX);
 
-I2C throttle(SDA_ACCEL, SCL_ACCEL);
-I2C regen(SDA_REGEN, SCL_REGEN);
+I2C throttle(ACCEL_SDA, ACCEL_SCL);
+I2C regen(NC, NC);
 
 MotorInterface motor_interface(throttle, regen);
 
@@ -71,7 +68,7 @@ bool cruise_control_enabled = false;
  */
 void signal_flash_handler() {
     if (bms_error || contact_12_error) {
-        // bms_strobe.write(!bms_strobe.read());
+        bms_strobe.write(!bms_strobe.read());
     }
 
     if (flashHazards) {
@@ -122,6 +119,29 @@ uint16_t read_brake() {
 }
 
 /**
+ * Sets the throttle and regen values based on the regen and throttle formula
+ */
+void regen_drive() {
+    uint16_t pedalValue = read_throttle();
+    uint16_t throttleValue;
+    uint16_t regenValue;
+
+    if (pedalValue <= 50) {
+        throttleValue = 0;
+        regenValue = 79.159 * pow(50 - pedalValue, 0.3);
+    } else if (pedalValue < 100) {
+        throttleValue = 0;
+        regenValue = 0;
+    } else {
+        throttleValue = -56.27610464 * pow(156 - (pedalValue - 100), 0.3) + 256;
+        regenValue = 0;
+    }
+
+    motor_interface.sendThrottle(throttleValue);
+    motor_interface.sendRegen(regenValue);
+}
+
+/**
  * Function that polls the throttle and brake pedals and sets throttle and regen values
  * Checks if the system has faulted, breaks are enabled, cruise control is enabled, or regen is 
  * enabled and sets the throttle and regen values accordingly
@@ -148,30 +168,8 @@ void set_motor_status() {
 
 }
 
-/**
- * Sets the throttle and regen values based on the regen and throttle formula 
- */
-void regen_drive(){
-    uint16_t pedalValue = read_throttle();
-    uint16_t throttleValue;
-    uint16_t regenValue;
-
-    if (pedalValue <= 50) {
-        throttleValue = 0;
-        regenValue = 79.159 * pow(50 - pedalValue, 0.3);
-    } else if (pedalValue < 100) {
-        throttleValue = 0;
-        regenValue = 0;
-    } else {
-        throttleValue = -56.27610464 * pow(156 - (pedalValue - 100), 0.3) + 256;
-        regenValue = 0;
-    }
-
-    motor_interface.sendThrottle(throttleValue);
-    motor_interface.sendRegen(regenValue);
-}
-
 int main() {
+    drl.write(PIN_ON);
     queue.call_every(MOTOR_STATUS_LOOP_PERIOD, set_motor_status);
     queue.dispatch_forever();
 }
