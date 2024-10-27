@@ -47,7 +47,7 @@ I2C regen(NC, NC);
 MotorInterface motor_interface(throttle, regen);
 
 // Need to update powercaninterface
-// PowerCANInterface vehicle_can_interface(UART5_RX, UART5_TX, DEBUG_SWITCH);
+PowerCANInterface vehicle_can_interface(NC, NC, NC);
 
 // Placeholders for DigitalIn pins
 bool flashLeftTurnSignal = false;
@@ -60,6 +60,8 @@ bool contact_12_error = false;
 bool has_faulted = false;
 bool regen_enabled = false;
 bool cruise_control_enabled = false;
+bool cruise_control_increase = false;
+bool cruise_control_decrease = false;
 
 /**
  * Function that handles the flashing of the turn signals and hazard lights.
@@ -172,4 +174,14 @@ int main() {
     drl.write(PIN_ON);
     queue.call_every(MOTOR_STATUS_LOOP_PERIOD, set_motor_status);
     queue.dispatch_forever();
+}
+
+void PowerCANInterface::handle(DashboardCommands *can_struct){
+    flashHazards = can_struct->hazards;
+    flashLeftTurnSignal = can_struct->left_turn_signal;
+    flashRightTurnSignal = can_struct->right_turn_signal;
+    regen_enabled = can_struct->regen_en;
+    cruise_control_enabled = can_struct->cruise_en;
+    cruise_control_increase = can_struct->cruise_inc;
+    cruise_control_decrease = can_struct->cruise_dec;
 }
