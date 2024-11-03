@@ -15,6 +15,7 @@
 #define THROTTLE_LOW_VOLTAGE_BUFFER  0.20
 #define THROTTLE_HIGH_VOLTAGE        3.08
 #define THROTTLE_HIGH_VOLTAGE_BUFFER 0.10
+#define SIGNAL_FLASH_HANDLER_VAL     1s
 
 #define MAX_REGEN 256
 
@@ -173,6 +174,7 @@ void set_motor_status() {
 int main() {
     drl.write(PIN_ON);
     queue.call_every(MOTOR_STATUS_LOOP_PERIOD, set_motor_status);
+    queue.call_every(SIGNAL_FLASH_HANDLER_VAL, signal_flash_handler);
     queue.dispatch_forever();
 }
 
@@ -184,4 +186,5 @@ void PowerCANInterface::handle(DashboardCommands *can_struct){
     cruise_control_enabled = can_struct->cruise_en;
     cruise_control_increase = can_struct->cruise_inc;
     cruise_control_decrease = can_struct->cruise_dec;
+    queue.call(set_motor_status);
 }
