@@ -295,10 +295,7 @@ int main() {
 
 
     while(true) {
-        if(digital_input.read()) {
-            
-        }
-        
+        led.write(digital_input.read());  
     }
 
 }
