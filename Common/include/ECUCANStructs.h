@@ -53,4 +53,28 @@ typedef struct ECUPowerAuxCommands : CANStruct,
     }
 } ECUPowerAuxCommands;
 
+typedef struct ECUWheelBoardCommands : CANStruct, rivanna2_ecu_power_aux_commands_t {
+
+    void serialize(CANMessage *message) {
+        rivanna2_ecu_power_aux_commands_pack(
+            message->data, this, RIVANNA2_ECU_MOTOR_COMMANDS_LENGTH);
+        message->len = RIVANNA2_ECU_MOTOR_COMMANDS_LENGTH;
+    }
+
+    void deserialize(CANMessage *message) {
+        rivanna2_ecu_power_aux_commands_unpack(
+            this, message->data, RIVANNA2_ECU_MOTOR_COMMANDS_LENGTH);
+    }
+
+    uint32_t get_message_ID() { return ECUWheelBoardCommands_MESSAGE_ID; }
+
+    void log(int level) {
+        log_at_level(level,
+                     "ECUPowerAuxCommands: left_signal %u, right_signal %u, hazards %u, cruise_control_enable %u, "
+                     "cruise_control_inc %u, cruise_control_dec %u, regen_enable %u",
+                     left_signal, right_signal, hazards, cruise_control_enable, cruise_control_inc, cruise_control_dec,
+                     regen_enable);
+    }
+}
+
 #endif
