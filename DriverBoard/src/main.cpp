@@ -49,8 +49,12 @@ Thread motor_thread;
 DigitalOut brake_lights(BRAKE_LIGHTS_OUT);
 DigitalOut leftTurnSignal(LEFT_TURN_OUT);
 DigitalOut rightTurnSignal(RIGHT_TURN_OUT);
-DigitalOut drl(DRL_OUT);
+// DigitalOut drl(DRL_OUT);
 DigitalOut bms_strobe(BMS_STROBE_OUT);
+
+//LED Pin 
+DigitalIn digital_input(PA_0);
+DigitalOut led(PB_7);
 
 DigitalIn brakeLightsSwitch(MECHANICAL_BRAKE_IN);
 DigitalIn leftTurnSwitch(LEFT_TURN_IN);
@@ -266,28 +270,37 @@ int main() {
     log_set_level(LOG_LEVEL);
     log_debug("Start main()");
     
-    motor_thread.start(motor_message_handler);
-    signalFlashThread.start(signalFlashHandler);
+    // motor_thread.start(motor_message_handler);
+    // signalFlashThread.start(signalFlashHandler);
 
-    drl = PIN_ON;
+    // drl = PIN_ON;
 
-    while (true) {
-        log_debug("Main thread loop");
+    // while (true) {
+    //     log_debug("Main thread loop");
 
-        read_inputs();
+    //     read_inputs();
 
-        ThisThread::sleep_for(MAIN_LOOP_PERIOD);
+    //     ThisThread::sleep_for(MAIN_LOOP_PERIOD);
 
-        //  hazards, brake_lights, headlights, left_turn_signal,
-        //              right_turn_signal
-        power_aux_out.hazards = flashHazards;
-        power_aux_out.brake_lights = brakeLightsSwitch;
-        power_aux_out.headlights = 0;
-        power_aux_out.left_turn_signal = flashLSignal;
-        power_aux_out.right_turn_signal = flashRSignal;
+    //     //  hazards, brake_lights, headlights, left_turn_signal,
+    //     //              right_turn_signal
+    //     power_aux_out.hazards = flashHazards;
+    //     power_aux_out.brake_lights = brakeLightsSwitch;
+    //     power_aux_out.headlights = 0;
+    //     power_aux_out.left_turn_signal = flashLSignal;
+    //     power_aux_out.right_turn_signal = flashRSignal;
 
-        vehicle_can_interface.send(&power_aux_out);
+    //     vehicle_can_interface.send(&power_aux_out);
+    // }
+
+
+    while(true) {
+        if(digital_input.read()) {
+            
+        }
+        
     }
+
 }
 
 void DriverCANInterface::handle(MotorControllerPowerStatus *can_struct) {
