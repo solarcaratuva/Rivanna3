@@ -10,6 +10,7 @@
 class PowerCANInterface : public CANInterface {
   public:
     PowerCANInterface(PinName rd, PinName td, PinName standby_pin);
+    void handle(BPSError *can_struct);
     void handle(DashboardCommands *can_struct);
     int send(CANStruct *can_struct);
 

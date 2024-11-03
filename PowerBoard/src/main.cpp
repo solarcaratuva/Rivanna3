@@ -142,6 +142,7 @@ void set_motor_status() {
 
 }
 
+
 int main() {
     drl.write(PIN_ON);
     queue.call_every(MOTOR_STATUS_LOOP_PERIOD, set_motor_status);
@@ -158,4 +159,8 @@ void PowerCANInterface::handle(DashboardCommands *can_struct){
     cruise_control_increase = can_struct->cruise_inc;
     cruise_control_decrease = can_struct->cruise_dec;
     queue.call(set_motor_status);
+}
+
+void PowerCANInterface::handle(BPSError *can_struct) {
+    bms_error = can_struct->internal_communications_fault || can_struct-> low_cell_voltage_fault || can_struct->open_wiring_fault || can_struct->current_sensor_fault || can_struct->pack_voltage_sensor_fault || can_struct->thermistor_fault || can_struct->canbus_communications_fault || can_struct->high_voltage_isolation_fault || can_struct->charge_limit_enforcement_fault || can_struct->discharge_limit_enforcement_fault || can_struct->charger_safety_relay_fault || can_struct->internal_thermistor_fault || can_struct->internal_memory_fault;
 }
