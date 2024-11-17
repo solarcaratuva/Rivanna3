@@ -8,8 +8,9 @@
 #include <rtos.h>
 #include <MotorInterface.h>
 #include <events/EventQueue.h>
-#include "ReadFiles.h"
+#include "ReadPedals.h"
 #include "main.h"
+#include "MotorCommandsCANStruct.h"
 
 #define LOG_LEVEL                    LOG_ERROR
 
@@ -18,6 +19,7 @@
 #define THROTTLE_HIGH_VOLTAGE        3.08
 #define THROTTLE_HIGH_VOLTAGE_BUFFER 0.10
 #define SIGNAL_FLASH_HANDLER_VAL     1s
+#define SET_BRAKE_LIGHTS_VAL         1s
 
 #define MAX_REGEN 256
 
@@ -95,7 +97,7 @@ void signal_flash_handler() {
 /**
  * Sets the throttle and regen values based on the regen and throttle formula
  */
-void regen_drive() {
+void regen_drive(MotorCommands *motor_CAN_struct) {
     uint16_t pedalValue = read_throttle();
     uint16_t throttleValue;
     uint16_t regenValue;
@@ -111,6 +113,9 @@ void regen_drive() {
         regenValue = 0;
     }
 
+    motor_CAN_struct->throttle = throttleValue;
+    motor_CAN_struct->regen_braking = regenValue;
+
     motor_interface.sendThrottle(throttleValue);
     motor_interface.sendRegen(regenValue);
 }
@@ -121,25 +126,56 @@ void regen_drive() {
  * enabled and sets the throttle and regen values accordingly
  */
 void set_motor_status() {
+    MotorCommands motor_CAN_struct;
     if (has_faulted) {
         motor_interface.sendThrottle(0);
         motor_interface.sendRegen(0);
+        motor_CAN_struct.throttle = 0;
+        motor_CAN_struct.regen_braking = 0;
     } else if (read_brake() > 0) {
         motor_interface.sendThrottle(0);
+        motor_CAN_struct.throttle = 0;
         if (regen_enabled) {
             motor_interface.sendRegen(MAX_REGEN);
+            motor_CAN_struct.regen_braking = MAX_REGEN;
         } else {
             motor_interface.sendRegen(0);
+            motor_CAN_struct.regen_braking = 0;
         }
     } else if (cruise_control_enabled){
+        motor_CAN_struct.throttle = 0;
+        motor_CAN_struct.regen_braking = 0;
         return;
     } else if(regen_enabled){
-        regen_drive();
+        regen_drive(&motor_CAN_struct);
     } else {
         motor_interface.sendThrottle(read_throttle());
         motor_interface.sendRegen(0);
+        motor_CAN_struct.throttle = read_throttle();
+        motor_CAN_struct.regen_braking = 0;
     }
 
+    motor_CAN_struct.cruise_drive = cruise_control_enabled;
+    motor_CAN_struct.regen_drive = regen_enabled;
+    motor_CAN_struct.manual_drive = !cruise_control_enabled && !regen_enabled;
+    if(read_brake() > 0 || (regen_enabled == true && read_throttle() <= 50)){
+        motor_CAN_struct.braking = true;
+    } else {
+        motor_CAN_struct.braking = false;
+    }
+    motor_CAN_struct.throttle_pedal = throttle_pedal.read();
+    motor_CAN_struct.brake_pedal = brake_pedal.read();
+    
+    vehicle_can_interface.send(&motor_CAN_struct);
+
+}
+
+void set_brake_lights(){
+    if(read_brake() > 0 || (regen_enabled == true && read_throttle() <= 50)){
+        brake_lights.write(PIN_ON);
+    } else {
+        brake_lights.write(PIN_OFF);
+    }
 }
 
 
@@ -147,6 +183,7 @@ int main() {
     drl.write(PIN_ON);
     queue.call_every(MOTOR_STATUS_LOOP_PERIOD, set_motor_status);
     queue.call_every(SIGNAL_FLASH_HANDLER_VAL, signal_flash_handler);
+    queue.call_every(SET_BRAKE_LIGHTS_VAL, set_brake_lights);
     queue.dispatch_forever();
 }
 
