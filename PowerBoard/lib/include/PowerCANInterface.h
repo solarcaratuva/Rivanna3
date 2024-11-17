@@ -6,6 +6,7 @@
 #include "ECUCANStructs.h"
 #include "MotorControllerCANStructs.h"
 #include "DashboardCommandsCANStruct.h"
+#include "MotorCommandsCANStruct.h"
 
 class PowerCANInterface : public CANInterface {
   public:

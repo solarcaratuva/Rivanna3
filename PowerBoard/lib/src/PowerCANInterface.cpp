@@ -1,6 +1,7 @@
 #include "PowerCANInterface.h"
 #include "MotorControllerCANStructs.h"
 #include "log.h"
+#include "MotorCommandsCANStruct.h"
 
 PowerCANInterface::PowerCANInterface(PinName rd, PinName td,
                                      PinName standby_pin)
