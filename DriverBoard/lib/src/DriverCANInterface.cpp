@@ -4,7 +4,6 @@
 
 DriverCANInterface::DriverCANInterface(PinName rd, PinName td, PinName standby_pin)
     : CANInterface(rd, td, standby_pin) {
-    
 }
 
 
@@ -32,9 +31,8 @@ int DriverCANInterface::send(CANStruct *can_struct) {
 
 void DriverCANInterface::message_handler() {
     while (true) {
-        ThisThread::flags_wait_all(0x1);
         CANMessage message;
-        while (CANInterface::read(message)) {
+        while (CANInterface::read(&message)) {
             char message_data[17];
 
             //TODO: Write to serial message_id, message_data

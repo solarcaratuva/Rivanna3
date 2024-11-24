@@ -19,8 +19,9 @@ int CANInterface::send(CANStruct *can_struct, CANMessage *message) {
     return result;
 }
 
-bool CANInterface::read(CANMessage message) {
-    return can.read(message);
+bool CANInterface::read(CANMessage *message) {
+    ThisThread::flags_wait_all(0x1);
+    return can.read(*message); //can.read accepts a REFFERENCE NOT POINTER
 }
 
 void CANInterface::can_isr() { can_thread.flags_set(0x1); }

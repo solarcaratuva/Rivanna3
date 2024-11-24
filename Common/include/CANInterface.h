@@ -22,7 +22,7 @@ class CANInterface {
 
     int send(CANStruct *can_struct, CANMessage *message);
 
-    bool read(CANMessage message);
+    bool read(CANMessage *message);
 
     /**
      * ISR method called on receipt of CAN message. Sets 0x1 flag of can_thread.
