@@ -21,17 +21,17 @@ int main() {
             printf("Received from Pi: %s\n", buffer);
 
             // Respond back with acknowledgment
-            const char *ack = "Message received on Mbed\n";
-            serial.write(ack, strlen(ack));
+            // const char *ack = "Received\n";
+            // serial.write(ack, strlen(ack));
 
             // Toggle LED for feedback
-            led = !led;
+            // led = !led;
         }
 
         // Send periodic message to Raspberry Pi
         const char *message = "Hello from Mbed!\n";
         serial.write(message, strlen(message));
-        ThisThread::sleep_for(2000ms);
+        // ThisThread::sleep_for(3000ms);
     }
 }
 
