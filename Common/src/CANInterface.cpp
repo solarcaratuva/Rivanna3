@@ -1,3 +1,4 @@
+#include "CANStruct.h"
 #include "CANInterface.h"
 
 CANInterface::CANInterface(PinName rd, PinName td, PinName standby_pin)
@@ -7,6 +8,19 @@ CANInterface::CANInterface(PinName rd, PinName td, PinName standby_pin)
     }
     can_thread.start(callback(this, &CANInterface::message_handler));
     can.attach(callback(this, &CANInterface::can_isr), CAN::RxIrq);
+    can.frequency(250000);
+}
+
+int CANInterface::send(CANStruct *can_struct, CANMessage *message) {
+    can_struct->serialize(message);
+    message->id = can_struct->get_message_ID();
+    int result = can.write(*message);
+
+    return result;
+}
+
+bool CANInterface::read(CANMessage message) {
+    return can.read(message);
 }
 
 void CANInterface::can_isr() { can_thread.flags_set(0x1); }

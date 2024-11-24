@@ -1,6 +1,7 @@
 #ifndef CAN_INTERFACE_H
 #define CAN_INTERFACE_H
 
+#include "CANStruct.h"
 #include <mbed.h>
 
 /**
@@ -18,6 +19,11 @@ class CANInterface {
      * Thread that runs message_handler.
      */
     Thread can_thread;
+
+    int send(CANStruct *can_struct, CANMessage *message);
+
+    bool read(CANMessage message);
+
     /**
      * ISR method called on receipt of CAN message. Sets 0x1 flag of can_thread.
      */

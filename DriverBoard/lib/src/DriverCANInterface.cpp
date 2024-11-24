@@ -4,15 +4,14 @@
 
 DriverCANInterface::DriverCANInterface(PinName rd, PinName td, PinName standby_pin)
     : CANInterface(rd, td, standby_pin) {
-    can.frequency(250000);
+    
 }
 
 
 int DriverCANInterface::send(CANStruct *can_struct) {
     CANMessage message;
-    can_struct->serialize(&message);
-    message.id = can_struct->get_message_ID();
-    int result = can.write(message);
+
+    int result = CANInterface::send(can_struct, &message);
 
     char message_data[17];
 
@@ -26,7 +25,6 @@ int DriverCANInterface::send(CANStruct *can_struct) {
         log_error(
             "Failed to send CAN message with ID 0x%03X Length %d Data 0x%s",
             message.id, message.len, message_data);
-        
     }
 
     return result;
@@ -36,7 +34,7 @@ void DriverCANInterface::message_handler() {
     while (true) {
         ThisThread::flags_wait_all(0x1);
         CANMessage message;
-        while (can.read(message)) {
+        while (CANInterface::read(message)) {
             char message_data[17];
 
             //TODO: Write to serial message_id, message_data
