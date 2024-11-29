@@ -19,11 +19,11 @@
 #define THROTTLE_HIGH_VOLTAGE        3.08
 #define THROTTLE_HIGH_VOLTAGE_BUFFER 0.10
 #define SIGNAL_FLASH_HANDLER_VAL     1s
-#define SET_BRAKE_LIGHTS_VAL         1s
+#define SET_BRAKE_LIGHTS_VAL         10ms
 
-#define MAX_REGEN 256
+#define MAX_REGEN                    256
 
-#define MOTOR_STATUS_LOOP_PERIOD 10ms
+#define MOTOR_STATUS_LOOP_PERIOD     10ms
 
 EventQueue queue(32 * EVENTS_EVENT_SIZE);
 
@@ -145,7 +145,6 @@ void set_motor_status() {
     } else if (cruise_control_enabled){
         motor_CAN_struct.throttle = 0;
         motor_CAN_struct.regen_braking = 0;
-        return;
     } else if(regen_enabled){
         regen_drive(&motor_CAN_struct);
     } else {
@@ -158,20 +157,20 @@ void set_motor_status() {
     motor_CAN_struct.cruise_drive = cruise_control_enabled;
     motor_CAN_struct.regen_drive = regen_enabled;
     motor_CAN_struct.manual_drive = !cruise_control_enabled && !regen_enabled;
-    if(read_brake() > 0 || (regen_enabled == true && read_throttle() <= 50)){
+    if(read_brake() > 0 || (regen_enabled && read_throttle() <= 50)){
         motor_CAN_struct.braking = true;
     } else {
         motor_CAN_struct.braking = false;
     }
-    motor_CAN_struct.throttle_pedal = throttle_pedal.read();
-    motor_CAN_struct.brake_pedal = brake_pedal.read();
+    motor_CAN_struct.throttle_pedal = read_throttle();
+    motor_CAN_struct.brake_pedal = read_brake();
     
     vehicle_can_interface.send(&motor_CAN_struct);
 
 }
 
 void set_brake_lights(){
-    if(read_brake() > 0 || (regen_enabled == true && read_throttle() <= 50)){
+    if(read_brake() > 0 || (regen_enabled && read_throttle() <= 50)){
         brake_lights.write(PIN_ON);
     } else {
         brake_lights.write(PIN_OFF);
@@ -195,6 +194,7 @@ void PowerCANInterface::handle(DashboardCommands *can_struct){
     cruise_control_enabled = can_struct->cruise_en;
     cruise_control_increase = can_struct->cruise_inc;
     cruise_control_decrease = can_struct->cruise_dec;
+    
     queue.call(set_motor_status);
 }
 
