@@ -1,10 +1,8 @@
 #ifndef TELEMETRY_CAN_INTERFACE_H
 #define TELEMETRY_CAN_INTERFACE_H
 
-#include "BPSCANStructs.h"
-#include "MotorControllerCANStructs.h"
 #include "CANInterface.h"
-#include "ECUCANStructs.h"
+#include "CANStructs.h"
 
 class TelemetryCANInterface : public CANInterface {
   public:
