@@ -4,6 +4,11 @@
 #include "CANStruct.h"
 #include <mbed.h>
 
+#ifdef TARGET_NUCLEO_F413ZH 
+
+
+#else
+
 /**
  * Abstract CAN interface. Uses an mbed::CAN object to read and write from the
  * CAN bus. Subclasses must implement message_handler.

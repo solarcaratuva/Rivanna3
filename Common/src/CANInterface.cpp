@@ -6,9 +6,11 @@
 #ifdef TARGET_NUCLEO_F413ZH 
 
 // BufferedSerial object
+serial(PD_1, PD_0, 9600)
 
 CANInterface::CANInterface(PinName rd, PinName td, PinName standby_pin)
-    : serial(PD_1, PD_0, 9600) {
+    : can(rd, td), standby(standby_pin) {
+
 }
 
 int CANInterface::send(CANStruct *can_struct, CANMessage *message) {
