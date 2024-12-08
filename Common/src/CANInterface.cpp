@@ -1,6 +1,14 @@
 #include "CANStruct.h"
 #include "CANInterface.h"
 
+#ifdef NUCLEO_F413ZH 
+
+
+
+#endif
+
+
+
 CANInterface::CANInterface(PinName rd, PinName td, PinName standby_pin)
     : can(rd, td), standby(standby_pin) {
     if (standby_pin != NC) {
