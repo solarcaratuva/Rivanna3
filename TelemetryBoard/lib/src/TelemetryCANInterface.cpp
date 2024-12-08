@@ -1,12 +1,46 @@
 #include "TelemetryCANInterface.h"
 #include "MotorControllerCANStructs.h"
 #include "log.h"
-#include "CANStructs.h"
+#include "SDBlockDevice.h"
+#include "FATFileSystem.h"
+
+#include "SDFileSystem.h"
 
 // Constructor for TelemetryCANInterface.h that extends from CANInterface.h in Common include
 TelemetryCANInterface::TelemetryCANInterface(PinName rd, PinName td, PinName standby_pin)
     : CANInterface(rd, td, standby_pin) {
     can.frequency(250000); // Tell can controller to communicate at 250000 bits per second
+}
+
+/* Code from ChatGPT */
+// Define pins for the microSD card (change according to your hardware)
+SDBlockDevice sd(PB_5, PB_4, PB_3, PC_8);  // MOSI, MISO, SCLK, CS (whatever those mean...)
+FATFileSystem fs("fs");
+
+uint8_t block[512] = "Hello World!\n"; // Example text to test sd card data transfer
+
+void init_sd_card() {   
+    printf("Initializing SD card...\n");
+    if (sd.init() != 0) {
+        printf("Failed to initialize SD card.\n"); // error statement for SD initialization
+        return;
+    }
+    // Printing details about sd_card, from https://os.mbed.com/docs/mbed-os/v6.16/apis/sdblockdevice.html
+    printf("sd size: %llu\n",         sd.size());
+    printf("sd read size: %llu\n",    sd.get_read_size());
+    printf("sd program size: %llu\n", sd.get_program_size());
+    printf("sd erase size: %llu\n",   sd.get_erase_size());
+
+    if (fs.mount(&sd) != 0) {
+        printf("Failed to mount the filesystem.\n"); // error statement for failed file system mouting
+        // Try formatting if the card is not mounted properly
+        if (fs.reformat(&sd) != 0) {
+            printf("Failed to format the filesystem.\n"); // error statement for failed reformatting
+            return;
+        }
+    }
+
+    printf("SD card initialized and mounted.\n");
 }
 
 
