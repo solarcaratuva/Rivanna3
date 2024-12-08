@@ -1,37 +1,37 @@
 #include "CANStruct.h"
 #include "CANInterface.h"
 
-#ifdef NUCLEO_F413ZH 
+// #ifdef NUCLEO_F413ZH 
 
-#include "mbed.h"
+// #include "mbed.h"
 
-// BufferedSerial object
+// // BufferedSerial object
 
-CANInterface::CANInterface(PinName rd, PinName td, PinName standby_pin)
-    : serial(PD_1, PD_0, 9600) {
-}
+// CANInterface::CANInterface(PinName rd, PinName td, PinName standby_pin)
+//     : serial(PD_1, PD_0, 9600) {
+// }
 
-int CANInterface::send(CANStruct *can_struct, CANMessage *message) {
-    int result = serial.write(*message, strlen(message));
-    return result;
-}
+// int CANInterface::send(CANStruct *can_struct, CANMessage *message) {
+//     int result = serial.write(*message, strlen(message));
+//     return result;
+// }
 
-bool CANInterface::read(CANMessage *message) {
-    ThisThread::flags_wait_all(0x1);
-    return serial.read(*message, sizeof(message) - 1);
-}
+// bool CANInterface::read(CANMessage *message) {
+//     ThisThread::flags_wait_all(0x1);
+//     return serial.read(*message, sizeof(message) - 1);
+// }
 
-void CANInterface::can_isr() {  }
+// void CANInterface::can_isr() {  }
 
-void CANInterface::write_CAN_message_data_to_buffer(char *buffer,
-                                                    CANMessage *message) {
-    buffer[0] = '\0';
-    for (int i = 0; i < message->len; i += 1) {
-        sprintf(buffer + (i * 2), "%02X", message->data[i]);
-    }
-}
+// void CANInterface::write_CAN_message_data_to_buffer(char *buffer,
+//                                                     CANMessage *message) {
+//     buffer[0] = '\0';
+//     for (int i = 0; i < message->len; i += 1) {
+//         sprintf(buffer + (i * 2), "%02X", message->data[i]);
+//     }
+// }
 
-#else
+// #else
 
 CANInterface::CANInterface(PinName rd, PinName td, PinName standby_pin)
     : can(rd, td), standby(standby_pin) {
@@ -66,4 +66,7 @@ void CANInterface::write_CAN_message_data_to_buffer(char *buffer,
     }
 }
 
-#endif
+
+
+
+// #endif
