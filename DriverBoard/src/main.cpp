@@ -288,8 +288,6 @@ int main() {
 
         vehicle_can_interface.send(&power_aux_out);
     }
-
-
 }
 
 void DriverCANInterface::handle(MotorControllerPowerStatus *can_struct) {
