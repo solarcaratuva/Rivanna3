@@ -31,12 +31,12 @@ const bool PIN_ON = true;
 const bool PIN_OFF = false;
 
 // Where does Accel pins go?
-DigitalOut bms_strobe(NC);
-DigitalOut brake_lights(NC);
+DigitalOut bms_strobe(STROBE_EN);
+DigitalOut brake_lights(BRAKE_LIGHT_EN);
 DigitalOut right_turn_signal(RIGHT_TURN_EN);
 DigitalOut left_turn_signal(LEFT_TURN_EN);
 DigitalOut drl(DRL_EN);
-DigitalOut mppt_precharge(NC);
+DigitalOut mppt_precharge(MPPT_PRE_EN);
 DigitalOut charge(CHARGE_EN);
 DigitalOut motor_precharge(MTR_PRE_EN);
 DigitalOut discharge(DIS_CHARGE_EN);
@@ -47,7 +47,7 @@ AnalogIn contactor(CONT_12);
 AnalogIn aux_battery(AUX);
 
 I2C throttle(ACCEL_SDA, ACCEL_SCL);
-I2C regen(NC, NC);
+I2C regen(REGEN_SDA, REGEN_SCL);
 
 MotorInterface motor_interface(throttle, regen);
 

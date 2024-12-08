@@ -105,8 +105,16 @@ typedef enum {
     PB_14      = 0x1E,
     PB_14_ALT0 = PB_14 | ALT0, // same pin used for alternate HW
     PB_15      = 0x1F,
+    
     PB_15_ALT0 = PB_15 | ALT0, // same pin used for alternate HW
     PB_15_ALT1 = PB_15 | ALT1, // same pin used for alternate HW
+    //added pins
+    PC_2       = 0x20, //strobe_en
+    PC_3       = 0x21, //brake_en_lighy
+    PC_6       = 0x22, //mppt_pre_en
+    PC_8       = 0x23, //regen_scl
+    PC_9       = 0x24, //regen_sda
+
     PC_13      = 0x2D,
     PC_13_ALT0 = PC_13 | ALT0, // same pin used for alternate HW
     PC_14      = 0x2E,

@@ -5,8 +5,8 @@
 #define DEBUG_BTN       PC_13
 #define DEBUG_LED_1     PC_0
 #define DEBUG_LED_2     PC_1
-// #define STROBE_EN       PC_2
-//#define BRAKE_LIGHT_EN  PC_2
+#define STROBE_EN       PC_2
+#define BRAKE_LIGHT_EN  PC_3
 #define RIGHT_TURN_EN   PA_0
 #define LEFT_TURN_EN    PA_1
 #define DRL_EN          PA_2
@@ -16,9 +16,10 @@
 
 #define ACCEL_SCL       PA_9
 #define ACCEL_SDA       PA_8
-// #define REGEN_SDA       PC_9
-// #define REGEN_SCL       PC_8
-// #define MPPT_PRE_EN     PC_6
+
+#define REGEN_SDA       PC_9
+#define REGEN_SCL       PC_8
+#define MPPT_PRE_EN     PC_6
 #define CHARGE_EN       PB_15
 #define MTR_PRE_EN      PB_14
 #define DIS_CHARGE_EN   PB_13
