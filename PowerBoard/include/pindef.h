@@ -18,7 +18,6 @@
 
 #define ACCEL_SCL       PA_9
 #define ACCEL_SDA       PA_8
-
 #define REGEN_SDA       PC_9
 #define REGEN_SCL       PC_8
 #define MPPT_PRE_EN     PC_6
@@ -28,9 +27,12 @@
 #define CONT_12         PB_12
 #define AUX             PB_11
 
+#define DEBUG_SWITCH    PB_9
+#define MAIN_CAN_TX     PB_6
+#define MAIN_CAN_RX     PB_5
+#define MAIN_CAN_STBY   PB_4
 #define UART5_RX        PD_2
 #define UART5_TX        PC_12
-#define DEBUG_SWITCH    PB_9
 
 #else // if not compiling for PowerBoard
 
@@ -49,7 +51,6 @@
 
 #define ACCEL_SCL       NC
 #define ACCEL_SDA       NC
-
 #define REGEN_SDA       NC
 #define REGEN_SCL       NC
 #define MPPT_PRE_EN     NC
@@ -59,9 +60,11 @@
 #define CONT_12         NC
 #define AUX             NC
 
+#define DEBUG_SWITCH    NC
+#define MAIN_CAN_TX     NC
+#define MAIN_CAN_RX     NC
+#define MAIN_CAN_STBY   NC
 #define UART5_RX        NC
 #define UART5_TX        NC
-#define DEBUG_SWITCH    NC
-
 #endif
 #endif

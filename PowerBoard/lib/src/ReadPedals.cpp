@@ -1,6 +1,7 @@
 #include <mbed.h>
 #include <rtos.h>
 #include "main.h"
+#include "ReadPedals.h"
 
 #define THROTTLE_LOW_VOLTAGE         0.66
 #define THROTTLE_LOW_VOLTAGE_BUFFER  0.20
@@ -25,7 +26,7 @@ uint16_t read_throttle() {
     }
 }
 
-// Reads the brake pedal value and returns a uint16_t
+// TODO Reads the brake pedal value and returns a uint16_t
 uint16_t read_brake() {
     float adjusted_brake_input =
         ((brake_pedal.read_voltage() - THROTTLE_LOW_VOLTAGE -

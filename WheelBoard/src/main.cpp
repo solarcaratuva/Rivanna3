@@ -9,6 +9,8 @@
 #include "DashboardCommandsCANStruct.h"
 #include "events/EventQueue.h"
 
+#define LOG_LEVEL                       LOG_DEBUG
+
 EventQueue queue(32 * EVENTS_EVENT_SIZE);
 
 //Defining Pins
@@ -46,6 +48,9 @@ void edge_handler(void){
 
 
 int main() {
+    log_set_level(LOG_LEVEL);
+
+    // toggle buttons have a rise and fall interrupt, press buttons only have a rise interrupt
     left_signal.rise(edge_handler);
     right_signal.rise(edge_handler);
     hazards.rise(edge_handler);

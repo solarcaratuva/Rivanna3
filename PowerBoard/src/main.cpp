@@ -12,25 +12,19 @@
 #include "main.h"
 #include "MotorCommandsCANStruct.h"
 
-#define LOG_LEVEL                    LOG_ERROR
+#define LOG_LEVEL                       LOG_DEBUG
+#define SIGNAL_FLASH_PERIOD             1s
+#define BRAKE_LIGHTS_UPDATE_PERIOD      10ms
+#define MOTOR_CONTROL_PERIOD            10ms
 
-#define THROTTLE_LOW_VOLTAGE         0.66
-#define THROTTLE_LOW_VOLTAGE_BUFFER  0.20
-#define THROTTLE_HIGH_VOLTAGE        3.08
-#define THROTTLE_HIGH_VOLTAGE_BUFFER 0.10
-#define SIGNAL_FLASH_HANDLER_VAL     1s
-#define SET_BRAKE_LIGHTS_VAL         10ms
+#define MAX_REGEN                       256
 
-#define MAX_REGEN                    256
-
-#define MOTOR_STATUS_LOOP_PERIOD     10ms
 
 EventQueue queue(32 * EVENTS_EVENT_SIZE);
 
 const bool PIN_ON = true;
 const bool PIN_OFF = false;
 
-// Where does Accel pins go?
 DigitalOut bms_strobe(STROBE_EN);
 DigitalOut brake_lights(BRAKE_LIGHT_EN);
 DigitalOut right_turn_signal(RIGHT_TURN_EN);
@@ -51,26 +45,25 @@ I2C regen(REGEN_SDA, REGEN_SCL);
 
 MotorInterface motor_interface(throttle, regen);
 
-// Need to update powercaninterface
-PowerCANInterface vehicle_can_interface(NC, NC, NC);
+PowerCANInterface vehicle_can_interface(MAIN_CAN_RX, MAIN_CAN_TX, MAIN_CAN_STBY);
 
-// Placeholders for DigitalIn pins
+// these are global control variables, mostly set by received CAN messages
 bool flashLeftTurnSignal = false;
 bool flashRightTurnSignal = false;
 bool flashHazards = false;
 bool bms_error = false;
 bool contact_12_error = false;
-
-// Placeholders
 bool has_faulted = false;
 bool regen_enabled = false;
 bool cruise_control_enabled = false;
 bool cruise_control_increase = false;
 bool cruise_control_decrease = false;
 
+
+
 /**
  * Function that handles the flashing of the turn signals and hazard lights.
- * Reads in the values of the DigitalIn pins from CAN Messages.
+ * Uses values of global control variables for logic.
  * Writes directly to the DigitalOut pins for the left and right turn signals.
  */
 void signal_flash_handler() {
@@ -95,7 +88,7 @@ void signal_flash_handler() {
 
 
 /**
- * Sets the throttle and regen values based on the regen and throttle formula
+ * Controls the throttle and regen values of the motor based on the regen and throttle formula
  */
 void regen_drive(MotorCommands *motor_CAN_struct) {
     uint16_t pedalValue = read_throttle();
@@ -169,6 +162,11 @@ void set_motor_status() {
 
 }
 
+
+/**
+ * Function that sets the brake lights based on the brake pedal value.
+ * If the brake pedal is pressed, or regen is enabled and actively regenerative braking, the brake lights are enabled, disabled otherwise
+ */
 void set_brake_lights(){
     if(read_brake() > 0 || (regen_enabled && read_throttle() <= 50)){
         brake_lights.write(PIN_ON);
@@ -177,15 +175,18 @@ void set_brake_lights(){
     }
 }
 
-
+// main method
 int main() {
+    log_set_level(LOG_LEVEL);
+
     drl.write(PIN_ON);
-    queue.call_every(MOTOR_STATUS_LOOP_PERIOD, set_motor_status);
-    queue.call_every(SIGNAL_FLASH_HANDLER_VAL, signal_flash_handler);
-    queue.call_every(SET_BRAKE_LIGHTS_VAL, set_brake_lights);
+    queue.call_every(MOTOR_CONTROL_PERIOD, set_motor_status);
+    queue.call_every(SIGNAL_FLASH_PERIOD, signal_flash_handler);
+    queue.call_every(BRAKE_LIGHTS_UPDATE_PERIOD, set_brake_lights);
     queue.dispatch_forever();
 }
 
+// DashboardCommands CAN message handler
 void PowerCANInterface::handle(DashboardCommands *can_struct){
     flashHazards = can_struct->hazards;
     flashLeftTurnSignal = can_struct->left_turn_signal;
@@ -198,6 +199,7 @@ void PowerCANInterface::handle(DashboardCommands *can_struct){
     queue.call(set_motor_status);
 }
 
+// BPSError CAN message handler
 void PowerCANInterface::handle(BPSError *can_struct) {
     bms_error = can_struct->internal_communications_fault || can_struct-> low_cell_voltage_fault || can_struct->open_wiring_fault || can_struct->current_sensor_fault || can_struct->pack_voltage_sensor_fault || can_struct->thermistor_fault || can_struct->canbus_communications_fault || can_struct->high_voltage_isolation_fault || can_struct->charge_limit_enforcement_fault || can_struct->discharge_limit_enforcement_fault || can_struct->charger_safety_relay_fault || can_struct->internal_thermistor_fault || can_struct->internal_memory_fault;
 }
