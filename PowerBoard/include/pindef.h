@@ -16,6 +16,9 @@
 #define THROTTLE_WIPER  PA_3
 #define BRAKE_WIPER     PA_4
 
+
+#define MTR_CAN_TX      PA_12
+#define MTR_CAN_RX      PA_11
 #define ACCEL_SCL       PA_9
 #define ACCEL_SDA       PA_8
 #define REGEN_SDA       PC_9
@@ -49,6 +52,8 @@
 #define THROTTLE_WIPER  NC
 #define BRAKE_WIPER     NC
 
+#define MTR_CAN_TX      NC
+#define MTR_CAN_RX      NC
 #define ACCEL_SCL       NC
 #define ACCEL_SDA       NC
 #define REGEN_SDA       NC

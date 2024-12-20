@@ -11,6 +11,7 @@
 #include "ReadPedals.h"
 #include "main.h"
 #include "MotorCommandsCANStruct.h"
+#include "MotorControllerCANInterface.h"
 
 #define LOG_LEVEL                       LOG_DEBUG
 #define SIGNAL_FLASH_PERIOD             1s
@@ -46,6 +47,7 @@ I2C regen(REGEN_SDA, REGEN_SCL);
 MotorInterface motor_interface(throttle, regen);
 
 PowerCANInterface vehicle_can_interface(MAIN_CAN_RX, MAIN_CAN_TX, MAIN_CAN_STBY);
+MotorControllerCANInterface motor_controller_can_interface(MTR_CAN_RX, MTR_CAN_TX, NC); // TODO add standby pin
 
 // these are global control variables, mostly set by received CAN messages
 bool flashLeftTurnSignal = false;
@@ -202,4 +204,33 @@ void PowerCANInterface::handle(DashboardCommands *can_struct){
 // BPSError CAN message handler
 void PowerCANInterface::handle(BPSError *can_struct) {
     bms_error = can_struct->internal_communications_fault || can_struct-> low_cell_voltage_fault || can_struct->open_wiring_fault || can_struct->current_sensor_fault || can_struct->pack_voltage_sensor_fault || can_struct->thermistor_fault || can_struct->canbus_communications_fault || can_struct->high_voltage_isolation_fault || can_struct->charge_limit_enforcement_fault || can_struct->discharge_limit_enforcement_fault || can_struct->charger_safety_relay_fault || can_struct->internal_thermistor_fault || can_struct->internal_memory_fault;
+}
+
+// Message_forwarder is called whenever the MotorControllerCANInterface gets a CAN message.
+// This forwards the message to the vehicle can bus.
+void MotorControllerCANInterface::message_forwarder(CANMessage *message) {
+    // vehicle_can_interface.send(message);
+    // TODO
+}
+
+void MotorControllerCANInterface::handle(MotorControllerPowerStatus *can_struct) {
+    // can_struct->log(LOG_ERROR);
+    // rpm = can_struct->motor_rpm;
+    // current = can_struct->motor_current;
+    // currentSpeed = (uint16_t)((double)rpm * (double)0.0596); 
+    // motor_state_tracker.setMotorControllerPowerStatus(*can_struct);
+    //log_error("fet temp: %d", can_struct->fet_temp);
+}
+
+void MotorControllerCANInterface::handle(MotorControllerDriveStatus *can_struct) {
+    // can_struct->log(LOG_ERROR);
+    // log_error("fwd rev: %d", can_struct->motor_status);
+    // log_error("pwr (1), eco (0): %d", can_struct->power_mode);
+    // half_throttle = can_struct->motor_status == 2 && can_struct->power_mode == 1;
+    // motor_state_tracker.setMotorControllerDriveStatus(*can_struct);
+}
+
+void MotorControllerCANInterface::handle(MotorControllerError *can_struct) {
+    // can_struct->log(LOG_ERROR);
+    // motor_state_tracker.setMotorControllerError(*can_struct);
 }
