@@ -73,7 +73,7 @@ void signal_flash_handler() {
         bms_strobe.write(!bms_strobe.read());
     }
 
-    if (flashHazards) {
+    if (flashHazards || has_faulted) {
         left_turn_signal.write(!left_turn_signal.read());
         right_turn_signal.write(left_turn_signal.read());
     } else if (flashLeftTurnSignal) {
@@ -204,6 +204,7 @@ void PowerCANInterface::handle(DashboardCommands *can_struct){
 // BPSError CAN message handler
 void PowerCANInterface::handle(BPSError *can_struct) {
     bms_error = can_struct->internal_communications_fault || can_struct-> low_cell_voltage_fault || can_struct->open_wiring_fault || can_struct->current_sensor_fault || can_struct->pack_voltage_sensor_fault || can_struct->thermistor_fault || can_struct->canbus_communications_fault || can_struct->high_voltage_isolation_fault || can_struct->charge_limit_enforcement_fault || can_struct->discharge_limit_enforcement_fault || can_struct->charger_safety_relay_fault || can_struct->internal_thermistor_fault || can_struct->internal_memory_fault;
+    has_faulted = true;
 }
 
 // Message_forwarder is called whenever the MotorControllerCANInterface gets a CAN message.
