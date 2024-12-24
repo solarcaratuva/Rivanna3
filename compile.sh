@@ -14,7 +14,7 @@ fi
 
 if [ "$1" == "hil" ]; then
     echo "Compiling for Hardware-in-Loop Testing board"
-    echo "placeholder"
+     mbed-tools compile -m NUCLEO_F413ZH -t GCC_ARM
     exit $?
 fi
 
