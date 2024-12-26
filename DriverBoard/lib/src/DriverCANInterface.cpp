@@ -27,7 +27,6 @@ int DriverCANInterface::send(CANStruct *can_struct) {
         log_error(
             "Failed to send CAN message with ID 0x%03X Length %d Data 0x%s",
             message.id, message.len, message_data);
-        
     }
 
     return result;
@@ -35,7 +34,6 @@ int DriverCANInterface::send(CANStruct *can_struct) {
 
 void DriverCANInterface::message_handler() {
     while (true) {
-        ThisThread::flags_wait_all(0x1);
         CANMessage message;
         while (CANRead(message)) {
             char message_data[17];
