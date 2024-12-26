@@ -1,6 +1,5 @@
 #include "CANStruct.h"
 #include "CANInterface.h"
-#include "CANStruct.h"
 #include <mbed.h>
 
 
