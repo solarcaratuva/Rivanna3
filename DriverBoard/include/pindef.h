@@ -58,8 +58,12 @@
 #define LEFT_TURN_OUT NC
 #define RIGHT_TURN_OUT NC
 #define BRAKE_LIGHTS_OUT NC
-#define DRO_OUT NC
+#define DRL_OUT NC
 #define BMS_STROBE_OUT NC
+
+#define CAN_RX NC
+#define CAN_TX NC
+#define CAN_STBY NC
 
 #endif
 
