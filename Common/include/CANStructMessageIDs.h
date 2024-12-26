@@ -4,9 +4,11 @@
 #include "dbc/structs/bps.h"
 #include "dbc/structs/motor_controller.h"
 #include "dbc/structs/rivanna2.h"
+#include "dbc/structs/rivanna3.h"   
 
 #define ECUMotorCommands_MESSAGE_ID    RIVANNA2_ECU_MOTOR_COMMANDS_FRAME_ID
 #define ECUPowerAuxCommands_MESSAGE_ID RIVANNA2_ECU_POWER_AUX_COMMANDS_FRAME_ID
+#define ECUWheelBoardCommands_MESSAGE_ID RIVANNA2_ECU_POWER_AUX_COMMANDS_FRAME_ID
 #define PowerAuxError_MESSAGE_ID       RIVANNA2_POWER_AUX_ERROR_FRAME_ID
 #define SolarCurrent_MESSAGE_ID        RIVANNA2_SOLAR_CURRENT_FRAME_ID
 #define SolarVoltage_MESSAGE_ID        RIVANNA2_SOLAR_VOLTAGE_FRAME_ID
@@ -22,6 +24,8 @@
 #define BPSError_MESSAGE_ID                            BPS_BPS_ERROR_FRAME_ID
 #define BPSCellVoltage_MESSAGE_ID                      BPS_BPS_CELL_VOLTAGE_FRAME_ID
 #define BPSCellTemperature_MESSAGE_ID                  BPS_BPS_CELL_TEMPERATURE_FRAME_ID
+#define DASHBOARD_COMMANDS_ID           RIVANNA3_DASHBOARD_COMMANDS_FRAME_ID           
+
 
 // Motor Controller message IDs
 // These cannot be user-configured and are on a CAN extended bus, so they are

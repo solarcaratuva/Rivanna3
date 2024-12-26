@@ -1,29 +1,58 @@
 #include "CANStruct.h"
 #include "CANInterface.h"
-#include "mbed.h"
+#include "CANStruct.h"
+#include <mbed.h>
 
 
-#ifdef TARGET_NUCLEO_F413ZH 
+#ifdef TARGET_NUCLEO_F413ZH //HIL Testing CAN simulation with BufferedSerial
 
-// BufferedSerial object
 BufferedSerial serial(PD_1, PD_0, 9600);
 
-CANInterface::CANInterface(PinName rd, PinName td, PinName standby_pin) {
-
+CANInterface::CANInterface(PinName rd, PinName td, PinName standby_pin) 
+    : can(rd, td), standby(standby_pin) { 
+    //do nothing
 }
 
-int CANInterface::send(CANStruct *can_struct, CANMessage *message) {
-    int result = serial.write(*message, strlen(message));
-    return result;
+void CANInterface::CANSetFrequency(int freq) { } //do nothing
+
+int CANInterface::CANWrite(CANMessage message) {
+    const void *CAN_message = message.data; 
+    size_t CAN_messageLength = message.len;
+
+    if(serial.write(CAN_message, CAN_messageLength) >= 0) {
+        return 1;
+    }
+    else {
+        return -1;
+    }
 }
 
-bool CANInterface::read(CANMessage *message) {
-    ThisThread::flags_wait_all(0x1);
-    return serial.read(*message, sizeof(message) - 1);
+//Currently will ignore message.id (since this will only be used between two devices)
+//Assumes only data is sent over
+int CANInterface::CANRead(CANMessage &message) {
+    if(serial.readable()) {
+        char serial_buffer[8]; //max CANMessage size is 8 bytes
+        size_t bytes_read = serial.read(serial_buffer, sizeof(serial_buffer));
+
+        message.id = 10; //FILLER
+        message.len = bytes_read; 
+
+        //copy data
+        for (int i = 0; i < (int) bytes_read; i++) {
+            message.data[i] = serial_buffer[i];
+        }
+
+        return 1;
+    }
+    else {
+        return 0;
+    }
 }
 
-void CANInterface::can_isr() {  }
+//keep the same:
+void CANInterface::can_isr() { can_thread.flags_set(0x1); } 
 
+//keep the same:
 void CANInterface::write_CAN_message_data_to_buffer(char *buffer,
                                                     CANMessage *message) {
     buffer[0] = '\0';
@@ -32,7 +61,9 @@ void CANInterface::write_CAN_message_data_to_buffer(char *buffer,
     }
 }
 
+
 #else
+
 
 CANInterface::CANInterface(PinName rd, PinName td, PinName standby_pin)
     : can(rd, td), standby(standby_pin) {
@@ -41,21 +72,20 @@ CANInterface::CANInterface(PinName rd, PinName td, PinName standby_pin)
     }
     can_thread.start(callback(this, &CANInterface::message_handler));
     can.attach(callback(this, &CANInterface::can_isr), CAN::RxIrq);
+}
+
+void CANInterface::CANSetFrequency(int freq) {
     can.frequency(250000);
 }
 
-int CANInterface::send(CANStruct *can_struct, CANMessage *message) {
-    can_struct->serialize(message);
-    message->id = can_struct->get_message_ID();
-    int result = can.write(*message);
-
-    return result;
+int CANInterface::CANWrite(CANMessage message) {
+    return can.write(message);
 }
 
-bool CANInterface::read(CANMessage *message) {
-    ThisThread::flags_wait_all(0x1);
-    return can.read(*message); //can.read accepts a REFFERENCE NOT POINTER
+int CANInterface::CANRead(CANMessage  &message) { //ACCEPTS A REFERENCE; NOT A POINTER
+    return can.read(message);
 }
+
 
 void CANInterface::can_isr() { can_thread.flags_set(0x1); }
 
@@ -66,8 +96,5 @@ void CANInterface::write_CAN_message_data_to_buffer(char *buffer,
         sprintf(buffer + (i * 2), "%02X", message->data[i]);
     }
 }
-
-
-
 
 #endif

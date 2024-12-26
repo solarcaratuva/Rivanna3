@@ -11,6 +11,9 @@
 class CANInterface {
   public:
     CANInterface(PinName rd, PinName td, PinName standby_pin = NC);
+    void CANSetFrequency(int freq);
+    int CANWrite(CANMessage message); 
+    int CANRead(CANMessage &message); 
 
   protected:
     CAN can;
