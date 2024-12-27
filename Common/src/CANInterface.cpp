@@ -24,25 +24,33 @@ int CANInterface::CANWrite(CANMessage message) {
         return -1;
 }
 
-//Currently will ignore message.id (since this will only be used between two devices)
-//Assumes only data is sent over
+//Assumes first 2 bytes is the message ID
 int CANInterface::CANRead(CANMessage &message) {
-    if (!serial.readable()) {
-        return 0;
+    //hang until it can read
+    while(serial.readable()){
+        ThisThread::sleep_for(10ms); //sleep for 10ms
     }
 
-    char serial_buffer[8]; //max CANMessage size is 8 bytes
+    char serial_buffer[10]; //max fake CANMessage size is 2 byte ID + 8 byte data
     size_t bytes_read = serial.read(serial_buffer, sizeof(serial_buffer));
 
-    message.id = 10; //FILLER
-    message.len = bytes_read; 
+    //minimum length for a fake CAN message
+    if (bytes_read >= 3) {
+        message.id = (serial_buffer[0]<<8) | (serial_buffer[1]); 
+        message.len = bytes_read - 2; 
 
-    //copy data
-    for (int i = 0; i < (int) bytes_read; i++) {
-        message.data[i] = serial_buffer[i];
+        //copy data
+        for (int i = 0; i < (int) message.len; i++) {
+            message.data[i] = serial_buffer[i + 2];
+        }
+
+        return 1;
     }
-
-    return 1;
+    else {
+        //invalid CAN message recieved
+        return 0; 
+    }
+    
 }
 
 //keep the same:
@@ -79,6 +87,7 @@ int CANInterface::CANWrite(CANMessage message) {
 }
 
 int CANInterface::CANRead(CANMessage  &message) { //ACCEPTS A REFERENCE; NOT A POINTER
+    ThisThread::flags_wait_all(0x1);
     return can.read(message);
 }
 
