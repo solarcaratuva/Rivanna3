@@ -15,15 +15,15 @@ CANInterface::CANInterface(PinName rd, PinName td, PinName standby_pin)
 void CANInterface::CANSetFrequency(int freq) { } //do nothing
 
 int CANInterface::CANWrite(CANMessage message) {
-    unsigned char *CAN_messageData = message.data; //message data
-    size_t CAN_messageLength = message.len; //message length
-    size_t CAN_messageID = message.id;
+    uint8_t* CAN_messageData = message.data; //message data
+    uint8_t CAN_messageLength = message.len; //message length
+    uint16_t CAN_messageID = message.id;
 
     char message_buffer[10];
     
     //first 2 bytes is the ID
     message_buffer[0] = (uint8_t) (CAN_messageID >> 8);
-    message_buffer[1] = (uint8_t) (CAN_messageID);
+    message_buffer[1] = (uint8_t) (CAN_messageID & 0xFF);
 
     //fill rest of message:
     for(int i = 0; i < (int) CAN_messageLength; i++) {
