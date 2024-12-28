@@ -15,10 +15,22 @@ CANInterface::CANInterface(PinName rd, PinName td, PinName standby_pin)
 void CANInterface::CANSetFrequency(int freq) { } //do nothing
 
 int CANInterface::CANWrite(CANMessage message) {
-    const void *CAN_message = message.data; 
-    size_t CAN_messageLength = message.len;
+    unsigned char *CAN_messageData = message.data; //message data
+    size_t CAN_messageLength = message.len; //message length
+    size_t CAN_messageID = message.id;
 
-    if(serial.write(CAN_message, CAN_messageLength) >= 0)
+    char message_buffer[10];
+    
+    //first 2 bytes is the ID
+    message_buffer[0] = (uint8_t) (CAN_messageID >> 8);
+    message_buffer[1] = (uint8_t) (CAN_messageID);
+
+    //fill rest of message:
+    for(int i = 0; i < (int) CAN_messageLength; i++) {
+        message_buffer[i + 2] = CAN_messageData[i];
+    }
+
+    if(serial.write(message_buffer, CAN_messageLength + 2) >= 0)
         return 1;
     else
         return -1;
@@ -27,7 +39,7 @@ int CANInterface::CANWrite(CANMessage message) {
 //Assumes first 2 bytes is the message ID
 int CANInterface::CANRead(CANMessage &message) {
     //hang until it can read
-    while(serial.readable()){
+    while(!serial.readable()){
         ThisThread::sleep_for(10ms); //sleep for 10ms
     }
 
