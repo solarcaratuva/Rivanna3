@@ -3,39 +3,34 @@
 #include "log.h"
 #include "SDBlockDevice.h"
 #include "FATFileSystem.h"
-
 #include "SDFileSystem.h"
 
-// Constructor for TelemetryCANInterface.h that extends from CANInterface.h in Common include
-TelemetryCANInterface::TelemetryCANInterface(PinName rd, PinName td, PinName standby_pin)
-    : CANInterface(rd, td, standby_pin) {
-    can.frequency(250000); // Tell can controller to communicate at 250000 bits per second
-}
-
-/* Code from ChatGPT */
-// Define pins for the microSD card (change according to your hardware)
-SDBlockDevice sd(PB_5, PB_4, PB_3, PC_8);  // MOSI, MISO, SCLK, CS (whatever those mean...)
+// We assume these pin definitions match your hardware
+SDBlockDevice sd(PB_5, PB_4, PB_3, PC_8);  // Example: MOSI, MISO, SCLK, CS
 FATFileSystem fs("fs");
 
-uint8_t block[512] = "Hello World!\n"; // Example text to test sd card data transfer
+// Constructor
+TelemetryCANInterface::TelemetryCANInterface(PinName rd, PinName td, PinName standby_pin)
+    : CANInterface(rd, td, standby_pin) {
+    can.frequency(250000);
+}
 
-void init_sd_card() {   
+void init_sd_card() {
     printf("Initializing SD card...\n");
     if (sd.init() != 0) {
-        printf("Failed to initialize SD card.\n"); // error statement for SD initialization
+        printf("Failed to initialize SD card.\n");
         return;
     }
-    // Printing details about sd_card, from https://os.mbed.com/docs/mbed-os/v6.16/apis/sdblockdevice.html
     printf("sd size: %llu\n",         sd.size());
     printf("sd read size: %llu\n",    sd.get_read_size());
     printf("sd program size: %llu\n", sd.get_program_size());
     printf("sd erase size: %llu\n",   sd.get_erase_size());
 
     if (fs.mount(&sd) != 0) {
-        printf("Failed to mount the filesystem.\n"); // error statement for failed file system mouting
+        printf("Failed to mount the filesystem.\n");
         // Try formatting if the card is not mounted properly
         if (fs.reformat(&sd) != 0) {
-            printf("Failed to format the filesystem.\n"); // error statement for failed reformatting
+            printf("Failed to format the filesystem.\n");
             return;
         }
     }
@@ -43,47 +38,41 @@ void init_sd_card() {
     printf("SD card initialized and mounted.\n");
 }
 
-
-int TelemetryCANInterface::send(CANStruct *can_struct) { // Overwriting send method
+// Overridden send
+int TelemetryCANInterface::send(CANStruct *can_struct) {
     CANMessage message;
-    // can_struct is a serializable object to be sent over a CAN bus.
-    can_struct->serialize(&message); // Formatting or converting message memory address using can_structs serialize function
-    message.id = can_struct->get_message_ID(); // assigning can message id
-    int result = can.write(message); // CANInterface message is sent, and the result either returns 1 (success) or 0 (fail)
+    can_struct->serialize(&message);
+    message.id = can_struct->get_message_ID();
+    int result = can.write(message);
 
     char message_data[17];
-
-    // Writes data of CAN message to buffer, message_data being the buffer and &message being the converted message
     CANInterface::write_CAN_message_data_to_buffer(message_data, &message);
-    if (result == 1) {  
-        log_debug("Sent CAN message with ID 0x%03X Length %d Data 0x%s",
+
+    if (result == 1) {
+        log_debug("Sent CAN message ID=0x%03X Len=%d Data=0x%s",
                   message.id, message.len, message_data);
-                    // If message is sent successfully, logs above message
     } else {
-        // this error logging requires changes to mbed-os. make the _can field in CAN.h public instead of private
-        // log_error("%d", HAL_FDCAN_GetError(&can._can.CanHandle));
-        log_error(
-            "Failed to send CAN message with ID 0x%03X Length %d Data 0x%s",
-            message.id, message.len, message_data);
-        
+        log_error("Failed to send CAN message ID=0x%03X Len=%d Data=0x%s",
+                  message.id, message.len, message_data);
     }
 
     return result;
 }
 
+// Continuously reads incoming CAN messages whenever the RX IRQ sets the thread flag
 void TelemetryCANInterface::message_handler() {
     while (true) {
+        // Wait for a CAN RX interrupt signal
         ThisThread::flags_wait_all(0x1);
+
         CANMessage message;
         while (can.read(message)) {
             char message_data[17];
+            CANInterface::write_CAN_message_data_to_buffer(message_data, &message);
 
-            //TODO: Write to serial message_id, message_data
+            log_debug("Received CAN message ID=0x%03X Len=%d Data=0x%s",
+                      message.id, message.len, message_data);
 
-            // Writes data of CAN message to buffer, message_data being the buffer and &message being the converted message
-            CANInterface::write_CAN_message_data_to_buffer(message_data,
-                                                           &message);
-            log_debug("Received CAN message with ID 0x%03X Length %d Data 0x%s ", message.id, message.len, message_data);
             if (message.id == ECUPowerAuxCommands_MESSAGE_ID) {
                 ECUPowerAuxCommands can_struct;
                 can_struct.deserialize(&message);
@@ -108,17 +97,20 @@ void TelemetryCANInterface::message_handler() {
                 SolarPhoto can_struct;
                 can_struct.deserialize(&message);
                 handle(&can_struct);
-            } else if (message.id == MotorControllerPowerStatus_MESSAGE_ID || message.id == MotorControllerPowerStatus_AUX_BUS_MESSAGE_ID) {
+            } else if (message.id == MotorControllerPowerStatus_MESSAGE_ID
+                    || message.id == MotorControllerPowerStatus_AUX_BUS_MESSAGE_ID) {
                 log_debug("Motor Power Status");
                 MotorControllerPowerStatus can_struct;
                 can_struct.deserialize(&message);
                 handle(&can_struct);
-            } else if (message.id == MotorControllerDriveStatus_MESSAGE_ID || message.id == MotorControllerDriveStatus_AUX_BUS_MESSAGE_ID) {
+            } else if (message.id == MotorControllerDriveStatus_MESSAGE_ID
+                    || message.id == MotorControllerDriveStatus_AUX_BUS_MESSAGE_ID) {
                 log_debug("Motor Drive Status");
                 MotorControllerDriveStatus can_struct;
                 can_struct.deserialize(&message);
                 handle(&can_struct);
-            } else if (message.id == MotorControllerError_MESSAGE_ID || message.id == MotorControllerError_AUX_BUS_MESSAGE_ID) {
+            } else if (message.id == MotorControllerError_MESSAGE_ID
+                    || message.id == MotorControllerError_AUX_BUS_MESSAGE_ID) {
                 log_debug("Motor Error Status");
                 MotorControllerError can_struct;
                 can_struct.deserialize(&message);
@@ -142,4 +134,100 @@ void TelemetryCANInterface::message_handler() {
             }
         }
     }
+}
+
+// Below are all the "handle(...)" methods that log CAN data to the SD card
+void TelemetryCANInterface::handle(ECUPowerAuxCommands *can_struct) {
+    // Example of writing out each field
+    FILE *file = fopen("/fs/can_log.txt", "a");
+    if (!file) {
+        log_error("Failed to open SD card file for writing.");
+        return;
+    }
+
+    fprintf(file,
+            "ECUPowerAuxCommands - ID=0x%03X hazards=%d brake_lights=%d headlights=%d left_turn=%d right_turn=%d\n",
+            ECUPowerAuxCommands_MESSAGE_ID,
+            can_struct->hazards,
+            can_struct->brake_lights,
+            can_struct->headlights,
+            can_struct->left_turn_signal,
+            can_struct->right_turn_signal);
+
+    fclose(file);
+    log_debug("ECUPowerAuxCommands message written to SD card.");
+}
+
+void TelemetryCANInterface::handle(PowerAuxError *can_struct) {
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer), "Error Code: %d", can_struct->error_code);
+    log_to_sd("PowerAuxError", buffer);
+}
+
+void TelemetryCANInterface::handle(SolarCurrent *can_struct) {
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer), "Current: %f", can_struct->current);
+    log_to_sd("SolarCurrent", buffer);
+}
+
+void TelemetryCANInterface::handle(SolarTemp *can_struct) {
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer), "Temperature: %f", can_struct->temperature);
+    log_to_sd("SolarTemp", buffer);
+}
+
+void TelemetryCANInterface::handle(SolarVoltage *can_struct) {
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer), "Voltage: %f", can_struct->voltage);
+    log_to_sd("SolarVoltage", buffer);
+}
+
+void TelemetryCANInterface::handle(SolarPhoto *can_struct) {
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer), "Photovoltaic: %f", can_struct->photo);
+    log_to_sd("SolarPhoto", buffer);
+}
+
+void TelemetryCANInterface::handle(MotorControllerPowerStatus *can_struct) {
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer), "Power Status: %d", can_struct->power_status);
+    log_to_sd("MotorControllerPowerStatus", buffer);
+}
+
+void TelemetryCANInterface::handle(MotorControllerDriveStatus *can_struct) {
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer), "Drive Status: %d", can_struct->drive_status);
+    log_to_sd("MotorControllerDriveStatus", buffer);
+}
+
+void TelemetryCANInterface::handle(MotorControllerError *can_struct) {
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer), "Error Code: %d", can_struct->error_code);
+    log_to_sd("MotorControllerError", buffer);
+}
+
+void TelemetryCANInterface::handle(BPSPackInformation *can_struct) {
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer),
+             "Pack Voltage: %f, Pack Current: %f",
+             can_struct->pack_voltage, can_struct->pack_current);
+    log_to_sd("BPSPackInformation", buffer);
+}
+
+void TelemetryCANInterface::handle(BPSError *can_struct) {
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer), "Error Flags: %d", can_struct->error_flags);
+    log_to_sd("BPSError", buffer);
+}
+
+void TelemetryCANInterface::handle(BPSCellVoltage *can_struct) {
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer), "Cell Voltage: %f", can_struct->cell_voltage);
+    log_to_sd("BPSCellVoltage", buffer);
+}
+
+void TelemetryCANInterface::handle(BPSCellTemperature *can_struct) {
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer), "Cell Temperature: %f", can_struct->cell_temperature);
+    log_to_sd("BPSCellTemperature", buffer);
 }
