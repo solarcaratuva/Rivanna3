@@ -4,7 +4,6 @@
 #include <mbed.h>
 #include "SDBlockDevice.h"
 #include "FATFileSystem.h"
-#include "SDFileSystem.h"
 
 #define LOG_LEVEL LOG_ERROR
 

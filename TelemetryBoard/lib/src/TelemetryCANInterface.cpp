@@ -3,7 +3,6 @@
 #include "log.h"
 #include "SDBlockDevice.h"
 #include "FATFileSystem.h"
-#include "SDFileSystem.h"
 
 // We assume these pin definitions match your hardware
 SDBlockDevice sd(PB_5, PB_4, PB_3, PC_8);  // Example: MOSI, MISO, SCLK, CS
