@@ -4,8 +4,6 @@
 #include "SDBlockDevice.h"
 #include "FATFileSystem.h"
 
-#include "SDFileSystem.h"
-
 // Constructor for TelemetryCANInterface.h that extends from CANInterface.h in Common include
 TelemetryCANInterface::TelemetryCANInterface(PinName rd, PinName td, PinName standby_pin)
     : CANInterface(rd, td, standby_pin) {

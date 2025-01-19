@@ -3,6 +3,12 @@
 #include "log.h"
 #include <mbed.h>
 
+#define placeholderRD 
+#define placeholderTD 
+#define placeholderSTANDBY 
+
+TelemetryCANInterface telemetry(placeholderRD, placeholderTD, placeholderSTANDBY); 
+
 void TelemetryCANInterface::handle(ECUPowerAuxCommands *can_struct) {
     
 }
