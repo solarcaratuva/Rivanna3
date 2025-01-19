@@ -20,7 +20,6 @@
 
 #define MAX_REGEN                       256
 
-
 EventQueue queue(32 * EVENTS_EVENT_SIZE);
 
 const bool PIN_ON = true;
@@ -54,13 +53,27 @@ bool flashLeftTurnSignal = false;
 bool flashRightTurnSignal = false;
 bool flashHazards = false;
 bool bms_error = false;
-bool contact_12_error = false;
-bool has_faulted = false;
+bool contact_12_error = false; //TODO currently does nothing
+bool has_faulted = false; // Currently used to mean there is any fault that locks the car until reset
 bool regen_enabled = false;
 bool cruise_control_enabled = false;
+
 bool cruise_control_increase = false;
 bool cruise_control_decrease = false;
 
+// Cruise Control variables and constants
+constexpr uint8_t cruise_control_increase_amount = 5;
+constexpr double motor_rpm_to_mph_ratio = (double) 0.0596;
+constexpr double cruise_control_max_speed = 40;
+constexpr double cruise_control_min_speed = 0;
+constexpr double cruise_control_kp = 25; // TODO fine tune
+constexpr double cruise_control_ki = 0.1; // TODO fine tune
+constexpr double cruise_control_kd = 0; // TODO fine tune
+constexpr double cruise_control_dt = 0.1; // TODO shrink, or perhaps get dynamically
+uint8_t cruise_control_target = 0;
+double previous_cruise_error = 0;
+double cruise_control_integral = 0;
+double current_speed_mph = 0;
 
 
 /**
@@ -137,6 +150,7 @@ void set_motor_status() {
             motor_interface.sendRegen(0);
             motor_CAN_struct.regen_braking = 0;
         }
+        cruise_control_enabled = false;
     } else if (cruise_control_enabled){
         motor_CAN_struct.throttle = 0;
         motor_CAN_struct.regen_braking = 0;
@@ -194,9 +208,25 @@ void PowerCANInterface::handle(DashboardCommands *can_struct){
     flashLeftTurnSignal = can_struct->left_turn_signal;
     flashRightTurnSignal = can_struct->right_turn_signal;
     regen_enabled = can_struct->regen_en;
-    cruise_control_enabled = can_struct->cruise_en;
     cruise_control_increase = can_struct->cruise_inc;
     cruise_control_decrease = can_struct->cruise_dec;
+
+    if(can_struct->cruise_en && !has_faulted && read_brake() == 0) {
+        cruise_control_enabled = true;
+    }
+
+    if(can_struct->cruise_inc) {
+        cruise_control_target += cruise_control_increase_amount;
+        if(cruise_control_target > cruise_control_max_speed) {
+            cruise_control_target = cruise_control_max_speed;
+        }
+    }
+    if(can_struct->cruise_dec) {
+        cruise_control_target -= cruise_control_increase_amount;
+        if(cruise_control_target < cruise_control_min_speed) {
+            cruise_control_target = cruise_control_min_speed;
+        }
+    }
     
     queue.call(set_motor_status);
 }
@@ -214,6 +244,33 @@ void MotorControllerCANInterface::message_forwarder(CANMessage *message) {
     // TODO
 }
 
+uint16_t calculate_cruise_control(double setpoint, double current_speed){
+    // Calculate error
+    double error = setpoint - current_speed;
+    
+    // Proportional term
+    double Pout = cruise_control_kp * error;
+
+    // Integral term
+    cruise_control_integral += error * cruise_control_dt;
+    double Iout = cruise_control_ki * cruise_control_integral;
+
+    // Derivative term
+    double derivative = (error - previous_cruise_error) / cruise_control_dt;
+    double Dout = cruise_control_kd * derivative;
+    uint16_t output = (uint16_t)(Pout + Iout + Dout);
+
+    if( output > cruise_control_max_speed ) {
+        output = cruise_control_max_speed;
+    }
+    else if( output < cruise_control_min_speed ) {
+        output = cruise_control_min_speed;
+    }
+    
+    previous_cruise_error = error;
+    return output;
+}
+
 void MotorControllerCANInterface::handle(MotorControllerPowerStatus *can_struct) {
     // can_struct->log(LOG_ERROR);
     // rpm = can_struct->motor_rpm;
@@ -221,6 +278,12 @@ void MotorControllerCANInterface::handle(MotorControllerPowerStatus *can_struct)
     // currentSpeed = (uint16_t)((double)rpm * (double)0.0596); 
     // motor_state_tracker.setMotorControllerPowerStatus(*can_struct);
     //log_error("fet temp: %d", can_struct->fet_temp);
+    current_speed_mph = (double)can_struct->motor_rpm * motor_rpm_to_mph_ratio;
+    if(!has_faulted && cruise_control_enabled) {
+        uint16_t next_cruise_output = calculate_cruise_control(cruise_control_target, current_speed_mph);
+        motor_interface.sendThrottle(next_cruise_output);
+        motor_interface.sendRegen(0);
+    }
 }
 
 void MotorControllerCANInterface::handle(MotorControllerDriveStatus *can_struct) {
