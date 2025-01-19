@@ -28,5 +28,21 @@
             "0841"
         ],
         "device_name": "STM32G474RETx"
+    },
+    "WHEEL_BOARD": {
+        "inherits": [
+            "MCU_STM32U5A9xH"
+        ],
+        "overrides": {
+            "lpticker_delay_ticks": 0,
+            "lse_available": 0,
+            "hse_value": 8000000,
+            "clock_source": "USE_PLL_HSE_EXTC | USE_PLL_HSI"
+        },
+        "detect_code": [
+            "0841"
+        ],
+        "device_name": "STM32U5A9NJH6Q"
     }
+
 }
