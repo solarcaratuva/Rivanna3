@@ -32,7 +32,7 @@ int DriverCANInterface::send(CANStruct *can_struct) {
     return result;
 }
 
-void TelemetryCANInterface::message_handler() {
+void DriverCANInterface::message_handler() {
     while (true) {
         ThisThread::flags_wait_all(0x1);
         CANMessage message;
