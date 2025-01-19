@@ -29,7 +29,7 @@ void log_to_sd(const char *tag, const char *data) {
         fclose(fp);
     } else {
         log_error("Failed to write to SD card.");
-    }
+    } 
 }
 
 int main() {
