@@ -8,12 +8,12 @@
 #include <mvp/View.hpp>
 #include <gui/screen1_screen/Screen1Presenter.hpp>
 #include <touchgfx/widgets/Box.hpp>
+#include <touchgfx/widgets/Gauge.hpp>
+#include <touchgfx/widgets/TextArea.hpp>
 #include <touchgfx/widgets/Button.hpp>
 #include <touchgfx/mixins/ClickListener.hpp>
-#include <touchgfx/widgets/Gauge.hpp>
-#include <touchgfx/widgets/canvas/PainterRGB888Bitmap.hpp>
-#include <touchgfx/widgets/TextArea.hpp>
 #include <touchgfx/widgets/ScalableImage.hpp>
+#include <touchgfx/widgets/TextAreaWithWildcard.hpp>
 
 class Screen1ViewBase : public touchgfx::View<Screen1Presenter>
 {
@@ -48,22 +48,22 @@ protected:
      * Member Declarations
      */
     touchgfx::Box __background;
+    touchgfx::Gauge gauge2;
+    touchgfx::TextArea textArea2_1;
+    touchgfx::TextArea textArea2_1_1;
+    touchgfx::TextArea textArea2_1_1_1;
+    touchgfx::TextArea textArea2_1_1_1_1;
+    touchgfx::TextArea textArea2;
     touchgfx::ClickListener< touchgfx::Button > button1;
     touchgfx::Gauge gauge1;
-    touchgfx::Gauge gauge2;
-    touchgfx::PainterRGB888Bitmap gauge2Painter;
-    touchgfx::TextArea textArea1;
     touchgfx::ScalableImage scalableImage1;
     touchgfx::ScalableImage scalableImage2;
     touchgfx::ScalableImage scalableImage3;
+    touchgfx::TextAreaWithOneWildcard textArea3;
+    touchgfx::TextArea textArea5;
+    touchgfx::TextAreaWithOneWildcard textArea4;
 
 private:
-
-    /*
-     * Canvas Buffer Size
-     */
-    static const uint32_t CANVAS_BUFFER_SIZE = 12000;
-    uint8_t canvasBuffer[CANVAS_BUFFER_SIZE];
 
     /*
      * Callback Declarations
@@ -82,6 +82,8 @@ private:
     uint32_t frameCountInteraction5Interval;
     static const uint32_t TICK_INTERACTION11_INTERVAL = 100;
     uint32_t frameCountInteraction11Interval;
+    static const uint32_t TICK_INTERACTION12_INTERVAL = 100;
+    uint32_t frameCountInteraction12Interval;
 
     /*
      * Delay Variable Declarations

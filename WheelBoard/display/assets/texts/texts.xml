@@ -6,11 +6,95 @@
   <Texts>
     <TextGroup Id="Group1" />
     <TextGroup Id="Unsorted">
-      <Text Id="__SingleUse_QW98" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">150</Translation>
+      <Text Id="__SingleUse_FG9P" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">0</Translation>
       </Text>
-      <Text Id="__SingleUse_IMVQ" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">150</Translation>
+      <Text Id="__SingleUse_RRP5" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">&lt;value&gt;</Translation>
+      </Text>
+      <Text Id="__SingleUse_8451" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Speed: </Translation>
+      </Text>
+      <Text Id="__SingleUse_H2PE" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">0</Translation>
+      </Text>
+      <Text Id="__SingleUse_UCP9" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">&lt;value&gt;</Translation>
+      </Text>
+      <Text Id="__SingleUse_JL6D" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Speed: </Translation>
+      </Text>
+      <Text Id="__SingleUse_4R4S" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">0</Translation>
+      </Text>
+      <Text Id="__SingleUse_GXAE" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Speed: </Translation>
+      </Text>
+      <Text Id="__SingleUse_M0IR" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">85</Translation>
+      </Text>
+      <Text Id="__SingleUse_T5MN" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">&lt;value&gt;</Translation>
+      </Text>
+      <Text Id="__SingleUse_UQ8F" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Voltage: &lt;value&gt;</Translation>
+      </Text>
+      <Text Id="__SingleUse_O97H" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">145</Translation>
+      </Text>
+      <Text Id="__SingleUse_08NE" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">130</Translation>
+      </Text>
+      <Text Id="__SingleUse_ICBY" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">115</Translation>
+      </Text>
+      <Text Id="__SingleUse_60X4" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">100</Translation>
+      </Text>
+      <Text Id="__SingleUse_M1E5" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">85</Translation>
+      </Text>
+      <Text Id="__SingleUse_D97Z" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">85</Translation>
+      </Text>
+      <Text Id="__SingleUse_V6WZ" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">New Text</Translation>
+      </Text>
+      <Text Id="__SingleUse_S2PP" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Voltage: &lt;value&gt;</Translation>
+      </Text>
+      <Text Id="__SingleUse_IYL2" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Voltage: &lt;value&gt;</Translation>
+      </Text>
+      <Text Id="__SingleUse_B8Q5" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">85</Translation>
+      </Text>
+      <Text Id="__SingleUse_8MDQ" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">100</Translation>
+      </Text>
+      <Text Id="__SingleUse_IAXF" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">115</Translation>
+      </Text>
+      <Text Id="__SingleUse_TOY6" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">130</Translation>
+      </Text>
+      <Text Id="__SingleUse_4C7R" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">145</Translation>
+      </Text>
+      <Text Id="__SingleUse_5A23" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">130</Translation>
+      </Text>
+      <Text Id="__SingleUse_OGEE" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">115</Translation>
+      </Text>
+      <Text Id="__SingleUse_BGSS" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">100</Translation>
+      </Text>
+      <Text Id="__SingleUse_9FRD" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">85</Translation>
+      </Text>
+      <Text Id="__SingleUse_CGXK" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">145</Translation>
       </Text>
     </TextGroup>
   </Texts>

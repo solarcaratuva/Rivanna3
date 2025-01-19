@@ -12,12 +12,12 @@
 #include <gui/common/FrontendApplication.hpp>
 #include <gui/model/Model.hpp>
 
+#include <gui/screen1_2_screen/Screen1_2View.hpp>
+#include <gui/screen1_2_screen/Screen1_2Presenter.hpp>
 #include <gui/screen1_1_screen/Screen1_1View.hpp>
 #include <gui/screen1_1_screen/Screen1_1Presenter.hpp>
 #include <gui/screen1_screen/Screen1View.hpp>
 #include <gui/screen1_screen/Screen1Presenter.hpp>
-#include <gui/screen2_screen/Screen2View.hpp>
-#include <gui/screen2_screen/Screen2Presenter.hpp>
 
 
 /**
@@ -40,9 +40,9 @@ public:
      * A list of all view types. Must end with meta::Nil.
      * @note All view types used in the application MUST be added to this list!
      */
-    typedef touchgfx::meta::TypeList< Screen1_1View,
+    typedef touchgfx::meta::TypeList< Screen1_2View,
+            touchgfx::meta::TypeList< Screen1_1View,
             touchgfx::meta::TypeList< Screen1View,
-            touchgfx::meta::TypeList< Screen2View,
             touchgfx::meta::Nil > >
             > GeneratedViewTypes;
 
@@ -55,9 +55,9 @@ public:
      * A list of all presenter types. Must end with meta::Nil.
      * @note All presenter types used in the application MUST be added to this list!
      */
-    typedef touchgfx::meta::TypeList< Screen1_1Presenter,
+    typedef touchgfx::meta::TypeList< Screen1_2Presenter,
+            touchgfx::meta::TypeList< Screen1_1Presenter,
             touchgfx::meta::TypeList< Screen1Presenter,
-            touchgfx::meta::TypeList< Screen2Presenter,
             touchgfx::meta::Nil > >
             > GeneratedPresenterTypes;
 

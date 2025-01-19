@@ -9,12 +9,12 @@
 #include <touchgfx/Texts.hpp>
 #include <touchgfx/hal/HAL.hpp>
 #include <platform/driver/lcd/LCD24bpp.hpp>
+#include <gui/screen1_2_screen/Screen1_2View.hpp>
+#include <gui/screen1_2_screen/Screen1_2Presenter.hpp>
 #include <gui/screen1_1_screen/Screen1_1View.hpp>
 #include <gui/screen1_1_screen/Screen1_1Presenter.hpp>
 #include <gui/screen1_screen/Screen1View.hpp>
 #include <gui/screen1_screen/Screen1Presenter.hpp>
-#include <gui/screen2_screen/Screen2View.hpp>
-#include <gui/screen2_screen/Screen2Presenter.hpp>
 
 using namespace touchgfx;
 
