@@ -17,6 +17,7 @@
 #define SIGNAL_FLASH_PERIOD             1s
 #define BRAKE_LIGHTS_UPDATE_PERIOD      10ms
 #define MOTOR_CONTROL_PERIOD            10ms
+#define MOTOR_REQUEST_FRAMES_PERIOD     10ms
 
 #define MAX_REGEN                       256
 
@@ -69,7 +70,7 @@ constexpr double cruise_control_min_speed = 0;
 constexpr double cruise_control_kp = 25; // TODO fine tune
 constexpr double cruise_control_ki = 0.1; // TODO fine tune
 constexpr double cruise_control_kd = 0; // TODO fine tune
-constexpr double cruise_control_dt = 0.1; // TODO shrink, or perhaps get dynamically
+constexpr double cruise_control_dt = 0.01; // TODO set dynamically
 uint8_t cruise_control_target = 0;
 double previous_cruise_error = 0;
 double cruise_control_integral = 0;
@@ -191,6 +192,10 @@ void set_brake_lights(){
     }
 }
 
+void request_motor_frames() {
+    motor_controller_can_interface.request_frames(true, true, true);
+}
+
 // main method
 int main() {
     log_set_level(LOG_LEVEL);
@@ -199,6 +204,7 @@ int main() {
     queue.call_every(MOTOR_CONTROL_PERIOD, set_motor_status);
     queue.call_every(SIGNAL_FLASH_PERIOD, signal_flash_handler);
     queue.call_every(BRAKE_LIGHTS_UPDATE_PERIOD, set_brake_lights);
+    queue.call_every(MOTOR_REQUEST_FRAMES_PERIOD, request_motor_frames);
     queue.dispatch_forever();
 }
 
