@@ -21,6 +21,7 @@ class TelemetryCANInterface : public CANInterface {
     void handle(BPSCellVoltage *can_struct);
     void handle(BPSCellTemperature *can_struct);
     int send(CANStruct *can_struct);
+    void init_sd_card();
 
   private:
     void message_handler() override;
