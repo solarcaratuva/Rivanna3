@@ -1,9 +1,10 @@
 #include "TelemetryCANInterface.h"
 #include "MotorControllerCANStructs.h"
 #include "log.h"
+#include "mbed.h"
 #include "SDBlockDevice.h"
 #include "FATFileSystem.h"
-#include "SDFileSystem.h"
+//#include "SDFileSystem.h"
 
 // We assume these pin definitions match your hardware
 SDBlockDevice sd(PB_5, PB_4, PB_3, PC_8);  // Example: MOSI, MISO, SCLK, CS
@@ -15,6 +16,7 @@ TelemetryCANInterface::TelemetryCANInterface(PinName rd, PinName td, PinName sta
     can.frequency(250000);
 }
 
+// Initializes the sd and mounts/connects it to FATFileSystem fs
 void init_sd_card() {
     printf("Initializing SD card...\n");
     if (sd.init() != 0) {
@@ -231,3 +233,15 @@ void TelemetryCANInterface::handle(BPSCellTemperature *can_struct) {
     snprintf(buffer, sizeof(buffer), "Cell Temperature: %f", can_struct->cell_temperature);
     log_to_sd("BPSCellTemperature", buffer);
 }
+
+// Seemingly prints log data to the fp file, which will hopefully be in the sd card???
+void log_to_sd(const char *tag, const char *data) {
+    FILE *fp = fopen("/fs/log.csv", "a"); // Opens log.csv file in append mode
+    if (fp) {
+        fprintf(fp, "[%s]: %s\n", tag, data); // Adds tag and message data to file
+        fclose(fp);
+    } else {
+        log_error("Failed to write to SD card.");
+    }
+}
+
