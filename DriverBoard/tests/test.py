@@ -3,11 +3,12 @@ import sys
 import os
 import time
 
-module_path = os.path.abspath("../HiL_Testing/Testing_Library")
+# module_path = os.path.abspath("solarcar/HiL_Testing/Testing_Library")
 
-sys.path.append(module_path)
+# sys.path.append(module_path)
+print(sys.path)
 
-from gpio import DigitalInput, DigitalOutput
+from gpioPins import DigitalInput, DigitalOutput
 
 class TestGPIO(unittest.TestCase):
 
@@ -15,7 +16,10 @@ class TestGPIO(unittest.TestCase):
         left_turn_flash = DigitalInput("LEFT_TURN_OUT")
         left_turn_signal = DigitalOutput("LEFT_TURN_IN")
 
+        left_turn_signal.write(False)
+        time.sleep(1)
         left_turn_signal.write(True)
+         
 
         previous_state = left_turn_flash.read()
         flash_count = 0
@@ -31,9 +35,14 @@ class TestGPIO(unittest.TestCase):
 
             if flash_count >= 2:
                 break
-
+                
             time.sleep(0.5)  # Adjust sample rate based on expected blinking speed
 
+        print(f'Flash Count: {flash_count} | Current State: {current_state} | Previous State: {previous_state}')
         self.assertGreaterEqual(flash_count, 2, "LEFT_TURN_OUT did not flash as expected.")
+        #self.assertEquals(True,True)
+        
+test1 = TestGPIO()
+test1.test_turn_signals()
 
         
