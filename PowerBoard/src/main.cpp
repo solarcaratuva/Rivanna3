@@ -74,7 +74,7 @@ constexpr double CRUISE_CONTROL_DT = 0.01; // TODO set dynamically
 
 // Cruise Control constants
 uint8_t cruise_control_target = 0;
-double previous_cruise_error = 0;
+double cruise_control_previous_error = 0;
 double cruise_control_integral = 0;
 double current_speed_mph = 0;
 
@@ -264,7 +264,7 @@ uint16_t calculate_cruise_control(double setpoint, double current_speed){
     double Iout = CRUISE_CONTROL_KI * cruise_control_integral;
 
     // Derivative term
-    double derivative = (error - previous_cruise_error) / CRUISE_CONTROL_DT;
+    double derivative = (error - cruise_control_previous_error) / CRUISE_CONTROL_DT;
     double Dout = CRUISE_CONTROL_KD * derivative;
     uint16_t output = (uint16_t)(Pout + Iout + Dout);
 
@@ -275,7 +275,7 @@ uint16_t calculate_cruise_control(double setpoint, double current_speed){
         output = CRUISE_CONTROL_MIN_SPEED;
     }
     
-    previous_cruise_error = error;
+    cruise_control_previous_error = error;
     return output;
 }
 
