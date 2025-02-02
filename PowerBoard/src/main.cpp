@@ -61,6 +61,7 @@ bool cruise_control_enabled = false;
 
 bool cruise_control_increase = false;
 bool cruise_control_decrease = false;
+bool cruise_control_brake_latch = false;
 
 // Cruise Control variables
 constexpr uint8_t CRUISE_CONTROL_INCREASE_AMOUNT = 5;
@@ -153,8 +154,8 @@ void set_motor_status() {
             motor_interface.sendRegen(0);
             motor_CAN_struct.regen_braking = 0;
         }
-        cruise_control_enabled = false;
-    } else if (cruise_control_enabled){
+        cruise_control_brake_latch = true;
+    } else if (cruise_control_enabled && !cruise_control_brake_latch){
         motor_CAN_struct.throttle = 0;
         motor_CAN_struct.regen_braking = 0;
     } else if(regen_enabled){
@@ -166,9 +167,9 @@ void set_motor_status() {
         motor_CAN_struct.regen_braking = 0;
     }
 
-    motor_CAN_struct.cruise_drive = cruise_control_enabled;
+    motor_CAN_struct.cruise_drive = cruise_control_enabled && !cruise_control_brake_latch;
     motor_CAN_struct.regen_drive = regen_enabled;
-    motor_CAN_struct.manual_drive = !cruise_control_enabled && !regen_enabled;
+    motor_CAN_struct.manual_drive = !(cruise_control_enabled && !cruise_control_brake_latch) && !regen_enabled;
     if(read_brake() > 0 || (regen_enabled && read_throttle() <= 50)){
         motor_CAN_struct.braking = true;
     } else {
@@ -219,9 +220,11 @@ void PowerCANInterface::handle(DashboardCommands *can_struct){
     cruise_control_increase = can_struct->cruise_inc;
     cruise_control_decrease = can_struct->cruise_dec;
 
-    if(can_struct->cruise_en && !has_faulted && read_brake() == 0) {
-        cruise_control_enabled = true;
+    if(can_struct->cruise_en && !cruise_control_enabled) {
+        cruise_control_brake_latch = false;
     }
+
+    cruise_control_enabled = can_struct->cruise_en;
 
     if(can_struct->cruise_inc) {
         cruise_control_target += CRUISE_CONTROL_INCREASE_AMOUNT;
@@ -287,7 +290,7 @@ void MotorControllerCANInterface::handle(MotorControllerPowerStatus *can_struct)
     // motor_state_tracker.setMotorControllerPowerStatus(*can_struct);
     //log_error("fet temp: %d", can_struct->fet_temp);
     current_speed_mph = (double)can_struct->motor_rpm * MOTOR_RPM_TO_MPH_RATIO;
-    if(!has_faulted && cruise_control_enabled) {
+    if(!has_faulted && cruise_control_enabled && !cruise_control_brake_latch) {
         uint16_t next_cruise_output = calculate_cruise_control(cruise_control_target, current_speed_mph);
         motor_interface.sendThrottle(next_cruise_output);
         motor_interface.sendRegen(0);
