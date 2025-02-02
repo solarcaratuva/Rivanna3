@@ -12,11 +12,16 @@ if [ "$1" == "riv2s" ]; then
     exit $?
 fi
 
+
+
 if [ "$1" == "hil" ]; then
     echo "Compiling for Hardware-in-Loop Testing board"
     echo "placeholder"
     exit $?
 fi
+
+
+
 
 echo "did not recognize '$1'"
 exit 1
