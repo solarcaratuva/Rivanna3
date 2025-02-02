@@ -78,6 +78,7 @@ double cruise_control_previous_error = 0;
 double cruise_control_integral = 0;
 double current_speed_mph = 0;
 uint64_t current_time = Kernel::get_ms_count();
+uint16_t motor_rpm = 0;
 
 
 /**
@@ -295,7 +296,11 @@ void MotorControllerCANInterface::handle(MotorControllerPowerStatus *can_struct)
     // currentSpeed = (uint16_t)((double)rpm * (double)0.0596); 
     // motor_state_tracker.setMotorControllerPowerStatus(*can_struct);
     //log_error("fet temp: %d", can_struct->fet_temp);
-    current_speed_mph = (double)can_struct->motor_rpm * MOTOR_RPM_TO_MPH_RATIO;
+    motor_rpm = can_struct->motor_rpm;
+}
+
+void send_cruise_control_to_motor() {
+    current_speed_mph = (double)motor_rpm * MOTOR_RPM_TO_MPH_RATIO;
     if(!has_faulted && cruise_control_enabled && !cruise_control_brake_latch) {
         uint16_t next_cruise_output = calculate_cruise_control(cruise_control_target, current_speed_mph);
         motor_interface.sendThrottle(next_cruise_output);
