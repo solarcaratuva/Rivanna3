@@ -263,30 +263,33 @@ void motor_message_handler(){
 }
 
 int main() {
-    log_set_level(LOG_LEVEL);
-    log_debug("Start main()");
+
     
-    motor_thread.start(motor_message_handler);
-    signalFlashThread.start(signalFlashHandler);
 
-    drl = PIN_ON;
+    // log_set_level(LOG_LEVEL);
+    // log_debug("Start main()");
+    
+    // motor_thread.start(motor_message_handler);
+    // signalFlashThread.start(signalFlashHandler);
 
-    while (true) {
-        log_debug("Main thread loop");
+    // drl = PIN_ON;
 
-        read_inputs();
+    // while (true) {
+    //     log_debug("Main thread loop");
 
-        ThisThread::sleep_for(MAIN_LOOP_PERIOD);
+    //     read_inputs();
 
-        //  hazards, brake_lights, headlights, left_turn_signal,
-        //              right_turn_signal
-        power_aux_out.hazards = flashHazards;
-        power_aux_out.brake_lights = brakeLightsSwitch;
-        power_aux_out.headlights = 0;
-        power_aux_out.left_turn_signal = flashLSignal;
-        power_aux_out.right_turn_signal = flashRSignal;
+    //     ThisThread::sleep_for(MAIN_LOOP_PERIOD);
 
-        vehicle_can_interface.send(&power_aux_out);
+    //     //  hazards, brake_lights, headlights, left_turn_signal,
+    //     //              right_turn_signal
+    //     power_aux_out.hazards = flashHazards;
+    //     power_aux_out.brake_lights = brakeLightsSwitch;
+    //     power_aux_out.headlights = 0;
+    //     power_aux_out.left_turn_signal = flashLSignal;
+    //     power_aux_out.right_turn_signal = flashRSignal;
+
+    //     vehicle_can_interface.send(&power_aux_out);
     }
 }
 
