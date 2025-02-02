@@ -245,6 +245,7 @@ void MotorControllerCANInterface::handle(MotorControllerPowerStatus *can_struct)
     // motor_state_tracker.setMotorControllerPowerStatus(*can_struct);
     //log_error("fet temp: %d", can_struct->fet_temp);
     motor_rpm = can_struct->motor_rpm;
+    send_cruise_control_to_motor();
 }
 
 void send_cruise_control_to_motor() {
