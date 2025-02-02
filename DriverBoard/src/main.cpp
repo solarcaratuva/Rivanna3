@@ -67,7 +67,7 @@ DigitalOut test_LED2(LED3);
 
 // AnalogIn throttle(THROTTLE_VALUE_IN, 5.0f);
 
-DriverCANInterface vehicle_can_interface(CAN_RX, CAN_TX, CAN_STBY);
+DriverCANInterface vehicle_can_interface(NC, NC, NC);
 
 // ECUMotorCommands to_motor;
 // ECUPowerAuxCommands power_aux_out;
@@ -267,7 +267,14 @@ uint16_t currentSpeed = 0;
 int main() {
 
     while(1) {
-        
+
+        test_LED = PIN_ON;
+        test_LED2 = PIN_ON;
+        thread_sleep_for(500);
+        test_LED = PIN_OFF;
+        test_LED2 = PIN_OFF;
+        thread_sleep_for(500);
+
     }
 
     // log_set_level(LOG_LEVEL);
@@ -298,18 +305,18 @@ int main() {
 }
 
 void DriverCANInterface::handle(MotorControllerPowerStatus *can_struct) {
-    // rpmPositive = can_struct->motor_rpm > 0;
-    vehicle_can_interface.send(can_struct);
-    //log_error("sent rpm: %d", can_struct->motor_rpm);
-    RPM = can_struct->motor_rpm; 
+    // // rpmPositive = can_struct->motor_rpm > 0;
+    // vehicle_can_interface.send(can_struct);
+    // //log_error("sent rpm: %d", can_struct->motor_rpm);
+    // RPM = can_struct->motor_rpm; 
 }
 
 void DriverCANInterface::handle(BPSError *can_struct) {
-    bms_error = can_struct->internal_communications_fault || can_struct-> low_cell_voltage_fault || can_struct->open_wiring_fault || can_struct->current_sensor_fault || can_struct->pack_voltage_sensor_fault || can_struct->thermistor_fault || can_struct->canbus_communications_fault || can_struct->high_voltage_isolation_fault || can_struct->charge_limit_enforcement_fault || can_struct->discharge_limit_enforcement_fault || can_struct->charger_safety_relay_fault || can_struct->internal_thermistor_fault || can_struct->internal_memory_fault;
+    // bms_error = can_struct->internal_communications_fault || can_struct-> low_cell_voltage_fault || can_struct->open_wiring_fault || can_struct->current_sensor_fault || can_struct->pack_voltage_sensor_fault || can_struct->thermistor_fault || can_struct->canbus_communications_fault || can_struct->high_voltage_isolation_fault || can_struct->charge_limit_enforcement_fault || can_struct->discharge_limit_enforcement_fault || can_struct->charger_safety_relay_fault || can_struct->internal_thermistor_fault || can_struct->internal_memory_fault;
 }
 
 void DriverCANInterface::handle(ECUPowerAuxCommands *can_struct) {
-    if(can_struct->headlights && can_struct->hazards) {
-        contact_12_error = true;
-    }
+    // if(can_struct->headlights && can_struct->hazards) {
+    //     contact_12_error = true;
+    // }
 }
