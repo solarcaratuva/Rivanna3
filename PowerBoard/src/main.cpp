@@ -12,6 +12,7 @@
 #include "main.h"
 #include "MotorCommandsCANStruct.h"
 #include "MotorControllerCANInterface.h"
+#include "CruiseControl.h"
 
 #define LOG_LEVEL                       LOG_DEBUG
 #define SIGNAL_FLASH_PERIOD             1s
@@ -59,25 +60,14 @@ bool has_faulted = false; // Currently used to mean there is any fault that lock
 bool regen_enabled = false;
 bool cruise_control_enabled = false;
 
-bool cruise_control_increase = false;
-bool cruise_control_decrease = false;
 bool cruise_control_brake_latch = false;
 
 // Cruise Control constants
-constexpr uint8_t CRUISE_CONTROL_INCREASE_AMOUNT = 5;
 constexpr double MOTOR_RPM_TO_MPH_RATIO = (double) 0.0596;
-constexpr double CRUISE_CONTROL_MAX_SPEED = 40;
-constexpr double CRUISE_CONTROL_MIN_SPEED = 0;
-constexpr double CRUISE_CONTROL_KP = 25; // TODO fine tune
-constexpr double CRUISE_CONTROL_KI = 0.1; // TODO fine tune
-constexpr double CRUISE_CONTROL_KD = 0; // TODO fine tune
 
 // Cruise Control variables
-uint8_t cruise_control_target = 0;
-double cruise_control_previous_error = 0;
-double cruise_control_integral = 0;
+CruiseControl cruise_control;
 double current_speed_mph = 0;
-uint64_t current_time = Kernel::get_ms_count();
 uint16_t motor_rpm = 0;
 
 
@@ -218,8 +208,6 @@ void PowerCANInterface::handle(DashboardCommands *can_struct){
     flashLeftTurnSignal = can_struct->left_turn_signal;
     flashRightTurnSignal = can_struct->right_turn_signal;
     regen_enabled = can_struct->regen_en;
-    cruise_control_increase = can_struct->cruise_inc;
-    cruise_control_decrease = can_struct->cruise_dec;
 
     if(can_struct->cruise_en && !cruise_control_enabled) {
         cruise_control_brake_latch = false;
@@ -228,16 +216,10 @@ void PowerCANInterface::handle(DashboardCommands *can_struct){
     cruise_control_enabled = can_struct->cruise_en;
 
     if(can_struct->cruise_inc) {
-        cruise_control_target += CRUISE_CONTROL_INCREASE_AMOUNT;
-        if(cruise_control_target > CRUISE_CONTROL_MAX_SPEED) {
-            cruise_control_target = CRUISE_CONTROL_MAX_SPEED;
-        }
+        cruise_control.increase_cruise_target();
     }
     if(can_struct->cruise_dec) {
-        cruise_control_target -= CRUISE_CONTROL_INCREASE_AMOUNT;
-        if(cruise_control_target < CRUISE_CONTROL_MIN_SPEED) {
-            cruise_control_target = CRUISE_CONTROL_MIN_SPEED;
-        }
+        cruise_control.decrease_cruise_target();
     }
     
     queue.call(set_motor_status);
@@ -255,40 +237,6 @@ void MotorControllerCANInterface::message_forwarder(CANMessage *message) {
     vehicle_can_interface.send_message(message);
 }
 
-uint16_t calculate_cruise_control(double setpoint, double current_speed){
-    uint64_t next_time = Kernel::get_ms_count();
-    uint64_t dt = next_time - current_time;
-    current_time = next_time;
-    if(dt > 20) {
-        dt = 10;
-    }
-
-    // Calculate error
-    double error = setpoint - current_speed;
-    
-    // Proportional term
-    double Pout = CRUISE_CONTROL_KP * error;
-
-    // Integral term
-    cruise_control_integral += error * dt;
-    double Iout = CRUISE_CONTROL_KI * cruise_control_integral;
-
-    // Derivative term
-    double derivative = (((double) 100.) * (error - cruise_control_previous_error)) / ((double) dt);
-    double Dout = CRUISE_CONTROL_KD * derivative;
-    uint16_t output = (uint16_t)(Pout + Iout + Dout);
-
-    if( output > CRUISE_CONTROL_MAX_SPEED ) {
-        output = CRUISE_CONTROL_MAX_SPEED;
-    }
-    else if( output < CRUISE_CONTROL_MIN_SPEED ) {
-        output = CRUISE_CONTROL_MIN_SPEED;
-    }
-    
-    cruise_control_previous_error = error;
-    return output;
-}
-
 void MotorControllerCANInterface::handle(MotorControllerPowerStatus *can_struct) {
     // can_struct->log(LOG_ERROR);
     // rpm = can_struct->motor_rpm;
@@ -302,11 +250,11 @@ void MotorControllerCANInterface::handle(MotorControllerPowerStatus *can_struct)
 void send_cruise_control_to_motor() {
     current_speed_mph = (double)motor_rpm * MOTOR_RPM_TO_MPH_RATIO;
     if(!has_faulted && cruise_control_enabled && !cruise_control_brake_latch) {
-        uint16_t next_cruise_output = calculate_cruise_control(cruise_control_target, current_speed_mph);
+        uint16_t next_cruise_output = cruise_control.calculate_cruise_control(current_speed_mph);
         motor_interface.sendThrottle(next_cruise_output);
         motor_interface.sendRegen(0);
     } else {
-        cruise_control_integral = 0;
+        cruise_control.reset_cruise_control_integral();
     }
 }
 
