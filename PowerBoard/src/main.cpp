@@ -63,7 +63,7 @@ bool cruise_control_increase = false;
 bool cruise_control_decrease = false;
 bool cruise_control_brake_latch = false;
 
-// Cruise Control variables
+// Cruise Control constants
 constexpr uint8_t CRUISE_CONTROL_INCREASE_AMOUNT = 5;
 constexpr double MOTOR_RPM_TO_MPH_RATIO = (double) 0.0596;
 constexpr double CRUISE_CONTROL_MAX_SPEED = 40;
@@ -71,13 +71,13 @@ constexpr double CRUISE_CONTROL_MIN_SPEED = 0;
 constexpr double CRUISE_CONTROL_KP = 25; // TODO fine tune
 constexpr double CRUISE_CONTROL_KI = 0.1; // TODO fine tune
 constexpr double CRUISE_CONTROL_KD = 0; // TODO fine tune
-constexpr double CRUISE_CONTROL_DT = 0.01; // TODO set dynamically
 
-// Cruise Control constants
+// Cruise Control variables
 uint8_t cruise_control_target = 0;
 double cruise_control_previous_error = 0;
 double cruise_control_integral = 0;
 double current_speed_mph = 0;
+uint64_t current_time = Kernel::get_ms_count();
 
 
 /**
@@ -255,6 +255,13 @@ void MotorControllerCANInterface::message_forwarder(CANMessage *message) {
 }
 
 uint16_t calculate_cruise_control(double setpoint, double current_speed){
+    uint64_t next_time = Kernel::get_ms_count();
+    uint64_t dt = next_time - current_time;
+    current_time = next_time;
+    if(dt > 20) {
+        dt = 10;
+    }
+
     // Calculate error
     double error = setpoint - current_speed;
     
@@ -262,11 +269,11 @@ uint16_t calculate_cruise_control(double setpoint, double current_speed){
     double Pout = CRUISE_CONTROL_KP * error;
 
     // Integral term
-    cruise_control_integral += error * CRUISE_CONTROL_DT;
+    cruise_control_integral += error * dt;
     double Iout = CRUISE_CONTROL_KI * cruise_control_integral;
 
     // Derivative term
-    double derivative = (error - cruise_control_previous_error) / CRUISE_CONTROL_DT;
+    double derivative = (((double) 100.) * (error - cruise_control_previous_error)) / ((double) dt);
     double Dout = CRUISE_CONTROL_KD * derivative;
     uint16_t output = (uint16_t)(Pout + Iout + Dout);
 
