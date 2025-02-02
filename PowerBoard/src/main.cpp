@@ -237,17 +237,6 @@ void MotorControllerCANInterface::message_forwarder(CANMessage *message) {
     vehicle_can_interface.send_message(message);
 }
 
-void MotorControllerCANInterface::handle(MotorControllerPowerStatus *can_struct) {
-    // can_struct->log(LOG_ERROR);
-    // rpm = can_struct->motor_rpm;
-    // current = can_struct->motor_current;
-    // currentSpeed = (uint16_t)((double)rpm * (double)0.0596); 
-    // motor_state_tracker.setMotorControllerPowerStatus(*can_struct);
-    //log_error("fet temp: %d", can_struct->fet_temp);
-    motor_rpm = can_struct->motor_rpm;
-    send_cruise_control_to_motor();
-}
-
 void send_cruise_control_to_motor() {
     current_speed_mph = (double)motor_rpm * MOTOR_RPM_TO_MPH_RATIO;
     if(!has_faulted && cruise_control_enabled && !cruise_control_brake_latch) {
@@ -257,6 +246,17 @@ void send_cruise_control_to_motor() {
     } else {
         cruise_control.reset_cruise_control_integral();
     }
+}
+
+void MotorControllerCANInterface::handle(MotorControllerPowerStatus *can_struct) {
+    // can_struct->log(LOG_ERROR);
+    // rpm = can_struct->motor_rpm;
+    // current = can_struct->motor_current;
+    // currentSpeed = (uint16_t)((double)rpm * (double)0.0596); 
+    // motor_state_tracker.setMotorControllerPowerStatus(*can_struct);
+    //log_error("fet temp: %d", can_struct->fet_temp);
+    motor_rpm = can_struct->motor_rpm;
+    send_cruise_control_to_motor();
 }
 
 void MotorControllerCANInterface::handle(MotorControllerDriveStatus *can_struct) {
