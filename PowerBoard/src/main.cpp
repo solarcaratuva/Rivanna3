@@ -12,19 +12,20 @@
 #include "main.h"
 #include "MotorCommandsCANStruct.h"
 #include "MotorControllerCANInterface.h"
+#include "CruiseControl.h"
 
 #define LOG_LEVEL                       LOG_DEBUG
 #define SIGNAL_FLASH_PERIOD             1s
 #define BRAKE_LIGHTS_UPDATE_PERIOD      10ms
 #define MOTOR_CONTROL_PERIOD            10ms
+#define MOTOR_REQUEST_FRAMES_PERIOD     10ms
 
 #define MAX_REGEN                       256
 
-
 EventQueue queue(32 * EVENTS_EVENT_SIZE);
 
-const bool PIN_ON = true;
-const bool PIN_OFF = false;
+constexpr bool PIN_ON = true;
+constexpr bool PIN_OFF = false;
 
 DigitalOut bms_strobe(STROBE_EN);
 DigitalOut brake_lights(BRAKE_LIGHT_EN);
@@ -54,13 +55,20 @@ bool flashLeftTurnSignal = false;
 bool flashRightTurnSignal = false;
 bool flashHazards = false;
 bool bms_error = false;
-bool contact_12_error = false;
-bool has_faulted = false;
+bool contact_12_error = false; //TODO currently does nothing
+bool has_faulted = false; // Currently used to mean there is any fault that locks the car until reset
 bool regen_enabled = false;
 bool cruise_control_enabled = false;
-bool cruise_control_increase = false;
-bool cruise_control_decrease = false;
 
+bool cruise_control_brake_latch = false;
+
+// Cruise Control constants
+constexpr double MOTOR_RPM_TO_MPH_RATIO = (double) 0.0596;
+
+// Cruise Control variables
+CruiseControl cruise_control;
+double current_speed_mph = 0;
+uint16_t motor_rpm = 0;
 
 
 /**
@@ -137,7 +145,8 @@ void set_motor_status() {
             motor_interface.sendRegen(0);
             motor_CAN_struct.regen_braking = 0;
         }
-    } else if (cruise_control_enabled){
+        cruise_control_brake_latch = true;
+    } else if (cruise_control_enabled && !cruise_control_brake_latch){
         motor_CAN_struct.throttle = 0;
         motor_CAN_struct.regen_braking = 0;
     } else if(regen_enabled){
@@ -149,9 +158,9 @@ void set_motor_status() {
         motor_CAN_struct.regen_braking = 0;
     }
 
-    motor_CAN_struct.cruise_drive = cruise_control_enabled;
+    motor_CAN_struct.cruise_drive = cruise_control_enabled && !cruise_control_brake_latch;
     motor_CAN_struct.regen_drive = regen_enabled;
-    motor_CAN_struct.manual_drive = !cruise_control_enabled && !regen_enabled;
+    motor_CAN_struct.manual_drive = !(cruise_control_enabled && !cruise_control_brake_latch) && !regen_enabled;
     if(read_brake() > 0 || (regen_enabled && read_throttle() <= 50)){
         motor_CAN_struct.braking = true;
     } else {
@@ -177,6 +186,10 @@ void set_brake_lights(){
     }
 }
 
+void request_motor_frames() {
+    motor_controller_can_interface.request_frames(true, true, true);
+}
+
 // main method
 int main() {
     log_set_level(LOG_LEVEL);
@@ -185,6 +198,7 @@ int main() {
     queue.call_every(MOTOR_CONTROL_PERIOD, set_motor_status);
     queue.call_every(SIGNAL_FLASH_PERIOD, signal_flash_handler);
     queue.call_every(BRAKE_LIGHTS_UPDATE_PERIOD, set_brake_lights);
+    queue.call_every(MOTOR_REQUEST_FRAMES_PERIOD, request_motor_frames);
     queue.dispatch_forever();
 }
 
@@ -194,9 +208,19 @@ void PowerCANInterface::handle(DashboardCommands *can_struct){
     flashLeftTurnSignal = can_struct->left_turn_signal;
     flashRightTurnSignal = can_struct->right_turn_signal;
     regen_enabled = can_struct->regen_en;
+
+    if(can_struct->cruise_en && !cruise_control_enabled) {
+        cruise_control_brake_latch = false;
+    }
+
     cruise_control_enabled = can_struct->cruise_en;
-    cruise_control_increase = can_struct->cruise_inc;
-    cruise_control_decrease = can_struct->cruise_dec;
+
+    if(can_struct->cruise_inc) {
+        cruise_control.increase_cruise_target();
+    }
+    if(can_struct->cruise_dec) {
+        cruise_control.decrease_cruise_target();
+    }
     
     queue.call(set_motor_status);
 }
@@ -210,8 +234,18 @@ void PowerCANInterface::handle(BPSError *can_struct) {
 // Message_forwarder is called whenever the MotorControllerCANInterface gets a CAN message.
 // This forwards the message to the vehicle can bus.
 void MotorControllerCANInterface::message_forwarder(CANMessage *message) {
-    // vehicle_can_interface.send(message);
-    // TODO
+    vehicle_can_interface.send_message(message);
+}
+
+void send_cruise_control_to_motor() {
+    current_speed_mph = (double)motor_rpm * MOTOR_RPM_TO_MPH_RATIO;
+    if(!has_faulted && cruise_control_enabled && !cruise_control_brake_latch) {
+        uint16_t next_cruise_output = cruise_control.calculate_cruise_control(current_speed_mph);
+        motor_interface.sendThrottle(next_cruise_output);
+        motor_interface.sendRegen(0);
+    } else {
+        cruise_control.reset_cruise_control_integral();
+    }
 }
 
 void MotorControllerCANInterface::handle(MotorControllerPowerStatus *can_struct) {
@@ -221,6 +255,8 @@ void MotorControllerCANInterface::handle(MotorControllerPowerStatus *can_struct)
     // currentSpeed = (uint16_t)((double)rpm * (double)0.0596); 
     // motor_state_tracker.setMotorControllerPowerStatus(*can_struct);
     //log_error("fet temp: %d", can_struct->fet_temp);
+    motor_rpm = can_struct->motor_rpm;
+    send_cruise_control_to_motor();
 }
 
 void MotorControllerCANInterface::handle(MotorControllerDriveStatus *can_struct) {
@@ -232,6 +268,6 @@ void MotorControllerCANInterface::handle(MotorControllerDriveStatus *can_struct)
 }
 
 void MotorControllerCANInterface::handle(MotorControllerError *can_struct) {
-    // can_struct->log(LOG_ERROR);
+    can_struct->log(LOG_ERROR);
     // motor_state_tracker.setMotorControllerError(*can_struct);
 }
