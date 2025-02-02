@@ -300,6 +300,8 @@ void MotorControllerCANInterface::handle(MotorControllerPowerStatus *can_struct)
         uint16_t next_cruise_output = calculate_cruise_control(cruise_control_target, current_speed_mph);
         motor_interface.sendThrottle(next_cruise_output);
         motor_interface.sendRegen(0);
+    } else {
+        cruise_control_integral = 0;
     }
 }
 
