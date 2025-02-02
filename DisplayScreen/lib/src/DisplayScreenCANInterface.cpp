@@ -1,14 +1,14 @@
-#include "WheelCANInterface.h"
+#include "DisplayScreenCANInterface.h"
 #include "MotorControllerCANStructs.h"
 #include "log.h"
 
-WheelCANInterface::WheelCANInterface(PinName rd, PinName td, PinName standby_pin)
+DisplayScreenCANInterface::DisplayScreenCANInterface(PinName rd, PinName td, PinName standby_pin)
     : CANInterface(rd, td, standby_pin) {
     can.frequency(250000);
 }
 
 
-int WheelCANInterface::send(CANStruct *can_struct) {
+int DisplayScreenCANInterface::send(CANStruct *can_struct) {
     CANMessage message;
     can_struct->serialize(&message);
     message.id = can_struct->get_message_ID();
@@ -32,7 +32,7 @@ int WheelCANInterface::send(CANStruct *can_struct) {
     return result;
 }
 
-void WheelCANInterface::message_handler() {
+void DisplayScreenCANInterface::message_handler() {
     while (true) {
         ThisThread::flags_wait_all(0x1);
         CANMessage message;
