@@ -67,7 +67,7 @@ DigitalOut test_LED2(LED3);
 
 // AnalogIn throttle(THROTTLE_VALUE_IN, 5.0f);
 
-DriverCANInterface vehicle_can_interface(NC, NC, NC);
+DriverCANInterface vehicle_can_interface(PG_11, PG_12, PG_13);
 
 // ECUMotorCommands to_motor;
 // ECUPowerAuxCommands power_aux_out;
