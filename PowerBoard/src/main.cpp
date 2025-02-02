@@ -251,8 +251,7 @@ void PowerCANInterface::handle(BPSError *can_struct) {
 // Message_forwarder is called whenever the MotorControllerCANInterface gets a CAN message.
 // This forwards the message to the vehicle can bus.
 void MotorControllerCANInterface::message_forwarder(CANMessage *message) {
-    // vehicle_can_interface.send(message);
-    // TODO
+    vehicle_can_interface.send(message);
 }
 
 uint16_t calculate_cruise_control(double setpoint, double current_speed){
@@ -306,6 +305,6 @@ void MotorControllerCANInterface::handle(MotorControllerDriveStatus *can_struct)
 }
 
 void MotorControllerCANInterface::handle(MotorControllerError *can_struct) {
-    // can_struct->log(LOG_ERROR);
+    can_struct->log(LOG_ERROR);
     // motor_state_tracker.setMotorControllerError(*can_struct);
 }
