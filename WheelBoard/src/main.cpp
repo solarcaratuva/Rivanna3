@@ -24,6 +24,32 @@ InterruptIn regen_enable(REGEN_ENABLE); // toggle
 
 WheelCANInterface wheel_board_interface(CAN_RX, CAN_TX, CAN_STBY);
 
+Timeout PowerBoard_timeout;
+
+void handle_powerboard_timeout() { printf("Power Board Timeout Detected") }
+
+/**
+* Function that when called creates and sends a Heartbeat can message from PowerBoard
+ */
+void send_wheelboard_heartbeat() {
+    HeartBeat wheelboard_heartbeat_struct;
+    wheelboard_heartbeat_struct.FromTelemetryBoard = 0;
+    wheelboard_heartbeat_struct.FromWheelBoard = 1;
+    wheelboard_heartbeat_struct.FromPowerBoard = 0;
+    vehicle_can_interface.send(&wheelboard_heartbeat_struct);
+}
+
+// Handle heartbeat message from powerboard
+void PowerCANInterface::handle(DashboardCommands *can_struct){
+    if (can_struct->FromPowerBoard == 1 && can_struct->FromWheelBoard == 0 && can_struct->FromTelemetryBoard == 0) {
+        // Reset current timeout
+        PowerBoard_timeout.detach();
+        // Set new timeout for 100ms from now
+        PowerBoard_timeout.attach(
+        queue.event(handle_powerboard_timeout), 100ms); // was event_queue in original motor main.cpp
+    }
+}
+
 //Poll dashboard buttons & send status over CAN
 void send_DashboardCommands_CAN_message(){ 
     DashboardCommands wheel_can_struct;
@@ -50,6 +76,10 @@ void edge_handler(void){
 int main() {
     log_set_level(LOG_LEVEL);
 
+    // set initial heartbeat timer
+    PowerBoard_timeout.attach(
+    queue.event(handle_powerboard_timeout), 100ms); // was event_queue in original motor main.cpp
+    
     // toggle buttons have a rise and fall interrupt, press buttons only have a rise interrupt
     left_signal.rise(edge_handler);
     right_signal.rise(edge_handler);
@@ -65,5 +95,6 @@ int main() {
     cruise_control_enable.fall(edge_handler);
     regen_enable.fall(edge_handler);
 
+    queue.
     queue.dispatch_forever();
 }

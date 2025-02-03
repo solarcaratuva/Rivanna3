@@ -11,6 +11,7 @@
 #include "ReadPedals.h"
 #include "main.h"
 #include "MotorCommandsCANStruct.h"
+#include "HeartBeatCANStruct.h" // heartbeat
 #include "MotorControllerCANInterface.h"
 
 #define LOG_LEVEL                       LOG_DEBUG
@@ -61,7 +62,16 @@ bool cruise_control_enabled = false;
 bool cruise_control_increase = false;
 bool cruise_control_decrease = false;
 
-
+/**
+* Function that when called creates and sends a Heartbeat can message from PowerBoard
+ */
+void send_powerboard_heartbeat() {
+    HeartBeat powerboard_heartbeat_struct;
+    powerboard_heartbeat_struct.FromTelemetryBoard = 0;
+    powerboard_heartbeat_struct.FromWheelBoard = 0;
+    powerboard_heartbeat_struct.FromPowerBoard = 1;
+    vehicle_can_interface.send(&powerboard_heartbeat_struct);
+}
 
 /**
  * Function that handles the flashing of the turn signals and hazard lights.

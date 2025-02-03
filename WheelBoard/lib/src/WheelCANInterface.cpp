@@ -46,6 +46,11 @@ void WheelCANInterface::message_handler() {
             log_debug(
                 "Received CAN message with ID 0x%03X Length %d Data 0x%s ",
                 message.id, message.len, message_data);
+            if (message.id == HEARTBEAT_ID) {
+                HeartBeat can_struct;
+                can_struct.deserialize(&message);
+                handle(&can_struct);
+            }
         }
     }
 }

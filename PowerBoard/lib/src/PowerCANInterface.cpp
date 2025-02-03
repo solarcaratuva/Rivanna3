@@ -2,6 +2,7 @@
 #include "MotorControllerCANStructs.h"
 #include "log.h"
 #include "MotorCommandsCANStruct.h"
+#include "HeartBeatCANStruct.h"
 
 PowerCANInterface::PowerCANInterface(PinName rd, PinName td,
                                      PinName standby_pin)
@@ -49,6 +50,11 @@ void PowerCANInterface::message_handler() {
                 message.id, message.len, message_data);
             if (message.id == BPSError_MESSAGE_ID) {
                 BPSError can_struct;
+                can_struct.deserialize(&message);
+                handle(&can_struct);
+            }
+            else if (message.id == HEARTBEAT_ID) {
+                HeartBeat can_struct;
                 can_struct.deserialize(&message);
                 handle(&can_struct);
             }
