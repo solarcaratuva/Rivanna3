@@ -2,6 +2,7 @@
 #include "Printing.h"
 #include "ThisThread.h"
 #include "ECUCANStructs.h"
+#include "MotorCommandsCANStruct.h"
 #include "log.h"
 #include "pindef.h"
 #include <mbed.h>
@@ -268,13 +269,14 @@ int main() {
 
     CANMessage testMessage;
 
-    char message_buffer[10];
 
-    testMessage.id = 123;
-    testMessage.data[0] = 2;
-    testMessage.data[1] = 5;
+    testMessage.id = 10;
 
-    testMessage.len = 4;
+    testMessage.len = 2;
+
+    MotorCommands motor_CAN_struct;
+    motor_CAN_struct.throttle = 5;
+    motor_CAN_struct.regen_braking = 1;
 
 
     while (true)
@@ -284,17 +286,17 @@ int main() {
         test_LED2 = PIN_ON;
 
         //if(vehicle_can_interface.CANWrite(testMessage) < 0) {
-        if(vehicle_can_interface.CANWrite(testMessage) < 0) { //-1: fail, 1: success 
+        if(vehicle_can_interface.send(&motor_CAN_struct) < 0) { //-1: fail, 1: success 
             test_LED = PIN_ON;
             test_LED2 = PIN_ON;
         }
         else {
             test_LED = PIN_ON;
             test_LED2 = PIN_ON;
-            thread_sleep_for(200);
+            thread_sleep_for(2000);
             test_LED = PIN_OFF;
             test_LED2 = PIN_OFF;
-            thread_sleep_for(200);
+            thread_sleep_for(2000);
         }
 
     }

@@ -30,6 +30,8 @@ int CANInterface::CANWrite(CANMessage message) {
         message_buffer[i + 2] = CAN_messageData[i];
     }
 
+    message_buffer[CAN_messageLength] = 10; 
+
     if(serial.write(message_buffer, CAN_messageLength + 2) >= 0)
         return 1;
     else
