@@ -16,7 +16,7 @@ void CANInterface::CANSetFrequency(int freq) { } //do nothing
 
 int CANInterface::CANWrite(CANMessage message) {
     uint8_t* CAN_messageData = message.data; //message data
-    uint8_t CAN_messageLength = message.len; //message length
+    uint8_t CAN_messageLength = message.len; //message length (excluding ID lenght)
     uint16_t CAN_messageID = message.id;
 
     char message_buffer[10];
@@ -29,6 +29,8 @@ int CANInterface::CANWrite(CANMessage message) {
     for(int i = 0; i < (int) CAN_messageLength; i++) {
         message_buffer[i + 2] = CAN_messageData[i];
     }
+
+    CAN_messageData[CAN_messageLength] = 10; //Raspberry PI needs a newline character 
 
     if(serial.write(message_buffer, CAN_messageLength + 2) >= 0)
         return 1;
