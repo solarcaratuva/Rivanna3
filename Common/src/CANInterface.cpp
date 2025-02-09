@@ -16,7 +16,7 @@ void CANInterface::CANSetFrequency(int freq) { } //do nothing
 
 int CANInterface::CANWrite(CANMessage message) {
     uint8_t* CAN_messageData = message.data; //message data
-    uint8_t CAN_messageLength = message.len; //message length (excluding ID lenght)
+    uint8_t CAN_messageLength = message.len; //message length (excluding ID length)
     uint16_t CAN_messageID = message.id;
 
     char message_buffer[10];
