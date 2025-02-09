@@ -30,7 +30,7 @@ int CANInterface::CANWrite(CANMessage message) {
         message_buffer[i + 2] = CAN_messageData[i];
     }
 
-    CAN_messageData[CAN_messageLength] = 10; //Raspberry PI needs a newline character 
+    message_buffer[CAN_messageLength] = 10; //Raspberry PI needs a newline character 
 
     if(serial.write(message_buffer, CAN_messageLength + 2) >= 0)
         return 1;
@@ -50,7 +50,7 @@ int CANInterface::CANRead(CANMessage &message) {
 
     //minimum length for a fake CAN message
     if (bytes_read >= 3) {
-        message.id = (serial_buffer[0]<<8) | (serial_buffer[1]); 
+        message.id = (((int) serial_buffer[0])<<8) | (serial_buffer[1]); 
         message.len = bytes_read - 2; 
 
         //copy data
