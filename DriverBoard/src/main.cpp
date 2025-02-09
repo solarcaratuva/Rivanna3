@@ -285,19 +285,37 @@ int main() {
         test_LED = PIN_ON;
         test_LED2 = PIN_ON;
 
-        //if(vehicle_can_interface.CANWrite(testMessage) < 0) {
-        if(vehicle_can_interface.send(&motor_CAN_struct) < 0) { //-1: fail, 1: success 
-            test_LED = PIN_ON;
-            test_LED2 = PIN_ON;
+        CANMessage message;
+        if(vehicle_can_interface.CANRead(message)) {
+            thread_sleep_for(200);
+            vehicle_can_interface.CANWrite(message);
+            for(int i = 0; i < 10; i++) {
+                test_LED = PIN_ON;
+                test_LED2 = PIN_ON;
+                thread_sleep_for(200);
+                test_LED = PIN_OFF;
+                test_LED2 = PIN_OFF;
+                thread_sleep_for(200);
+            }
         }
         else {
             test_LED = PIN_ON;
             test_LED2 = PIN_ON;
-            thread_sleep_for(2000);
-            test_LED = PIN_OFF;
-            test_LED2 = PIN_OFF;
-            thread_sleep_for(2000);
         }
+
+        
+        // if(vehicle_can_interface.send(&motor_CAN_struct) < 0) { //-1: fail, 1: success 
+        //     test_LED = PIN_ON;
+        //     test_LED2 = PIN_ON;
+        // }
+        // else {
+        //     test_LED = PIN_ON;
+        //     test_LED2 = PIN_ON;
+        //     thread_sleep_for(2000);
+        //     test_LED = PIN_OFF;
+        //     test_LED2 = PIN_OFF;
+        //     thread_sleep_for(2000);
+        // }
 
     }
 

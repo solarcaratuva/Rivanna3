@@ -16,7 +16,7 @@ void CANInterface::CANSetFrequency(int freq) { } //do nothing
 
 int CANInterface::CANWrite(CANMessage message) {
     uint8_t* CAN_messageData = message.data; //message data
-    uint8_t CAN_messageLength = message.len; //message length
+    uint8_t CAN_messageLength = message.len; //message length (excluding ID)
     uint16_t CAN_messageID = message.id;
 
     char message_buffer[10];
@@ -50,7 +50,7 @@ int CANInterface::CANRead(CANMessage &message) {
 
     //minimum length for a fake CAN message
     if (bytes_read >= 3) {
-        message.id = (serial_buffer[0]<<8) | (serial_buffer[1]); 
+        message.id = ( ((int) serial_buffer[0])<<8) | (serial_buffer[1]); 
         message.len = bytes_read - 2; 
 
         //copy data
