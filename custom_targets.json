@@ -31,12 +31,12 @@
     },
     "WHEEL_BOARD": {
         "inherits": [
-            "MCU_STM32U5A9xH"
+            "NUCLEO_U575ZI_Q"
         ],
         "detect_code": [
             "0841"
         ],
-        "device_name": "STM32U5A9NJH6Q"
+        "device_name": "STM32U5A9xH"
     }
 
 }

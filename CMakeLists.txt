@@ -12,6 +12,7 @@ project(${APP_TARGET})
 
 add_subdirectory(TARGET_UVA_SOLAR_CAR)
 add_subdirectory(TARGET_POWER_BOARD)
+add_subdirectory(TARGET_WHEEL_BOARD)
 add_subdirectory(${MBED_PATH})
 
 mbed_create_distro(mbed-os-lib mbed-os mbed-events mbed-rtos)
