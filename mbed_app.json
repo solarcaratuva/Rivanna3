@@ -9,7 +9,7 @@
       "sd.SPI_CS":   "PA_4",
       "platform.stdio-baud-rate": 921600,
       "platform.stdio-buffered-serial": 1,
-      "platform.callback-nontrivial": false
+      "platform.callback-nontrivial": true
     }
   }
 }
