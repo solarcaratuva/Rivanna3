@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextDatabase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="texts.xsd" Version="4.24.0">
+  <Languages>
+    <Language Id="GB" />
+  </Languages>
+  <Texts>
+    <TextGroup Id="Group1" />
+    <TextGroup Id="Unsorted">
+      <Text Id="__SingleUse_Q149" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Dee's House</Translation>
+      </Text>
+      <Text Id="__SingleUse_8G3K" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">&lt;&gt;</Translation>
+      </Text>
+      <Text Id="__SingleUse_59XA" Alignment="Center" TypographyId="Large">
+        <Translation Language="GB">Here should settings page.</Translation>
+      </Text>
+      <Text Id="__SingleUse_A691" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">&lt;&gt;</Translation>
+      </Text>
+      <Text Id="__SingleUse_XYU6" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Dee's House</Translation>
+      </Text>
+      <Text Id="__SingleUse_9Z6Z" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">There are no notifications.</Translation>
+      </Text>
+      <Text Id="__SingleUse_KH36" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">&lt;&gt;</Translation>
+      </Text>
+      <Text Id="__SingleUse_I9PN" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Dee's House</Translation>
+      </Text>
+      <Text Id="__SingleUse_OWWH" Alignment="Center" TypographyId="Large">
+        <Translation Language="GB">Here should be configuration page.</Translation>
+      </Text>
+      <Text Id="__SingleUse_SL0J" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">&lt;&gt;</Translation>
+      </Text>
+      <Text Id="__SingleUse_5PCJ" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Dee's House</Translation>
+      </Text>
+      <Text Id="__SingleUse_OSHC" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">&lt;&gt;</Translation>
+      </Text>
+      <Text Id="__SingleUse_D3HO" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Dee's House</Translation>
+      </Text>
+      <Text Id="__SingleUse_QSYT" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">&lt;&gt;</Translation>
+      </Text>
+      <Text Id="__SingleUse_V08M" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Dee's House</Translation>
+      </Text>
+      <Text Id="__SingleUse_298H" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">&lt;&gt;</Translation>
+      </Text>
+      <Text Id="__SingleUse_GBJG" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Dee's House</Translation>
+      </Text>
+      <Text Id="__SingleUse_GP0X" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">o</Translation>
+      </Text>
+      <Text Id="__SingleUse_4JF3" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">o</Translation>
+      </Text>
+      <Text Id="__SingleUse_CWX1" Alignment="Left" TypographyId="Large">
+        <Translation Language="GB">22.4</Translation>
+      </Text>
+      <Text Id="__SingleUse_SHX2" Alignment="Left" TypographyId="Large">
+        <Translation Language="GB">22.4</Translation>
+      </Text>
+      <Text Id="__SingleUse_SWFI" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Upstairs</Translation>
+      </Text>
+      <Text Id="__SingleUse_YYCO" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Downstairs</Translation>
+      </Text>
+      <Text Id="__SingleUse_OF2B" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Garage</Translation>
+      </Text>
+      <Text Id="__SingleUse_NEB0" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Bathroom</Translation>
+      </Text>
+      <Text Id="__SingleUse_HMWW" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Living Room</Translation>
+      </Text>
+      <Text Id="__SingleUse_CNGM" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Bedroom</Translation>
+      </Text>
+      <Text Id="__SingleUse_3TSQ" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Kitchen</Translation>
+      </Text>
+    </TextGroup>
+  </Texts>
+  <Typographies>
+    <Typography Id="Default" Font="verdana.ttf" Size="16" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" WidgetWildcardCharacters="0123456789 :APM" />
+    <Typography Id="Large" Font="verdana.ttf" Size="24" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" />
+    <Typography Id="Small" Font="verdana.ttf" Size="10" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" />
+  </Typographies>
+</TextDatabase>
