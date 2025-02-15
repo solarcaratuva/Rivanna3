@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextDatabase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="texts.xsd" Version="4.24.0">
+  <Languages>
+    <Language Id="GB" />
+  </Languages>
+  <Texts>
+    <TextGroup Id="Group1" />
+    <TextGroup Id="Unsorted">
+      <Text Id="__SingleUse_9QJN" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">[error messages go here]</Translation>
+      </Text>
+      <Text Id="__SingleUse_LNQQ" Alignment="Left" TypographyId="Small">
+        <Translation Language="GB">Console</Translation>
+      </Text>
+      <Text Id="__SingleUse_TBWX" Alignment="Right" TypographyId="Default">
+        <Translation Language="GB">1000.42 Mi.</Translation>
+      </Text>
+      <Text Id="__SingleUse_DCK3" Alignment="Right" TypographyId="Default">
+        <Translation Language="GB">23.01 Mi.</Translation>
+      </Text>
+      <Text Id="__SingleUse_3LS9" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Total Dist. Traveled:</Translation>
+      </Text>
+      <Text Id="__SingleUse_2AGF" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Session Dist. Traveled:</Translation>
+      </Text>
+      <Text Id="__SingleUse_0FYM" Alignment="Center" TypographyId="Default">
+        <Translation Language="GB">Reverse Camera</Translation>
+      </Text>
+      <Text Id="__SingleUse_0L5N" Alignment="Left" TypographyId="Large">
+        <Translation Language="GB">24.3 MPH</Translation>
+      </Text>
+      <Text Id="__SingleUse_QA52" Alignment="Right" TypographyId="Default">
+        <Translation Language="GB">OK</Translation>
+      </Text>
+      <Text Id="__SingleUse_WSHO" Alignment="Right" TypographyId="Default">
+        <Translation Language="GB">ERROR</Translation>
+      </Text>
+      <Text Id="__SingleUse_Z25H" Alignment="Right" TypographyId="Default">
+        <Translation Language="GB">OK</Translation>
+      </Text>
+      <Text Id="__SingleUse_Z9JE" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">72.3C</Translation>
+      </Text>
+      <Text Id="__SingleUse_KKYN" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">5.0V</Translation>
+      </Text>
+      <Text Id="__SingleUse_YOPN" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">420</Translation>
+      </Text>
+      <Text Id="__SingleUse_5173" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">2.2V</Translation>
+      </Text>
+      <Text Id="__SingleUse_61H7" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">420.4C</Translation>
+      </Text>
+      <Text Id="__SingleUse_E4H2" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">0.8A</Translation>
+      </Text>
+      <Text Id="__SingleUse_60S6" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">BPSError</Translation>
+      </Text>
+      <Text Id="__SingleUse_I3OA" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">MotorControllerError</Translation>
+      </Text>
+      <Text Id="__SingleUse_170P" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">PowerAuxError</Translation>
+      </Text>
+      <Text Id="__SingleUse_3XPC" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">BPSCellTemp</Translation>
+      </Text>
+      <Text Id="__SingleUse_Q71M" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">BPSCellVoltage</Translation>
+      </Text>
+      <Text Id="__SingleUse_APHG" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">SolarPhoto</Translation>
+      </Text>
+      <Text Id="__SingleUse_15K0" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">SolarVoltage</Translation>
+      </Text>
+      <Text Id="__SingleUse_I1HZ" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">SolarTemp</Translation>
+      </Text>
+      <Text Id="__SingleUse_KPDM" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">SPEED:</Translation>
+      </Text>
+      <Text Id="__SingleUse_FM16" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">&lt;&gt;</Translation>
+      </Text>
+      <Text Id="__SingleUse_0I0I" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">SolarCurrent</Translation>
+      </Text>
+    </TextGroup>
+  </Texts>
+  <Typographies>
+    <Typography Id="Default" Font="verdana.ttf" Size="20" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" WidgetWildcardCharacters="0123456789 :APM" />
+    <Typography Id="Large" Font="verdana.ttf" Size="40" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" />
+    <Typography Id="Small" Font="verdana.ttf" Size="10" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" />
+  </Typographies>
+</TextDatabase>
