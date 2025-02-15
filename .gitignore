@@ -5,4 +5,3 @@ mbed-os
 .cache
 build/
 .DS_Store
-DisplayScreen/
