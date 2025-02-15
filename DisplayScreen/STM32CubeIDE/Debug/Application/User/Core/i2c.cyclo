@@ -1,0 +1,5 @@
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/i2c.c:32:6:MX_I2C1_Init	4
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/i2c.c:75:6:MX_I2C2_Init	4
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/i2c.c:118:6:MX_I2C4_Init	4
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/i2c.c:161:6:HAL_I2C_MspInit	7
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/i2c.c:267:6:HAL_I2C_MspDeInit	4

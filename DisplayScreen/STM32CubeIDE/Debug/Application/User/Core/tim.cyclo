@@ -1,0 +1,12 @@
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/tim.c:34:6:MX_TIM3_Init	8
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/tim.c:107:6:MX_TIM5_Init	4
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/tim.c:151:6:MX_TIM6_Init	3
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/tim.c:184:6:MX_TIM8_Init	7
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/tim.c:263:6:MX_TIM15_Init	7
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/tim.c:334:6:HAL_TIM_PWM_MspInit	3
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/tim.c:374:6:HAL_TIM_Base_MspInit	3
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/tim.c:401:6:HAL_TIM_OC_MspInit	2
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/tim.c:429:6:HAL_TIM_MspPostInit	5
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/tim.c:528:6:HAL_TIM_PWM_MspDeInit	3
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/tim.c:564:6:HAL_TIM_Base_MspDeInit	3
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/tim.c:591:6:HAL_TIM_OC_MspDeInit	2

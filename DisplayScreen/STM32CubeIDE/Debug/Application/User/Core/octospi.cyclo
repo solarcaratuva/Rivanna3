@@ -1,0 +1,7 @@
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/octospi.c:37:6:MX_OCTOSPI1_Init	8
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/octospi.c:113:6:HAL_OSPI_MspInit	3
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/octospi.c:194:6:HAL_OSPI_MspDeInit	2
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/octospi.c:234:9:OSPI_DLYB_Enable	6
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/octospi.c:278:16:ospi_memory_reset	7
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/octospi.c:323:16:OSPI_NOR_EnterSOPIMode	8
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/octospi.c:389:9:OSPI_NOR_EnableMemoryMappedMode	2

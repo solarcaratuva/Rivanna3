@@ -10,7 +10,9 @@ target_link_libraries(WheelBoard PRIVATE mbed-os-lib Common-lib WheelBoard-lib t
 
 mbed_set_post_build(WheelBoard)
 
-target_include_directories(WheelBoardExe PRIVATE
+target_include_directories(WheelBoard PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/touchgfx/include
 )
+
+mbed_set_post_build(WheelBoard)

@@ -1,0 +1,3 @@
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/ltdc.c:30:6:MX_LTDC_Init	3
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/ltdc.c:87:6:HAL_LTDC_MspInit	3
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/ltdc.c:203:6:HAL_LTDC_MspDeInit	2

@@ -1,0 +1,4 @@
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/spi.c:31:6:MX_SPI1_Init	24	static
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/spi.c:82:6:MX_SPI2_Init	24	static
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/spi.c:133:6:HAL_SPI_MspInit	280	static
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/spi.c:210:6:HAL_SPI_MspDeInit	16	static

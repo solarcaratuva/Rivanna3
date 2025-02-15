@@ -1,0 +1,13 @@
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rng.c:154:19:HAL_RNG_Init	10
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rng.c:266:19:HAL_RNG_DeInit	5
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rng.c:340:13:HAL_RNG_MspInit	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rng.c:355:13:HAL_RNG_MspDeInit	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rng.c:622:19:HAL_RNG_GenerateRandomNumber	9
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rng.c:702:19:HAL_RNG_GenerateRandomNumber_IT	3
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rng.c:751:6:HAL_RNG_IRQHandler	7
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rng.c:838:10:HAL_RNG_ReadLastRandomNumber	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rng.c:855:13:HAL_RNG_ReadyDataCallback	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rng.c:871:13:HAL_RNG_ErrorCallback	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rng.c:905:22:HAL_RNG_GetState	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rng.c:915:10:HAL_RNG_GetError	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_rng.c:937:19:RNG_RecoverSeedError	7

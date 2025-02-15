@@ -1,0 +1,9 @@
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ/non_secure/portasm.c:43:6:vRestoreContextOfFirstTask	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ/non_secure/portasm.c:129:12:xIsPrivileged	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ/non_secure/portasm.c:148:6:vRaisePrivilege	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ/non_secure/portasm.c:163:6:vResetPrivilege	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ/non_secure/portasm.c:178:6:vStartFirstTask	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ/non_secure/portasm.c:202:10:ulSetInterruptMask	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ/non_secure/portasm.c:219:6:vClearInterruptMask	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ/non_secure/portasm.c:234:6:PendSV_Handler	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ/non_secure/portasm.c:348:6:SVC_Handler	1

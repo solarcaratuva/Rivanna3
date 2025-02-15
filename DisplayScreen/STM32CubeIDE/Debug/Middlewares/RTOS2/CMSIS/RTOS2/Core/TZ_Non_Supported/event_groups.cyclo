@@ -1,0 +1,15 @@
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c:96:24:xEventGroupCreateStatic	4
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c:148:24:xEventGroupCreate	2
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c:194:13:xEventGroupSync	12
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c:317:13:xEventGroupWaitBits	17
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c:473:13:xEventGroupClearBits	3
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c:503:16:xEventGroupClearBitsFromISR	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c:517:13:xEventGroupGetBitsFromISR	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c:533:13:xEventGroupSetBits	9
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c:629:6:vEventGroupDelete	5
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c:677:6:vEventGroupSetBitsCallback	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c:686:6:vEventGroupClearBitsCallback	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c:693:19:prvTestWaitCondition	4
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c:732:16:xEventGroupSetBitsFromISR	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c:749:17:uxEventGroupGetNumber	2
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c:771:10:vEventGroupSetNumber	1

@@ -1,0 +1,3 @@
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/gpu2d.c:30:6:MX_GPU2D_Init	8	static
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/gpu2d.c:51:6:HAL_GPU2D_MspInit	24	static
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/gpu2d.c:74:6:HAL_GPU2D_MspDeInit	16	static

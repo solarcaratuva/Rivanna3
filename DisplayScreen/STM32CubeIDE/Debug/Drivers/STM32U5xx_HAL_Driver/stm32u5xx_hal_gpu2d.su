@@ -1,0 +1,12 @@
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gpu2d.c:188:19:HAL_GPU2D_Init	16	static
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gpu2d.c:247:19:HAL_GPU2D_DeInit	16	static
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gpu2d.c:300:13:HAL_GPU2D_MspInit	16	static
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gpu2d.c:316:13:HAL_GPU2D_MspDeInit	16	static
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gpu2d.c:565:10:HAL_GPU2D_ReadRegister	24	static
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gpu2d.c:591:19:HAL_GPU2D_WriteRegister	24	static
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gpu2d.c:613:6:HAL_GPU2D_IRQHandler	32	static
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gpu2d.c:645:6:HAL_GPU2D_ER_IRQHandler	16	static
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gpu2d.c:657:13:HAL_GPU2D_CommandListCpltCallback	16	static
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gpu2d.c:674:13:HAL_GPU2D_ErrorCallback	16	static
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gpu2d.c:718:24:HAL_GPU2D_GetState	16	static
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Drivers/STM32U5xx_HAL_Driver/Src/stm32u5xx_hal_gpu2d.c:729:10:HAL_GPU2D_GetError	16	static

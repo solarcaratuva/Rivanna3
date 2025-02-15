@@ -1,0 +1,3 @@
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/dac.c:30:6:MX_DAC1_Init	64	static
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/dac.c:87:6:HAL_DAC_MspInit	272	static
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/dac.c:127:6:HAL_DAC_MspDeInit	16	static

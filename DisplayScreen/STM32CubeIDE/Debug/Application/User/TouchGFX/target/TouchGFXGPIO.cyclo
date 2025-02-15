@@ -1,0 +1,5 @@
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/TouchGFX/target/TouchGFXGPIO.cpp:47:6:static void touchgfx::GPIO::init()	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/TouchGFX/target/TouchGFXGPIO.cpp:55:6:static void touchgfx::GPIO::set(GPIO_ID)	2
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/TouchGFX/target/TouchGFXGPIO.cpp:85:6:static void touchgfx::GPIO::clear(GPIO_ID)	2
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/TouchGFX/target/TouchGFXGPIO.cpp:115:6:static void touchgfx::GPIO::toggle(GPIO_ID)	2
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/TouchGFX/target/TouchGFXGPIO.cpp:145:6:static bool touchgfx::GPIO::get(GPIO_ID)	1

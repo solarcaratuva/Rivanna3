@@ -1,0 +1,5 @@
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/usart.c:33:6:MX_USART1_UART_Init	5
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/usart.c:77:6:MX_USART3_UART_Init	5
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/usart.c:121:6:MX_USART6_UART_Init	5
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/usart.c:164:6:HAL_UART_MspInit	7
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/usart.c:290:6:HAL_UART_MspDeInit	4

@@ -1,0 +1,5 @@
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/app_freertos.c:68:6:vApplicationMallocFailedHook	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/app_freertos.c:84:6:vApplicationIdleHook	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/app_freertos.c:99:6:vApplicationStackOverflowHook	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/app_freertos.c:112:6:MX_FREERTOS_Init	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/app_freertos.c:154:6:StartDefaultTask	1

@@ -1,0 +1,7 @@
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/main.c:91:5:main	2
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/main.c:197:6:SystemClock_Config	4
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/main.c:266:6:PeriphCommonClock_Config	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/main.c:274:13:SystemPower_Config	2
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/main.c:312:13:MX_NVIC_Init	1
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/main.c:331:6:HAL_TIM_PeriodElapsedCallback	2
+C:/Users/Ethan/Documents/SolarCar/Rivanna3/DisplayScreen/Core/Src/main.c:348:6:Error_Handler	1
