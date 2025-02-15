@@ -28,7 +28,7 @@ mainViewBase::mainViewBase()
     boxWithBorder1_2.setBorderSize(1);
     add(boxWithBorder1_2);
 
-    boxWithBorder1_1_1.setPosition(510, 319, 290, 161);
+    boxWithBorder1_1_1.setPosition(512, 319, 290, 161);
     boxWithBorder1_1_1.setColor(touchgfx::Color::getColorFromRGB(250, 249, 246));
     boxWithBorder1_1_1.setBorderColor(touchgfx::Color::getColorFromRGB(0, 0, 0));
     boxWithBorder1_1_1.setBorderSize(1);
@@ -106,13 +106,13 @@ mainViewBase::mainViewBase()
     textArea1_2_1_1_1_1_1_1_1_1.setTypedText(touchgfx::TypedText(T___SINGLEUSE_QA52));
     add(textArea1_2_1_1_1_1_1_1_1_1);
 
-    textArea1_2_1_1_1_1_1_1_1_1_1.setXY(516, 359);
+    textArea1_2_1_1_1_1_1_1_1_1_1.setXY(568, 361);
     textArea1_2_1_1_1_1_1_1_1_1_1.setColor(touchgfx::Color::getColorFromRGB(0, 0, 0));
     textArea1_2_1_1_1_1_1_1_1_1_1.setLinespacing(0);
     textArea1_2_1_1_1_1_1_1_1_1_1.setTypedText(touchgfx::TypedText(T___SINGLEUSE_DCK3));
     add(textArea1_2_1_1_1_1_1_1_1_1_1);
 
-    textArea1_2_1_1_1_1_1_1_1_1_1_1.setXY(516, 434);
+    textArea1_2_1_1_1_1_1_1_1_1_1_1.setXY(568, 434);
     textArea1_2_1_1_1_1_1_1_1_1_1_1.setColor(touchgfx::Color::getColorFromRGB(0, 0, 0));
     textArea1_2_1_1_1_1_1_1_1_1_1_1.setLinespacing(0);
     textArea1_2_1_1_1_1_1_1_1_1_1_1.setTypedText(touchgfx::TypedText(T___SINGLEUSE_TBWX));
@@ -174,13 +174,13 @@ mainViewBase::mainViewBase()
     digitalClock1.setTime12Hour(10, 10, 0, true);
     add(digitalClock1);
 
-    textArea2.setXY(362, 118);
+    textArea2.setXY(362, 162);
     textArea2.setColor(touchgfx::Color::getColorFromRGB(0, 0, 0));
     textArea2.setLinespacing(0);
     textArea2.setTypedText(touchgfx::TypedText(T___SINGLEUSE_KPDM));
     add(textArea2);
 
-    textArea2_1.setXY(304, 152);
+    textArea2_1.setXY(304, 192);
     textArea2_1.setColor(touchgfx::Color::getColorFromRGB(0, 0, 0));
     textArea2_1.setLinespacing(0);
     textArea2_1.setTypedText(touchgfx::TypedText(T___SINGLEUSE_0L5N));

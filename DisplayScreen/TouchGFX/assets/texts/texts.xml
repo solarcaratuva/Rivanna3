@@ -19,10 +19,10 @@
         <Translation Language="GB">23.01 Mi.</Translation>
       </Text>
       <Text Id="__SingleUse_3LS9" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">Total Dist. Traveled</Translation>
+        <Translation Language="GB">Total Dist. Traveled:</Translation>
       </Text>
       <Text Id="__SingleUse_2AGF" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">Session Dist. Traveled</Translation>
+        <Translation Language="GB">Session Dist. Traveled:</Translation>
       </Text>
       <Text Id="__SingleUse_0FYM" Alignment="Center" TypographyId="Default">
         <Translation Language="GB">Reverse Camera</Translation>
