@@ -8,9 +8,10 @@
 #include <mvp/View.hpp>
 #include <gui/main_screen/mainPresenter.hpp>
 #include <touchgfx/widgets/Box.hpp>
-#include <touchgfx/widgets/TextArea.hpp>
 #include <touchgfx/widgets/BoxWithBorder.hpp>
-#include <touchgfx/containers/ScrollableContainer.hpp>
+#include <touchgfx/widgets/TextArea.hpp>
+#include <touchgfx/containers/clock/DigitalClock.hpp>
+#include <touchgfx/widgets/ButtonWithLabel.hpp>
 
 class mainViewBase : public touchgfx::View<mainPresenter>
 {
@@ -29,9 +30,37 @@ protected:
      */
     touchgfx::Box __background;
     touchgfx::Box box1;
-    touchgfx::TextArea textArea1;
     touchgfx::BoxWithBorder boxWithBorder1;
-    touchgfx::ScrollableContainer scrollableContainer1;
+    touchgfx::BoxWithBorder boxWithBorder1_2;
+    touchgfx::BoxWithBorder boxWithBorder1_1_1;
+    touchgfx::TextArea textArea1;
+    touchgfx::TextArea textArea1_3;
+    touchgfx::TextArea textArea1_3_1;
+    touchgfx::TextArea textArea1_2;
+    touchgfx::TextArea textArea1_2_1;
+    touchgfx::TextArea textArea1_2_1_1;
+    touchgfx::TextArea textArea1_2_1_1_1;
+    touchgfx::TextArea textArea1_2_1_1_1_1;
+    touchgfx::TextArea textArea1_2_1_1_1_1_1;
+    touchgfx::TextArea textArea1_2_1_1_1_1_1_1;
+    touchgfx::TextArea textArea1_2_1_1_1_1_1_1_1;
+    touchgfx::TextArea textArea1_2_1_1_1_1_1_1_1_1;
+    touchgfx::TextArea textArea1_2_1_1_1_1_1_1_1_1_1;
+    touchgfx::TextArea textArea1_2_1_1_1_1_1_1_1_1_1_1;
+    touchgfx::TextArea textArea1_1;
+    touchgfx::TextArea textArea1_1_1;
+    touchgfx::TextArea textArea1_1_1_1;
+    touchgfx::TextArea textArea1_1_1_1_1;
+    touchgfx::TextArea textArea1_1_1_1_1_1;
+    touchgfx::TextArea textArea1_1_1_1_1_1_1;
+    touchgfx::TextArea textArea1_1_1_1_1_1_1_1;
+    touchgfx::TextArea textArea1_1_1_1_1_1_1_1_1;
+    touchgfx::DigitalClock digitalClock1;
+    touchgfx::TextArea textArea2;
+    touchgfx::TextArea textArea2_1;
+    touchgfx::ButtonWithLabel buttonWithLabel1;
+    touchgfx::TextArea textArea3;
+    touchgfx::TextArea textArea4;
 
 private:
 
