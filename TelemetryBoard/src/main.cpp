@@ -22,6 +22,7 @@ void can_processing_task() {
     vehicle_can_interface.message_handler();
 }
 
+/* Moved to TelemetryCANInterface.cpp
 void log_to_sd(const char *tag, const char *data) {
     FILE *fp = fopen("/fs/log.csv", "a");
     if (fp) {
@@ -29,8 +30,8 @@ void log_to_sd(const char *tag, const char *data) {
         fclose(fp);
     } else {
         log_error("Failed to write to SD card.");
-    } 
-}
+    }
+}*/
 
 int main() {
     log_set_level(LOG_LEVEL);
