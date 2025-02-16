@@ -11,7 +11,10 @@
 #define SPI_MISO    PA_6
 #define SPI_CLK     PA_5
 #define SD_CS       PA_4
-#define EEPROM_CS   PA_3
+
+
+#define XBEE_TX     PA_2
+#define XBEE_RX     PA_3
 
 #endif
 

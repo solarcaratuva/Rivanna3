@@ -1,47 +1,36 @@
 #include "mbed.h"
-#include "SDBlockDevice.h"
-#include "FATFileSystem.h"
-#include "EEPROMDriver.h"
-#include "pindef.h"
+#include <string.h>
+using namespace std::chrono;
+
+BufferedSerial xbee(PA_2, PA_3, 9600);  // XBee radio interface: TX, RX, baud rate 9600
+BufferedSerial pc(USBTX, USBRX, 115200);  // Debug console over USB
 
 int main() {
-    SDBlockDevice sd(SPI_MOSI, SPI_MISO, SPI_CLK, SD_CS);
-    FATFileSystem fs("sd");
-    int err = sd.init();
-    if (err == 0) {
-        err = fs.mount(&sd);
-        if (err == 0) {
-            FILE *fp = fopen("/sd/test.txt", "w");
-            if (fp) {
-                fprintf(fp, "SD Card test successful\n");
-                fclose(fp);
-                fp = fopen("/sd/test.txt", "r");
-                if (fp) {
-                    char buf[64];
-                    fgets(buf, sizeof(buf), fp);
-                    printf("SD Card read: %s\n", buf);
-                    fclose(fp);
-                }
-            } else {
-                printf("Error opening file on SD\n");
-            }
-            fs.unmount();
-        } else {
-            printf("Filesystem mount error: %d\n", err);
-        }
-        sd.deinit();
-    } else {
-        printf("SD init error: %d\n", err);
-    }
-    
-    EEPROMDriver eeprom(SPI_MOSI, SPI_MISO, SPI_CLK, EEPROM_CS, 1000000);
-    uint32_t addr = 0x0100;
-    uint8_t dataToWrite = 0xA5;
-    eeprom.write_byte(addr, dataToWrite);
-    uint8_t dataRead = eeprom.read_byte(addr);
-    printf("EEPROM wrote: 0x%02X, read: 0x%02X\n", dataToWrite, dataRead);
-    
+    // Configure both serial ports to use 8 data bits, no parity, 1 stop bit.
+    xbee.set_format(8, BufferedSerial::None, 1);
+    pc.set_format(8, BufferedSerial::None, 1);
+
+    char buffer[128] = {0};
+
     while (true) {
-        ThisThread::sleep_for(1s);
+        const char *msg = "XBee Test Message\r\n";
+        // Send test message to XBee
+        xbee.write(msg, strlen(msg));
+        // Also print message on the debug console
+        pc.write(msg, strlen(msg));
+
+        // Wait up to 500ms for a response from XBee
+        auto start = chrono::steady_clock::now();
+        while (chrono::steady_clock::now() - start < 500ms) {
+            if (xbee.readable()) {
+                int n = xbee.read(buffer, sizeof(buffer));
+                if (n > 0) {
+                    // Echo any received data to the debug console
+                    pc.write(buffer, n);
+                }
+            }
+        }
+        // Wait 1 second before sending the next test message
+        ThisThread::sleep_for(1000ms);
     }
 }
