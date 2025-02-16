@@ -13,8 +13,10 @@
 #define SD_CS       PA_4
 
 
-#define XBEE_TX     PA_2
-#define XBEE_RX     PA_3
+#define Radio_TX     PA_2
+#define Radio_RX     PA_3
+#define USB_TX       PC_10
+#define USB_RX       PC_11
 
 #endif
 

@@ -1,9 +1,11 @@
 #include "mbed.h"
 #include <string.h>
+#include "pindef.h"
+
 using namespace std::chrono;
 
-BufferedSerial xbee(PA_2, PA_3, 9600);  // XBee radio interface: TX, RX, baud rate 9600
-BufferedSerial pc(USBTX, USBRX, 115200);  // Debug console over USB
+BufferedSerial xbee(Radio_TX, Radio_RX, 9600);  // XBee radio interface: TX, RX, baud rate 9600
+BufferedSerial pc(USB_TX, USB_RX, 115200);  // Debug console over USB
 
 int main() {
     // Configure both serial ports to use 8 data bits, no parity, 1 stop bit.
