@@ -12,11 +12,11 @@ logoViewBase::logoViewBase() :
     __background.setColor(touchgfx::Color::getColorFromRGB(0, 0, 0));
     add(__background);
 
-    image1.setXY(0, -60);
+    image1.setXY(0, 0);
     image1.setBitmap(touchgfx::Bitmap(BITMAP_SOLARCARIMAGE1_ID));
     add(image1);
 
-    image2.setXY(11, 11);
+    image2.setXY(0, 0);
     image2.setBitmap(touchgfx::Bitmap(BITMAP_SOLARCARTEAMLOGO1_ID));
     add(image2);
 }

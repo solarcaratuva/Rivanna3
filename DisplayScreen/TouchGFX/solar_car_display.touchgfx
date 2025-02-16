@@ -7,7 +7,6 @@
           {
             "Type": "Image",
             "Name": "image1",
-            "Y": -60,
             "Width": 800,
             "Height": 600,
             "RelativeFilename": "solarcarimage1.png"
@@ -15,8 +14,6 @@
           {
             "Type": "Image",
             "Name": "image2",
-            "X": 11,
-            "Y": 11,
             "Width": 180,
             "Height": 59,
             "RelativeFilename": "SolarCarTeamLogo1.png"
