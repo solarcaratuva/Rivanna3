@@ -1,1 +1,12 @@
-add_subdirectory(TouchGFX)
+
+set(TOUCHGFX_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/TouchGFX)
+
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core
+    ${CMAKE_CURRENT_SOURCE_DIR}/Drivers
+    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares
+    ${CMAKE_CURRENT_SOURCE_DIR}/gcc
+    ${CMAKE_CURRENT_SOURCE_DIR}/
+)
+
+add_subdirectory(${TOUCHGFX_ROOT})

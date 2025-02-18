@@ -8,11 +8,12 @@ add_executable(WheelBoard src/main.cpp)
 
 target_link_libraries(WheelBoard PRIVATE mbed-os-lib Common-lib WheelBoard-lib touchgfx-lib)
 
-mbed_set_post_build(WheelBoard)
-
-target_include_directories(WheelBoard PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/touchgfx/include
+target_include_directories(WheelBoard PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/touchgfx/Middlewares/ST/touchgfx_components/gpu2d/TouchGFXNema/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/touchgfx/Middlewares/ST/touchgfx/framework/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/touchgfx/Middlewares/ST/touchgfx_components/gpu2d/NemaGFX/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/touchgfx/Middlewares/ST/touchgfx/framework/include
+    
 )
 
 mbed_set_post_build(WheelBoard)
