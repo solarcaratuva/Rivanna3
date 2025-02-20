@@ -1,12 +1,11 @@
 {
     "target_overrides": {
       "*": {
-        "macros": ["STM32U5A9xx"],
+
         "platform.stdio-baud-rate": 921600,
         "platform.stdio-buffered-serial": 1,
         "platform.callback-nontrivial": true
       }
-    },
-    "macros": ["STM32U5A9xx"]
+    }
+
   }
-  

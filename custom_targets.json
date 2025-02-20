@@ -12,10 +12,6 @@
         "detect_code": [
             "0841"
         ],
-        "device_name": "STM32G473CETx",
-        "macros_add": [
-            "STM32U585xx",
-            "USE_HAL_DRIVER"
-        ]
+        "device_name": "STM32G473CETx"
     }
 }
