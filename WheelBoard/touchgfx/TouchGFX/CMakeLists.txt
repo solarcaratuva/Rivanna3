@@ -9,6 +9,11 @@ list(FILTER TOUCHGFX_SOURCES EXCLUDE REGEX "simulator")
 
 add_library(touchgfx-lib STATIC ${TOUCHGFX_SOURCES})
 
+target_link_libraries(touchgfx-lib 
+    PRIVATE
+        mbed-os-lib
+)
+
 target_include_directories(touchgfx-lib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/App
     ${CMAKE_CURRENT_SOURCE_DIR}/config
@@ -37,6 +42,4 @@ target_include_directories(touchgfx-lib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../mbed-os/cmsis/tests/UNITTESTS/doubles
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../mbed-os/targets/TARGET_STM/TARGET_STM32U5/STM32Cube_FW/STM32U5xx_HAL_Driver
     # ${CMAKE_CURRENT_SOURCE_DIR}/../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2
-    
 )
-
