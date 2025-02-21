@@ -33,13 +33,13 @@ target_include_directories(touchgfx-lib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/generated/images/include
     ${CMAKE_CURRENT_SOURCE_DIR}/generated/fonts/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../Core/Inc
-    ${CMAKE_CURRENT_SOURCE_DIR}/../Middlewares/ST/touchgfx_components/gpu2d/TouchGFXNema/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/../Middlewares/ST/touchgfx_components/gpu2d/NemaGFX/include
+    # ${CMAKE_CURRENT_SOURCE_DIR}/../Middlewares/ST/touchgfx_components/gpu2d/TouchGFXNema/include
+    # ${CMAKE_CURRENT_SOURCE_DIR}/../Middlewares/ST/touchgfx_components/gpu2d/NemaGFX/include
     # ${CMAKE_CURRENT_SOURCE_DIR}/../Drivers/STM32U5xx_HAL_Driver/Inc
     # ${CMAKE_CURRENT_SOURCE_DIR}/../Drivers/CMSIS/Device/ST/STM32U5xx/Include
     ${CMAKE_CURRENT_SOURCE_DIR}/../Middlewares/ST/touchgfx/3rdparty/libjpeg/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../mbed-os/targets/TARGET_STM/TARGET_STM32U5/STM32Cube_FW/CMSIS
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../mbed-os/cmsis/tests/UNITTESTS/doubles
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../mbed-os/targets/TARGET_STM/TARGET_STM32U5/STM32Cube_FW/STM32U5xx_HAL_Driver
+    # ${CMAKE_CURRENT_SOURCE_DIR}/../../../mbed-os/targets/TARGET_STM/TARGET_STM32U5/STM32Cube_FW/CMSIS
+    # ${CMAKE_CURRENT_SOURCE_DIR}/../../../mbed-os/cmsis/tests/UNITTESTS/doubles
+    # ${CMAKE_CURRENT_SOURCE_DIR}/../../../mbed-os/targets/TARGET_STM/TARGET_STM32U5/STM32Cube_FW/STM32U5xx_HAL_Driver
     # ${CMAKE_CURRENT_SOURCE_DIR}/../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2
 )

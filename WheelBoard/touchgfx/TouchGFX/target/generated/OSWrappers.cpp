@@ -24,11 +24,8 @@
 #include <cmsis_os2.h>
 #include <cassert>
 
-static osSemaphoreId_t frame_buffer_sem = NULL;
-static osMessageQueueId_t vsync_queue = NULL;
-
-static Semaphore frame_buffer_sem(1, 1);
-static Semaphore vsync_sem(0, 1);
+static rtos::Semaphore frame_buffer_sem(1, 1);
+static rtos::Semaphore vsync_sem(0, 1);
 
 using namespace touchgfx;
 
@@ -45,7 +42,7 @@ void OSWrappers::initialize()
  */
 void OSWrappers::takeFrameBufferSemaphore()
 {
-    frame_buffer_sem.wait();
+    frame_buffer_sem.acquire();
 }
 
 /*
@@ -65,7 +62,7 @@ void OSWrappers::giveFrameBufferSemaphore()
  */
 void OSWrappers::tryTakeFrameBufferSemaphore()
 {
-    frame_buffer_sem.wait(0);
+    frame_buffer_sem.try_acquire_for(std::chrono::milliseconds(0));
 }
 
 /*
@@ -108,8 +105,8 @@ void OSWrappers::signalRenderingDone()
  */
 void OSWrappers::waitForVSync()
 {
-    vsync_sem.wait(0); /*Clear any pending VSYNC first*/
-	vsync_sem.wait(); /*Then wait for the next signal*/
+    vsync_sem.try_acquire_for(std::chrono::milliseconds(0));
+    vsync_sem.acquire();
 }
 
 /*
