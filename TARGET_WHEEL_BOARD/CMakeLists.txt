@@ -13,4 +13,4 @@ target_include_directories(mbed-wheel-board
         .
 )
 
-target_link_libraries(mbed-wheel-board INTERFACE mbed-stm32u5a9xj)
+target_link_libraries(mbed-wheel-board INTERFACE mbed-stm32u575xg)

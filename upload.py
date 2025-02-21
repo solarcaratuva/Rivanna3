@@ -8,7 +8,7 @@ BOARD_MAP = {
     "battery": {"cmd": "st-flash",  "args":"--connect-under-reset --reset write", "path": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/BatteryBoard/BatteryBoard.bin 0x8000000"},
     "motor": {"cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/Motor/Motor.bin 0x8000000"},
     "power": {"cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/POWER_BOARD/develop/GCC_ARM/PowerBoard/PowerBoard.bin 0x8000000"},
-    "wheel": {"cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/POWER_BOARD/develop/GCC_ARM/WheelBoard/WheelBoard.bin 0x8000000"}}
+    "wheel": {"cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/WHEEL_BOARD/develop/GCC_ARM/WheelBoard/WheelBoard.bin 0x8000000"}}
 op_sys = platform.system()
 
 def create_net_map() -> None:
