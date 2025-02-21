@@ -5,6 +5,8 @@ file(GLOB_RECURSE TOUCHGFX_SOURCES
     target/*.cpp
 )
 
+list(FILTER TOUCHGFX_SOURCES EXCLUDE REGEX "simulator")
+
 add_library(touchgfx-lib STATIC ${TOUCHGFX_SOURCES})
 
 target_include_directories(touchgfx-lib PUBLIC
