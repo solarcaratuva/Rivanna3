@@ -17,7 +17,7 @@
   */
 
 #include "mbed.h"
-#include "rtos.h"
+// #include "rtos.h"
 #include <touchgfx/hal/HAL.hpp>
 #include <touchgfx/hal/OSWrappers.hpp>
 
