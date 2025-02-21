@@ -21,7 +21,6 @@
 #include <touchgfx/hal/HAL.hpp>
 #include <touchgfx/hal/OSWrappers.hpp>
 
-#include <cmsis_os2.h>
 #include <cassert>
 
 static rtos::Semaphore frame_buffer_sem(1, 1);
