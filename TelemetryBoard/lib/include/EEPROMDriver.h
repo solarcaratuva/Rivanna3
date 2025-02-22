@@ -5,7 +5,7 @@
 
 class EEPROMDriver {
 public:
-    EEPROMDriver(PinName mosi, PinName miso, PinName sclk, PinName cs, int frequency = 1000000);
+    EEPROMDriver(PinName mosi, PinName miso, PinName sclk /*Maybe replace with sck?*/, PinName cs, int frequency = 1000000);
     void write_enable();
     void write_byte(uint32_t address, uint8_t data);
     uint8_t read_byte(uint32_t address);

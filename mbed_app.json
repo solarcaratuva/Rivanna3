@@ -1,15 +1,13 @@
 {
   "target_overrides": {
     "*": {
-      "target.features_add": ["STORAGE"],
-      "target.components_add": ["SD"],
-      "sd.SPI_MOSI": "PA_7",
-      "sd.SPI_MISO": "PA_6",
-      "sd.SPI_CLK":  "PA_5",
-      "sd.SPI_CS":   "PA_4",
       "platform.stdio-baud-rate": 921600,
       "platform.stdio-buffered-serial": 1,
-      "platform.callback-nontrivial": true
+      "platform.callback-nontrivial": true,
+      "sd.SPI_CS": "PB_12",
+      "sd.SPI_MOSI": "PB_13",
+      "sd.SPI_MISO": "PB_14",
+      "sd.SPI_CLK": "PB_15"
     }
   }
 }

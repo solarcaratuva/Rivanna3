@@ -11,6 +11,7 @@ include(${MBED_PATH}/tools/cmake/app.cmake)
 project(${APP_TARGET})
 
 add_subdirectory(TARGET_UVA_SOLAR_CAR)
+add_subdirectory(TARGET_POWER_BOARD)
 add_subdirectory(${MBED_PATH})
 
 mbed_create_distro(mbed-os-lib mbed-os mbed-storage mbed-events mbed-rtos)
@@ -18,11 +19,9 @@ mbed_create_distro(mbed-os-lib mbed-os mbed-storage mbed-events mbed-rtos)
 add_subdirectory(Common)
 
 
-add_subdirectory(Motor)
-add_subdirectory(BatteryBoard)
-add_subdirectory(DriverBoard)
-add_subdirectory(PowerBoard)
 add_subdirectory(TelemetryBoard)
+add_subdirectory(PowerBoard)
+add_subdirectory(WheelBoard)
 
 option(VERBOSE_BUILD "Have a verbose build process")
 if(VERBOSE_BUILD)
