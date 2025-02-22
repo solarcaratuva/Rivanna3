@@ -26,7 +26,6 @@
         "device_name": "STM32G474RETx"
     },
     "POWER_BOARD": {
-        "components_add": ["SD"],
         "inherits": [
             "MCU_STM32G474xE"
         ],
