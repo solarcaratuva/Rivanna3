@@ -3078,7 +3078,7 @@ __STATIC_INLINE void LL_RCC_SetSDMMCKernelClockSource(uint32_t SDMMCxSource)
   */
 __STATIC_INLINE void LL_RCC_SetSDMMCClockSource(uint32_t SDMMCxSource)
 {
-  MODIFY_REG(RCC->CCIPR1, RCC_CCIPR1_ICLKSEL, SDMMCxSource);
+  MODIFY_REG(RCC->CCIPR1, RCC_CCIPR1_I2C2SEL, SDMMCxSource);
 }
 
 /**
@@ -3124,7 +3124,7 @@ __STATIC_INLINE void LL_RCC_SetUSBPHYClockSource(uint32_t Source)
   */
 __STATIC_INLINE void LL_RCC_SetUSBClockSource(uint32_t USBxSource)
 {
-  MODIFY_REG(RCC->CCIPR1, RCC_CCIPR1_ICLKSEL, USBxSource);
+  MODIFY_REG(RCC->CCIPR1, RCC_CCIPR1_I2C2SEL, USBxSource);
 }
 
 /**

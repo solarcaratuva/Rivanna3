@@ -3236,7 +3236,7 @@ __STATIC_INLINE void LL_ADC_SetCalibrationOffsetFactor(ADC_TypeDef *ADCx, uint32
   {
     /* Note: Bitfields ADC_CALFACT_LATCH_COEF and ADC_CALFACT_CAPTURE_COEF have property "wr1",
              therefore they are not cleared in this function. */
-    MODIFY_REG(ADCx->CR, ADC_CR_CALINDEX, (0UL << ADC_CR_CALINDEX_Pos));  /* CalibIndex == 0 */
+    MODIFY_REG(ADCx->CR, ADC_CR_CALINDEX0, (0UL << ADC_CR_CALINDEX3_Pos));  /* CalibIndex == 0 */
     MODIFY_REG(ADCx->CALFACT2,
                SingleDiff & ADC_SINGLEDIFF_CALIB_FACTOR_MASK,
                CalibrationFactor << (((SingleDiff & ADC_SINGLEDIFF_CALIB_F_BIT_D_MASK)    \
@@ -3278,7 +3278,7 @@ __STATIC_INLINE uint32_t LL_ADC_GetCalibrationOffsetFactor(ADC_TypeDef *ADCx, ui
              therefore they are not cleared in this function. */
     uint32_t temp_CalibOffset;
     SET_BIT(ADCx->CALFACT, ADC_CALFACT_CAPTURE_COEF);
-    MODIFY_REG(ADCx->CR, ADC_CR_CALINDEX, (0UL << ADC_CR_CALINDEX_Pos));  /* CalibIndex == 0 */
+    MODIFY_REG(ADCx->CR, ADC_CR_CALINDEX0, (0UL << ADC_CR_CALINDEX3_Pos));  /* CalibIndex == 0 */
     temp_CalibOffset = (READ_BIT(ADCx->CALFACT2, (SingleDiff & ADC_SINGLEDIFF_CALIB_FACTOR_MASK)) \
                         >> ((SingleDiff & ADC_SINGLEDIFF_CALIB_F_BIT_D_MASK) >> ADC_SINGLEDIFF_CALIB_F_BIT_D_SHIFT4));
     return temp_CalibOffset;
@@ -3318,7 +3318,7 @@ __STATIC_INLINE void LL_ADC_SetCalibrationLinearFactor(ADC_TypeDef *ADCx, uint32
 {
   /* Note: Bitfields ADC_CALFACT_LATCH_COEF and ADC_CALFACT_CAPTURE_COEF have property "wr1",
            therefore they are not cleared in this function. */
-  MODIFY_REG(ADCx->CR, (ADC_CR_CALINDEX),
+  MODIFY_REG(ADCx->CR, (ADC_CR_CALINDEX0),
              LinearityWord);   /* LinearityWord == CalibIndex (1 to 7 for linearity reading) */
   MODIFY_REG(ADCx->CALFACT2, ADC_CALFACT2_CALFACT, CalibrationFactor);
   SET_BIT(ADCx->CALFACT, ADC_CALFACT_LATCH_COEF);
@@ -3349,7 +3349,7 @@ __STATIC_INLINE uint32_t LL_ADC_GetCalibrationLinearFactor(ADC_TypeDef *ADCx, ui
   /* Note: Bitfields ADC_CALFACT_LATCH_COEF and ADC_CALFACT_CAPTURE_COEF have property "wr1",
            therefore they are not cleared in this function. */
   SET_BIT(ADCx->CALFACT, ADC_CALFACT_CAPTURE_COEF);
-  MODIFY_REG(ADCx->CR, (ADC_CR_CALINDEX),
+  MODIFY_REG(ADCx->CR, (ADC_CR_CALINDEX0),
              LinearityWord);   /* LinearityWord == CalibIndex (1 to 7 for linearity reading) */
   temp_calib_linearity = (uint32_t)(READ_BIT(ADCx->CALFACT2, ADC_CALFACT2_CALFACT_Msk));
   return temp_calib_linearity;
@@ -3507,7 +3507,7 @@ __STATIC_INLINE void LL_ADC_SetLowPowerMode(ADC_TypeDef *ADCx, uint32_t LowPower
   else
   {
     MODIFY_REG(ADCx->CFGR1, ADC4_CFGR1_WAIT, LowPowerMode);
-    MODIFY_REG(ADCx->PWRR, ADC4_PWRR_AUTOFF, LowPowerMode);
+    MODIFY_REG(ADCx->PW, ADC4_PW_AUTOFF, LowPowerMode);
   }
 }
 
@@ -5352,7 +5352,7 @@ __STATIC_INLINE uint32_t LL_ADC_GetChannelPreselection(const ADC_TypeDef *ADCx)
   */
 __STATIC_INLINE void LL_ADC_SetLPModeAutoPowerOff(ADC_TypeDef *ADCx, uint32_t LowPowerMode)
 {
-  MODIFY_REG(ADCx->PWRR, ADC4_PWRR_AUTOFF, LowPowerMode);
+  MODIFY_REG(ADCx->PW, ADC4_PW_AUTOFF, LowPowerMode);
 }
 
 /**
@@ -5371,7 +5371,7 @@ __STATIC_INLINE void LL_ADC_SetLPModeAutoPowerOff(ADC_TypeDef *ADCx, uint32_t Lo
   */
 __STATIC_INLINE uint32_t LL_ADC_GetLPModeAutoPowerOff(const ADC_TypeDef *ADCx)
 {
-  return (uint32_t)(READ_BIT(ADCx->PWRR, ADC4_PWRR_AUTOFF));
+  return (uint32_t)(READ_BIT(ADCx->PW, ADC4_PW_AUTOFF));
 }
 
 /**
@@ -5388,7 +5388,7 @@ __STATIC_INLINE uint32_t LL_ADC_GetLPModeAutoPowerOff(const ADC_TypeDef *ADCx)
   */
 __STATIC_INLINE void LL_ADC_SetLPModeAutonomousDPD(ADC_TypeDef *ADCx, uint32_t LowPowerMode)
 {
-  MODIFY_REG(ADCx->PWRR, ADC4_PWRR_DPD, LowPowerMode);
+  MODIFY_REG(ADCx->PW, ADC4_PW_DPD, LowPowerMode);
 }
 
 /**
@@ -5401,7 +5401,7 @@ __STATIC_INLINE void LL_ADC_SetLPModeAutonomousDPD(ADC_TypeDef *ADCx, uint32_t L
   */
 __STATIC_INLINE uint32_t LL_ADC_GetLPModeAutonomousDPD(const ADC_TypeDef *ADCx)
 {
-  return (uint32_t)(READ_BIT(ADCx->PWRR, ADC4_PWRR_DPD));
+  return (uint32_t)(READ_BIT(ADCx->PW, ADC4_PW_DPD));
 }
 
 /**
@@ -5421,7 +5421,7 @@ __STATIC_INLINE uint32_t LL_ADC_GetLPModeAutonomousDPD(const ADC_TypeDef *ADCx)
   */
 __STATIC_INLINE void LL_ADC_SetVrefProtection(ADC_TypeDef *ADCx, uint32_t VrefProtection)
 {
-  MODIFY_REG(ADCx->PWRR, ADC4_PWRR_VREFPROT | ADC4_PWRR_VREFSECSMP, VrefProtection);
+  MODIFY_REG(ADCx->PW, ADC4_PW_VREFPROT | ADC4_PW_VREFSECSMP, VrefProtection);
 }
 
 /**
@@ -5436,7 +5436,7 @@ __STATIC_INLINE void LL_ADC_SetVrefProtection(ADC_TypeDef *ADCx, uint32_t VrefPr
   */
 __STATIC_INLINE uint32_t LL_ADC_GetVrefProtection(const ADC_TypeDef *ADCx)
 {
-  return (uint32_t)(READ_BIT(ADCx->PWRR, ADC4_PWRR_VREFPROT | ADC4_PWRR_VREFSECSMP));
+  return (uint32_t)(READ_BIT(ADCx->PW, ADC4_PW_VREFPROT | ADC4_PW_VREFSECSMP));
 }
 
 /**
