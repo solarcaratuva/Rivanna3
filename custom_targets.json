@@ -36,7 +36,11 @@
         "detect_code": [
             "0841"
         ],
-        "device_name": "STM32U5A9xH"
+        "device_name": "STM32U5A9xH",
+        "overrides": {
+            "device_has_ltdc": true,
+            "HAL_LTDC_MODULE_ENABLED": 1
+        },
+        "features_add": ["LTDC"]
     }
-
 }
