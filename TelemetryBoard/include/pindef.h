@@ -31,4 +31,15 @@
 #define LTE_RX          PB_7
 #define DEBUG_LED_2     PB_9
 
+// caused by having to include features/components in custom targets
+#undef MBED_CONF_SD_SPI_MOSI
+#undef MBED_CONF_SD_SPI_MISO
+#undef MBED_CONF_SD_SPI_CLK
+#undef MBED_CONF_SD_SPI_CS
+
+#define MBED_CONF_SD_SPI_MOSI SPI2_MOSI
+#define MBED_CONF_SD_SPI_MISO SPI2_MISO
+#define MBED_CONF_SD_SPI_CLK  SPI2_SCK
+#define MBED_CONF_SD_SPI_CS   SD_SELECT
+
 #endif

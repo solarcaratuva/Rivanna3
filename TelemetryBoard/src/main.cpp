@@ -5,7 +5,7 @@
 #include "pindef.h"
 
 int main() {
-    SDBlockDevice sd(SPI_MOSI, SPI_MISO, SPI_SCLK, SD_CS);
+    SDBlockDevice sd(SPI2_MOSI, SPI2_MISO, SPI2_SCK, SD_SELECT);
     FATFileSystem fs("sd");
     int err = sd.init();
     if (err == 0) {
@@ -34,7 +34,7 @@ int main() {
         printf("SD init error: %d\n", err);
     }
     
-    EEPROMDriver eeprom(SPI_MOSI, SPI_MISO, SPI_SCLK, EEPROM_CS, 1000000);
+    EEPROMDriver eeprom(SPI2_MOSI, SPI2_MISO, SPI2_SCK, EEPROM_SELECT, 1000000);
     uint32_t addr = 0x0100;
     uint8_t dataToWrite = 0xA5;
     eeprom.write_byte(addr, dataToWrite);

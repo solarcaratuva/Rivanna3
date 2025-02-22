@@ -16,7 +16,17 @@
     },
     "TELEMETRY_BOARD": {
         "features_add": ["STORAGE"],
+        "components_add": ["SD"],
+        "inherits": [
+            "MCU_STM32G474xE"
+        ],
+        "detect_code": [
+            "0841"
+        ],
+        "device_name": "STM32G474RETx"
+    },
     "POWER_BOARD": {
+        "components_add": ["SD"],
         "inherits": [
             "MCU_STM32G474xE"
         ],
@@ -40,5 +50,4 @@
         ],
         "device_name": "STM32U5A9NJH6Q"
     }
-
 }
