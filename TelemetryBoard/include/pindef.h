@@ -1,30 +1,34 @@
 #ifndef PINDEF_H
 #define PINDEF_H
 
-#ifdef TARGET_UVA_SOLAR_CAR
-
-// PINS BEING CORRECTED. SHOULD BE GOOD, BUT SOME MAY POSSIBLY BE INCORRECT OR HAVE PLACEHOLDERS
-// Also, for some reason the PC_# pins don't like compiling
-
-#define SPI_MOSI    PB_15 // Switched From PA_7
-#define SPI_MISO    PB_14 // Switched From PA_6
-#define SPI_SCLK    PB_13 // (Technically this is the SPI_SCK pin, but both SCK and SCLK are clock pins that should do the same function??)
-//#define SPI_CLK     PA_5      (Replaced with SCLK)
-#define EEPROM_CS   PC_6 // Switched From PA_3, for EEPROM (Chip) Select Bit
-#define SD_CS       PB_12 // Swtiched From PA_4, for SD Card (Chip) Select Bit
-
+#define DEBUG_LED_1     PC_13
+#define RADIO_DTR       PA_1
+#define RADIO_TX        PA_2
+#define RADIO_RX        PA_3
+#define DEBUG_BTN       PA_4
+#define SD_SELECT       PB_12
+#define SPI2_SCK        PB_13 // (Technically this is the SPI_SCK pin, but both SCK and SCLK are clock pins that should do the same function??)
+#define SPI2_MISO       PB_14
+#define SPI2_MOSI       PB_15
+#define EEPROM_SELECT   PC_6
 #define EEPROM_WRITE    PC_7
 #define EEPROM_HOLD     PC_8
-
-/*
-Pins that I'm not sure we will use and only have placeholder values
-
-#define SD_SPI_CS   PA_4
-#define EEPROM_SPI_CS PA_3
-*/
-
-// CS means Chip Select, which is seemingly the same as CE or Chip Enable
-
-#endif
+#define IMU_SDA         PA_8
+#define IMU_SCL         PA_9
+#define MAIN_CAN_STBY   PA_10
+#define MAIN_CAN_RX     PA_11
+#define MAIN_CAN_TX     PA_12
+#define SWDIO           PA_13
+#define SWCLK           PA_14
+#define JTDI            PA_15
+#define USB_TX          PC_10
+#define USB_RX          PC_11
+#define GPS_TX          PC_12
+#define GPS_RX          PD_2
+#define SWO             PB_3
+#define LTE_DTR         PB_5
+#define LTE_TX          PB_6
+#define LTE_RX          PB_7
+#define DEBUG_LED_2     PB_9
 
 #endif
