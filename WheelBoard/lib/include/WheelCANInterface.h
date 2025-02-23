@@ -11,7 +11,6 @@ class WheelCANInterface : public CANInterface {
   public:
     WheelCANInterface(PinName rd, PinName td, PinName standby_pin);
     int send(CANStruct *can_struct);
-    void handle(HeartBeat *can_struct); // added for heartbeat
 
   private:
     void message_handler() override;
