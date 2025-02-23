@@ -42,8 +42,8 @@ void send_wheelboard_heartbeat() {
 
 
 // Handle heartbeat message from powerboard
-void WheelCANInterface::handle(HeartBeat*){
-    if (can_struct->FromPowerBoard == 1 && can_struct->FromWheelBoard == 0 && can_struct->FromTelemetryBoard == 0) {
+void WheelCANInterface::handle(HeartBeat *can_struct){
+    if (can_struct->from_power_board == 1 && can_struct->from_wheel_board == 0 && can_struct->from_telemetry_board == 0) {
         // Reset current timeout
         PowerBoard_timeout.detach();
         // Set new timeout for 100ms from now
