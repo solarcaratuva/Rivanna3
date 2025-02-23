@@ -4,6 +4,8 @@ import os
 import time
 
 from gpioPins import DigitalInput, DigitalOutput
+from CANMessage import CanMessage
+from CANPi import writeOut
 
 class DriverBoardTests(unittest.TestCase):
 
@@ -33,17 +35,15 @@ class DriverBoardTests(unittest.TestCase):
                 
             time.sleep(0.5)  # Adjust sample rate based on expected blinking speed
 
-        print(f'Flash Count: {flash_count} | Current State: {current_state} | Previous State: {previous_state}')
+        #print(f'Flash Count: {flash_count} | Current State: {current_state} | Previous State: {previous_state}')
         self.assertGreaterEqual(flash_count, 2, "LEFT_TURN_OUT did not flash as expected.")
         #self.assertEquals(True,True)
-        
-test1 = TestGPIO()
-test1.test_turn_signals()
+        left_turn_signal.write(False)
 
     def test_bms_strobe(self):
         name = "BPSError"
-        id = 262
-        signals = {"internal_communications_fault": 1}
+        id = 0x106
+        signals = {"internal_communications_fault" : 1}
         timestamp = 1.0
 
         can_message = CanMessage(name, id, signals, timestamp)
@@ -70,10 +70,11 @@ test1.test_turn_signals()
 
         self.assertGreaterEqual(flash_count, 2, "BMS_STROBE_OUT did not flash as expected.")
 
-    def failing_test_right_turn_signal(self):
-        right_turn_flash = DigitalInput("RIGHT_TURN_OUT")
-        right_turn_signal = DigitalOutput("RIGHT_TURN_IN")
+    def test_failing_test_right_turn_signal(self):
+        #right_turn_flash = DigitalInput("RIGHT_TURN_OUT")
+        #right_turn_signal = DigitalOutput("RIGHT_TURN_IN")
 
-        right_turn_signal.write(False)
+        #right_turn_signal.write(False)
+        right_turn_signal = False
         
-        self.assertTrue(right_turn_flash)
+        self.assertTrue(right_turn_signal)
