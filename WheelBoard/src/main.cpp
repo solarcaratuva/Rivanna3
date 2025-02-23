@@ -26,11 +26,11 @@ WheelCANInterface wheel_board_interface(CAN_RX, CAN_TX, CAN_STBY);
 
 Timeout PowerBoard_timeout;
 
-void handle_powerboard_timeout() { printf("Power Board Timeout Detected") }
 
-/**
-* Function that when called creates and sends a Heartbeat can message from PowerBoard
- */
+void handle_powerboard_timeout() { printf("Power Board Timeout Detected"); }
+
+
+/*
 void send_wheelboard_heartbeat() {
     HeartBeat wheelboard_heartbeat_struct;
     wheelboard_heartbeat_struct.FromTelemetryBoard = 0;
@@ -38,9 +38,11 @@ void send_wheelboard_heartbeat() {
     wheelboard_heartbeat_struct.FromPowerBoard = 0;
     vehicle_can_interface.send(&wheelboard_heartbeat_struct);
 }
+*/
+
 
 // Handle heartbeat message from powerboard
-void PowerCANInterface::handle(DashboardCommands *can_struct){
+void WheelCANInterface::handle(HeartBeat *can_struct){
     if (can_struct->FromPowerBoard == 1 && can_struct->FromWheelBoard == 0 && can_struct->FromTelemetryBoard == 0) {
         // Reset current timeout
         PowerBoard_timeout.detach();
@@ -76,7 +78,7 @@ void edge_handler(void){
 int main() {
     log_set_level(LOG_LEVEL);
 
-    // set initial heartbeat timer
+    // set initial heartbeat timer (Call handle_powerborad_timeout in 100ms)
     PowerBoard_timeout.attach(
     queue.event(handle_powerboard_timeout), 100ms); // was event_queue in original motor main.cpp
     
@@ -95,6 +97,6 @@ int main() {
     cruise_control_enable.fall(edge_handler);
     regen_enable.fall(edge_handler);
 
-    queue.
+    //queue.
     queue.dispatch_forever();
 }

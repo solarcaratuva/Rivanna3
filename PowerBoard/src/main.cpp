@@ -11,7 +11,6 @@
 #include "ReadPedals.h"
 #include "main.h"
 #include "MotorCommandsCANStruct.h"
-#include "HeartBeatCANStruct.h" // heartbeat
 #include "MotorControllerCANInterface.h"
 
 #define LOG_LEVEL                       LOG_DEBUG
@@ -67,9 +66,9 @@ bool cruise_control_decrease = false;
  */
 void send_powerboard_heartbeat() {
     HeartBeat powerboard_heartbeat_struct;
-    powerboard_heartbeat_struct.FromTelemetryBoard = 0;
-    powerboard_heartbeat_struct.FromWheelBoard = 0;
-    powerboard_heartbeat_struct.FromPowerBoard = 1;
+    powerboard_heartbeat_struct.from_telemetry_board = 0;
+    powerboard_heartbeat_struct.from_wheel_board = 0;
+    powerboard_heartbeat_struct.from_power_board = 1;
     vehicle_can_interface.send(&powerboard_heartbeat_struct);
 }
 

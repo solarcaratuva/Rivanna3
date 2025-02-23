@@ -24,7 +24,7 @@
             log_at_level(
                 level,
                 "HeartBeat: FromTelemetryBoard %u, FromWheelBoard %u, FromPowerBoard %u",
-                FromTelemetryBoard, FromWheelBoard, FromPowerBoard);
+                from_telemetry_board, from_wheel_board, from_power_board);
         }
     } HeartBeat;
 
