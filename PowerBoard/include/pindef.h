@@ -19,10 +19,8 @@
 
 #define MTR_CAN_TX      PA_12
 #define MTR_CAN_RX      PA_11
-#define ACCEL_SCL       PA_9
-#define ACCEL_SDA       PA_8
-#define REGEN_SDA       PC_9
-#define REGEN_SCL       PC_8
+#define RGN_ACL_SCL     PA_9
+#define RGN_ACL_SDA     PA_8
 #define MPPT_PRE_EN     PC_6
 #define CHARGE_EN       PB_15
 #define MTR_PRE_EN      PB_14

@@ -42,10 +42,9 @@ AnalogIn brake_pedal(BRAKE_WIPER, 5.0f);
 AnalogIn contactor(CONT_12);
 AnalogIn aux_battery(AUX);
 
-I2C throttle(ACCEL_SDA, ACCEL_SCL);
-I2C regen(REGEN_SDA, REGEN_SCL);
+I2C throttle_regen(RGN_ACL_SDA, RGN_ACL_SCL);
 
-MotorInterface motor_interface(throttle, regen);
+MotorInterface motor_interface(throttle_regen);
 
 PowerCANInterface vehicle_can_interface(MAIN_CAN_RX, MAIN_CAN_TX, MAIN_CAN_STBY);
 MotorControllerCANInterface motor_controller_can_interface(MTR_CAN_RX, MTR_CAN_TX, NC); // TODO add standby pin

@@ -6,13 +6,12 @@
 class MotorInterface {
 
   public:
-    MotorInterface(I2C &throttle, I2C &regen);
+    MotorInterface(I2C &throttle_regen);
     int sendThrottle(uint16_t throttle);
     int sendRegen(uint16_t regen);
 
   private:
-    I2C &throttleBus;
-    I2C &regenBus;
+    I2C &throttle_regen_bus;
 };
 
 #endif
