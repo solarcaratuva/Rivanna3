@@ -19,7 +19,7 @@ int main() {
             FILE *fp = fopen("/sd/test.txt", "w");
             if (fp) {
                 // fprintf(fp, "SD Card test successful\n");
-                EEPROMDriver eeprom(SPI2_MOSI, SPI2_MISO, SPI2_SCK, EEPROM_SELECT, 1000000);
+                EEPROMDriver eeprom(SPI2_MOSI, SPI2_MISO, SPI2_SCK, EEPROM_SELECT, 1000000); // clock speed here is 1Mhz
                 uint32_t addr = 0x0100;
                 uint8_t dataToWrite = 0xA5;
                 eeprom.write_byte(addr, dataToWrite);
