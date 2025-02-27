@@ -24,6 +24,7 @@ int main() {
                 uint8_t dataToWrite = 0xA5;
                 eeprom.write_byte(addr, dataToWrite);
                 uint8_t dataRead = eeprom.read_byte(addr);
+                log_debug("EEPROM wrote: 0x%02X, read: 0x%02X\n", dataToWrite, dataRead);
                 fprintf(fp, "EEPROM wrote: 0x%02X, read: 0x%02X\n", dataToWrite, dataRead);
                 fclose(fp);
                 fp = fopen("/sd/test.txt", "r");
