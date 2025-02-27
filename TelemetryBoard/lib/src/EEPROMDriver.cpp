@@ -17,6 +17,7 @@ void EEPROMDriver::write_byte(uint32_t address, uint8_t data) {
     write_enable();
     _cs = 0;
     _spi.write(0x02); // WRITE command (0x02)
+    _spi.write((address >> 16) & 0xFF);
     _spi.write((address >> 8) & 0xFF);
     _spi.write(address & 0xFF);
     _spi.write(data);
@@ -27,6 +28,7 @@ void EEPROMDriver::write_byte(uint32_t address, uint8_t data) {
 uint8_t EEPROMDriver::read_byte(uint32_t address) {
     _cs = 0;
     _spi.write(0x03);
+    _spi.write((address >> 16) & 0xFF);
     _spi.write((address >> 8) & 0xFF);
     _spi.write(address & 0xFF);
     // Perform a dummy write to receive the data byte
