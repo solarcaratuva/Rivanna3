@@ -3,11 +3,11 @@
     "*": {
       "platform.stdio-baud-rate": 921600,
       "platform.stdio-buffered-serial": 1,
-      "platform.callback-nontrivial": true,
-      "sd.SPI_CS": "PB_12",
-      "sd.SPI_MOSI": "PB_13",
-      "sd.SPI_MISO": "PB_14",
-      "sd.SPI_CLK": "PB_15"
+        "platform.callback-nontrivial": true,
+        "sd.SPI_CS": "PB_12",
+        "sd.SPI_MOSI": "PB_13",
+        "sd.SPI_MISO": "PB_14",
+        "sd.SPI_CLK": "PB_15"
     }
   }
 }
