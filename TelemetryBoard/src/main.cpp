@@ -1,102 +1,89 @@
 #include "mbed.h"
 #include <string.h>
-#include "pindef.h" 
-
-using namespace std::chrono;
-
-BufferedSerial xbee(RADIO_TX, RADIO_RX, 9600);
-BufferedSerial pc(USB_TX, USB_RX, 115200);        // Debug console over USB
+#include "pindef.h"
+#include "EEPROMDriver.h"
 #include "log.h"
 
 #define LOG_LEVEL          LOG_DEBUG
+#define EEPROM_START_ADDR  0x0100   // EEPROM start address for message storage
+#define MESSAGE_SIZE       64       // Max size of stored message
+
+// Debug console over USB (ST-Link)
+BufferedSerial pc(USB_TX, USB_RX, 115200);
+
+// EEPROM interface (1MHz clock speed)
+EEPROMDriver eeprom(SPI2_MOSI, SPI2_MISO, SPI2_SCK, EEPROM_SELECT, 1000000);
+
+bool read_eeprom_message(char *buffer, size_t size);
+void write_eeprom_message(const char *message);
 
 int main() {
     log_set_level(LOG_LEVEL);
-    log_debug("Start main()");
-    SDBlockDevice sd(SPI2_MOSI, SPI2_MISO, SPI2_SCK, SD_SELECT);
-    FATFileSystem fs("sd");
-    int err = sd.init();
-    if (err == 0) {
-        err = fs.mount(&sd);
-        if (err == 0) {
-            FILE *fp = fopen("/sd/test.txt", "w");
-            if (fp) {
-                // fprintf(fp, "SD Card test successful\n");
-                EEPROMDriver eeprom(SPI2_MOSI, SPI2_MISO, SPI2_SCK, EEPROM_SELECT, 1000000); // clock speed here is 1Mhz
-                uint32_t addr = 0x0100;
-                uint8_t dataToWrite = 0xA5;
-                eeprom.write_byte(addr, dataToWrite);
-                uint8_t dataRead = eeprom.read_byte(addr);
-                log_debug("EEPROM wrote: 0x%02X, read: 0x%02X\n", dataToWrite, dataRead);
-                fprintf(fp, "EEPROM wrote: 0x%02X, read: 0x%02X\n", dataToWrite, dataRead);
-                fclose(fp);
-                fp = fopen("/sd/test.txt", "r");
-                if (fp) {
-                    char buf[64];
-                    fgets(buf, sizeof(buf), fp);
-                    log_debug("SD Card read: %s\n", buf);
-                    fclose(fp);
-                }
-            } else {
-                log_debug("Error opening file on SD\n");
-            }
-            fs.unmount();
-        } else {
-            log_debug("Filesystem mount error: %d\n", err);
-        }
-        sd.deinit();
-    } else {
-        log_debug("SD init error: %d\n", err);
+    log_debug("System startup...");
+
+    char message[MESSAGE_SIZE] = {0};
+
+    // Attempt to read a valid message from EEPROM
+    bool validMessageFound = read_eeprom_message(message, MESSAGE_SIZE);
+
+    // If nothing valid is stored, fall back to a default
+    if (!validMessageFound) {
+        strcpy(message, "Default EEPROM Message");
+        write_eeprom_message(message);
+        log_debug("No valid message found. Stored default message in EEPROM.");
     }
-    
-    // SDBlockDevice sd2(SPI2_MOSI, SPI2_MISO, SPI2_SCK, SD_SELECT);
-    // FATFileSystem fs2("sd");
-    // int err2 = sd2.init();
-    // if (err2 == 0) {
-    //     err2 = fs2.mount(&sd2);
-    //     if (err2 == 0) {
-    //         FILE *fp = fopen("/sd/test2.txt", "w");
-    //         if (fp) {
-    //             EEPROMDriver eeprom(SPI2_MOSI, SPI2_MISO, SPI2_SCK, EEPROM_SELECT, 1000000);
-    //             uint32_t addr = 0x0100;
-    //             uint8_t dataToWrite = 0xA5;
-    //             eeprom.write_byte(addr, dataToWrite);
-    //             uint8_t dataRead = eeprom.read_byte(addr);
-    //             fprintf(fp, "EEPROM wrote: 0x%02X, read: 0x%02X\n", dataToWrite, dataRead);
-    //         } else {
-    //             log_debug("Error opening file on SD\n");
-    //         }
-    //         fs2.unmount();
-    //     } else {
-    //         log_debug("Filesystem mount error: %d\n", err2);
-    //     }
-    //     sd2.deinit();
-    // } else {
-    //     log_debug("SD init error: %d\n", err2);
-    // }
-    
+
+    // Main loop: continuously send the EEPROM message over ST-Link
     while (true) {
-    // 8 data bits, no parity, 1 stop bit.
-    xbee.set_format(8, BufferedSerial::None, 1);
-    pc.set_format(8, BufferedSerial::None, 1);
+        log_debug("Sending over ST-Link: %s", message);
 
-    const char *msg = "XBee Test Message\r\n";
-    char buffer[128] = {0};
+        // Send the message to the USB debug console
+        pc.write(message, strlen(message));
+        pc.write("\r\n", 2);  // Newline for readability
 
-    while (true) {
-        xbee.write(msg, strlen(msg));
-        pc.write(msg, strlen(msg));
-
-        // check for any response from the XBee module and echo to PC console if needed
-        auto start = chrono::steady_clock::now();
-        while (chrono::steady_clock::now() - start < 500ms) {
-            if (xbee.readable()) {
-                int n = xbee.read(buffer, sizeof(buffer));
-                if (n > 0) {
-                    pc.write(buffer, n);
-                }
-            }
-        }
         ThisThread::sleep_for(1s);
     }
+}
+
+// Read message from EEPROM
+// Returns true if a valid message is found, false otherwise.
+bool read_eeprom_message(char *buffer, size_t size) {
+    memset(buffer, 0, size);
+
+    // Read stored message length
+    uint8_t len = eeprom.read_byte(EEPROM_START_ADDR);
+    // Check for invalid length (0xFF indicates an erased or empty EEPROM cell)
+    if (len == 0xFF || len == 0 || len > size - 1) {
+        log_debug("EEPROM: No valid message found.");
+        return false;
+    }
+
+    // Read each character
+    for (size_t i = 0; i < len; i++) {
+        buffer[i] = eeprom.read_byte(EEPROM_START_ADDR + 1 + i);
+    }
+    buffer[len] = '\0';  // Null-terminate
+    log_debug("EEPROM: Read stored message '%s'", buffer);
+
+    return true;
+}
+
+// Write message to EEPROM
+void write_eeprom_message(const char *message) {
+    size_t len = strlen(message);
+
+    // Prevent overflow if message is too large
+    if (len > MESSAGE_SIZE - 1) {
+        len = MESSAGE_SIZE - 1;
+    }
+
+    // Store length at the first byte
+    eeprom.write_byte(EEPROM_START_ADDR, (uint8_t)len);
+
+    // Store message characters
+    for (size_t i = 0; i < len; i++) {
+        eeprom.write_byte(EEPROM_START_ADDR + 1 + i, message[i]);
+    }
+
+    log_debug("EEPROM: Stored message '%s' (size: %d)", message, (int)len);
 }
