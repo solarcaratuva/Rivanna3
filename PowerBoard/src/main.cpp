@@ -161,14 +161,11 @@ void set_motor_status() {
     motor_CAN_struct.cruise_drive = cruise_control_enabled && !cruise_control_brake_latch;
     motor_CAN_struct.regen_drive = regen_enabled;
     motor_CAN_struct.manual_drive = !(cruise_control_enabled && !cruise_control_brake_latch) && !regen_enabled;
-    if(read_brake() > 0 || (regen_enabled && read_throttle() <= 50)){
-        motor_CAN_struct.braking = true;
-    } else {
-        motor_CAN_struct.braking = false;
-    }
+    motor_CAN_struct.braking = read_brake() > 0 || (regen_enabled && read_throttle() <= 50);
     motor_CAN_struct.throttle_pedal = read_throttle();
     motor_CAN_struct.brake_pedal = read_brake();
-    
+    motor_CAN_struct.cruise_speed = motor_CAN_struct.cruise_drive ? cruise_control.get_cruise_target() : 0;
+
     vehicle_can_interface.send(&motor_CAN_struct);
 
 }
