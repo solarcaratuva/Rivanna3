@@ -44,8 +44,10 @@ Thread signalFlashThread;
 Thread motor_thread;
 
 
-DigitalOut test_LED(LED2);
-DigitalOut test_LED2(LED3);
+AnalogOut test_LED(PA_4);
+// AnalogOut test_LED(LED1);
+
+AnalogIn test_pin(PA_0);
 
 
 
@@ -68,7 +70,7 @@ DigitalOut test_LED2(LED3);
 
 // AnalogIn throttle(THROTTLE_VALUE_IN, 5.0f);
 
-DriverCANInterface vehicle_can_interface(PG_11, PG_12, PG_13);
+// DriverCANInterface vehicle_can_interface(PG_11, PG_12, PG_13);
 
 // ECUMotorCommands to_motor;
 // ECUPowerAuxCommands power_aux_out;
@@ -267,41 +269,52 @@ uint16_t currentSpeed = 0;
 
 int main() {
 
-    CANMessage testMessage;
+    // CANMessage testMessage;
 
 
-    testMessage.id = 10;
+    // testMessage.id = 10;
 
-    testMessage.len = 2;
+    // testMessage.len = 2;
 
-    MotorCommands motor_CAN_struct;
-    motor_CAN_struct.throttle = 5;
-    motor_CAN_struct.regen_braking = 1;
-
+    // MotorCommands motor_CAN_struct;
+    // motor_CAN_struct.throttle = 5;
+    // motor_CAN_struct.regen_braking = 1;
+    double analog_value = 0;
 
     while (true)
     {
 
-        test_LED = PIN_ON;
-        test_LED2 = PIN_ON;
+        analog_value = test_pin.read();
 
-        CANMessage message;
-        if(vehicle_can_interface.CANRead(message)) {
-            thread_sleep_for(200);
-            vehicle_can_interface.CANWrite(message);
-            for(int i = 0; i < 10; i++) {
-                test_LED = PIN_ON;
-                test_LED2 = PIN_ON;
-                thread_sleep_for(200);
-                test_LED = PIN_OFF;
-                test_LED2 = PIN_OFF;
-                thread_sleep_for(200);
-            }
-        }
-        else {
-            test_LED = PIN_ON;
-            test_LED2 = PIN_ON;
-        }
+        test_LED.write(analog_value);
+        thread_sleep_for(200);
+        log_debug("%d", (int) (analog_value*100));
+        // test_LED2.write(analog_value); 
+
+        
+        
+
+
+        // test_LED = PIN_ON;
+        // test_LED2 = PIN_ON;
+
+        // CANMessage message;
+        // if(vehicle_can_interface.CANRead(message)) {
+        //     thread_sleep_for(200);
+        //     vehicle_can_interface.CANWrite(message);
+        //     for(int i = 0; i < 10; i++) {
+        //         test_LED = PIN_ON;
+        //         test_LED2 = PIN_ON;
+        //         thread_sleep_for(200);
+        //         test_LED = PIN_OFF;
+        //         test_LED2 = PIN_OFF;
+        //         thread_sleep_for(200);
+        //     }
+        // }
+        // else {
+        //     test_LED = PIN_ON;
+        //     test_LED2 = PIN_ON;
+        // }
 
         
         // if(vehicle_can_interface.send(&motor_CAN_struct) < 0) { //-1: fail, 1: success 
