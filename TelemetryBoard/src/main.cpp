@@ -21,8 +21,8 @@ int main() {
     log_set_level(LOG_LEVEL);
     log_debug("System startup...");
 
-    char message[MESSAGE_SIZE] = {0};
-
+    char message[MESSAGE_SIZE] = "Time to test EEPROM!";
+    write_eeprom_message(message);
     // Attempt to read a valid message from EEPROM
     bool validMessageFound = read_eeprom_message(message, MESSAGE_SIZE);
 
@@ -63,7 +63,9 @@ bool read_eeprom_message(char *buffer, size_t size) {
         buffer[i] = eeprom.read_byte(EEPROM_START_ADDR + 1 + i);
     }
     buffer[len] = '\0';  // Null-terminate
-    log_debug("EEPROM: Read stored message '%s'", buffer);
+    pc.write("EEPROM: Read message: ", 22);
+    pc.write(buffer, len);
+    pc.write("\r\n", 2);
 
     return true;
 }
@@ -84,6 +86,8 @@ void write_eeprom_message(const char *message) {
     for (size_t i = 0; i < len; i++) {
         eeprom.write_byte(EEPROM_START_ADDR + 1 + i, message[i]);
     }
-
+    pc.write("EEPROM: Wrote message: ", 22);
+    pc.write(message, len);
+    pc.write("\r\n", 2);
     log_debug("EEPROM: Stored message '%s' (size: %d)", message, (int)len);
 }
