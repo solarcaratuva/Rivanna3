@@ -59,8 +59,7 @@ void PowerCANInterface::message_handler() {
 
             // TODO: Write to serial message_id, message_data
 
-            CANInterface::write_CAN_message_data_to_buffer(message_data,
-                                                           &message);
+            CANInterface::write_CAN_message_data_to_buffer(message_data, &message);
             log_debug(
                 "Received CAN message with ID 0x%03X Length %d Data 0x%s ",
                 message.id, message.len, message_data);
@@ -69,12 +68,11 @@ void PowerCANInterface::message_handler() {
                 can_struct.deserialize(&message);
                 handle(&can_struct);
             }
-            // else if (message.id == DASHBOARD_COMMANDS_ID) {
-            //     DashboardCommands can_struct;
-            //     can_struct.deserialize(&message);
-            //     handle(&can_struct);
-            // }
-
+            else if (message.id == DASHBOARD_COMMANDS_ID) {
+                DashboardCommands can_struct;
+                can_struct.deserialize(&message);
+                handle(&can_struct);
+            }
         }
     }
 }

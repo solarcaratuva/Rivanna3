@@ -1,5 +1,7 @@
 #include "CruiseControl.h"
 #include <mbed.h>
+#include "MotorInterface.h"
+#include "main.h"
 
 uint16_t CruiseControl::calculate_cruise_control(double current_speed){
     uint64_t current_time = Kernel::get_ms_count();
@@ -55,4 +57,15 @@ void CruiseControl::decrease_cruise_target() {
 
 uint8_t CruiseControl::get_cruise_target() {
     return this->cruise_control_target;
+}
+
+void CruiseControl::send_cruise_control_to_motor(uint16_t motor_rpm) {
+    uint16_t current_speed_mph = (double)motor_rpm * MOTOR_RPM_TO_MPH_RATIO;
+    if(!has_faulted && cruise_control_enabled && !cruise_control_brake_latch) {
+        uint16_t next_cruise_output = calculate_cruise_control(current_speed_mph);
+        motor_interface.sendThrottle(next_cruise_output);
+        motor_interface.sendRegen(0);
+    } else {
+        reset_cruise_control_integral();
+    }
 }
