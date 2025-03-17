@@ -24,8 +24,8 @@
 
 DigitalIn aux_input(AUX);
 DigitalIn cont_12(CONT_12);
-DigitalIn rc_voltage(RC_VOLTAGE);
-DigitalIn pack_voltage(PACK_VOLTAGE);
+AnalogIn rc_voltage(RC_VOLTAGE);
+AnalogIn pack_voltage(PACK_VOLTAGE);
 
 //charge
 DigitalOut mppt_precharge(MPPT_PRE_EN);
@@ -59,7 +59,7 @@ int high_cell_voltage_threshold = 42000;
 uint16_t BPS_Cell_Messages = 0;
 
 void start_precharge() {
-
+    //check conditions
     charge_enable.write(0);
     mppt_precharge.write(1);
 
@@ -72,33 +72,68 @@ void start_discharge() {
 
 void battery_precharge(){
     //precharge for battery & mppt
-    while(true){
-        int contact12_status = cont_12.read();
-
-        //discharge_relay_status is high & contactor12 rising status --> start precharge
-        if(contact12_status == 1 && discharge_relay_status == false){
-            discharge_relay_status = readCANMessage("vehicle_can_interface");
-            std::precharge_check::sleep_for(std::chrono::milliseconds(100)); 
-            log_debug("Precharge has started");
-
-        }
-        start_precharge(); 
-
-        //rc voltage reaches .95 of pack coltage --> discharge
-        while (rc_voltage < 0.95 * pack_voltage) {
-            std::precharge_check::sleep_for(std::chrono::milliseconds(100)); 
+    while (true) {
+        //check for faulting
+        if (has_faulted || cell_voltage_fault) {
+            charge_enable.write(0);
+            mppt_precharge.write(0);
+            ThisThread::sleep_for(CHARGE_PAUSE);
+            continue;
         }
 
-        //close contactor & disable motor precharge
-        start_discharge();
-        std::precharge_check::sleep_for(std::chrono::milliseconds(100)); //small delay
-        motor_precharge.write(0);
-        log_debug("Precharge complete, discharge enabled.");
+        //checking conditions
+        if (charge_relay_status && cont_12.read() && allow_precharge) {
+            has_prechaged_before = true;
+            allow_precharge = false;
+            log_debug("Starting MPPT Precharge");
+            start_precharge();
 
-        std::precharge_check::sleep_for(std::chrono::milliseconds(100)); //small delay for entire system
+            //let RC reach 05% of pack voltage
+            while ((rc_voltage.read()) < 0.95 * (pack_voltage.read())) {
+                ThisThread::sleep_for(CHARGE_PAUSE);
+            }
 
+            charge_enable.write(1);
+            ThisThread::sleep_for(PRECHARGE_OVERLAP);
+            mppt_precharge.write(0);
+        }
+
+        ThisThread::sleep_for(CHARGE_PAUSE);
+    }
+    
+}
+
+void battery_discharge() {
+    while (true) {
+        //check for faulting
+        if (has_faulted || cell_voltage_fault) {
+            discharge_enable.write(0);
+            motor_precharge.write(0);
+            ThisThread::sleep_for(CHARGE_PAUSE);
+            continue;
+        }
+        
+        //checking conditions
+        if (discharge_relay_status && cont_12.read() && allow_discharge) {
+            has_precharged_discharge_before = true;
+            allow_discharge = false;
+            log_debug("Starting Motor Precharge");
+            start_discharge();
+
+            //wait for RC to reach 95% of pack voltage
+            while ((rc_voltage.read()) < 0.95 * (pack_voltage.read())) {
+                ThisThread::sleep_for(CHARGE_PAUSE);
+            }
+
+            discharge_enable.write(1);
+            ThisThread::sleep_for(PRECHARGE_OVERLAP);
+            motor_precharge.write(0);
+        }
+
+        ThisThread::sleep_for(CHARGE_PAUSE);
     }
 }
+
 
 
 
@@ -110,17 +145,34 @@ int main(){
     log_debug("Start main()");
 
     precharge_check.start(battery_precharge);
+    discharge_check.start(battery_discharge);
+    
 
     while(true){
+        //allowing for precharge reset
+        if (!cont_12.read() && has_prechaged_before) {
+            allow_precharge = true;
+            has_prechaged_before = false;
+        }
+        
+        if (!cont_12.read() && has_precharged_discharge_before) {
+            allow_discharge = true;
+            has_precharged_discharge_before = false;
+        }
+
         //for fault checking 
         if(has_faulted == false){
             has_faulted = contact12V_has_gone_high && !(cont_12.read());
         }
-        else if(has_faulted == true){
-            charge_enable = true;
-            mppt_precharge = false;
+        else if(has_faulted == true || cell_voltage_fault == true){
+            mppt_precharge.write(0);
+            discharge_enable.write(0);
+            motor_precharge.write(0);
+            charge_enable.write(0);
         }
+        ThisThread::sleep_for(MAIN_LOOP_PERIOD);
     }
+    
     
 
 }
