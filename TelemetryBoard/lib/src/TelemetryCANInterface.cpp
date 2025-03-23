@@ -2,6 +2,10 @@
 #include "MotorControllerCANStructs.h"
 #include "log.h"
 #include "MotorCommandsCANStruct.h"
+#include "pindef.h"
+#include "FATFileSystem.h"
+#include "EEPROMDriver.h"
+#include "SDBlockDevice.h"
 
 TelemetryCANInterface::TelemetryCANInterface(PinName rd, PinName td,
                                      PinName standby_pin)
@@ -9,73 +13,60 @@ TelemetryCANInterface::TelemetryCANInterface(PinName rd, PinName td,
     can.frequency(250000);
 }
 
-int TelemetryCANInterface::send(CANStruct *can_struct) {
-    CANMessage message;
-    can_struct->serialize(&message);
-    message.id = can_struct->get_message_ID();
-    int result = can.write(message);
-
-    char message_data[17];
-
-    CANInterface::write_CAN_message_data_to_buffer(message_data, &message);
-    if (result == 1) {
-        log_debug("Sent CAN message with ID 0x%03X Length %d Data 0x%s",
-                  message.id, message.len, message_data);
-    } else {
-        // this error logging requires changes to mbed-os. make the _can field
-        // in CAN.h public instead of private log_error("%d",
-        // HAL_FDCAN_GetError(&can._can.CanHandle));
-        log_error(
-            "Failed to send CAN message with ID 0x%03X Length %d Data 0x%s",
-            message.id, message.len, message_data);
-    }
-
-    return result;
+int TelemetryCANInterface::send_message(CANMessage *message) {
+    log_debug("Sending CAN message with ID: %d", message->id);
+    send_to_sd(message, message->id);
+    send_to_radio(message, message->id);
+    return 0;
 }
 
-int TelemetryCANInterface::send_message(CANMessage *message) {
-    int result = can.write(*message);
+void TelemetryCANInterface::send_to_sd(CANMessage *message, uint16_t message_id) {
+    log_debug("SD Card: Sent message with ID: %d", message_id);
+    SDBlockDevice sd(SPI2_MOSI, SPI2_MISO, SPI2_SCK, SD_SELECT);
+    FATFileSystem fs("sd");
+    int err = sd.init();
+    if (err) {
+        log_error("SD Card: Error initializing SD card");
+        return;
+    }
+    FILE *fp = fopen("/sd/log.txt", "w");
+    char message_data[17];
+    CANInterface::write_CAN_message_data_to_buffer(message_data, &message);
+    fprintf(fp, "Received message with ID: %d, Data: %s\n", message_id, message_data);
+    // Example: Open file, write message->id and message->data, then close file.
+}
+
+void TelemetryCANInterface::send_to_radio(CANMessage *message, uint16_t message_id) {
+
+    BufferedSerial xbee(RADIO_TX, RADIO_RX, 9600);
+    BufferedSerial pc(USB_TX, USB_RX, 115200);
+    xbee.set_format(8, BufferedSerial::None, 1);
+    pc.set_format(8, BufferedSerial::None, 1);
 
     char message_data[17];
-    CANInterface::write_CAN_message_data_to_buffer(message_data, message);
-    if (result == 1) {
-        log_debug("Sent CAN message with ID 0x%03X Length %d Data 0x%s",
-                  message->id, message->len, message_data);
-    } else {
-        log_error(
-            "Failed to send CAN message with ID 0x%03X Length %d Data 0x%s",
-            message->id, message->len, message_data);
-    }
+    CANInterface::write_CAN_message_data_to_buffer(message_data, &message);
+    xbee.write(message_data, std::strlen(message_data));
 
-    return result;
+    auto start = std::chrono::steady_clock::now();
+    while (chrono::steady_clock::now() - start < 500ms) {
+        if (xbee.readable()) {
+            int n = xbee.read(buffer, sizeof(buffer));
+            if (n > 0) {
+                pc.write(buffer, n);
+            }
+        }
+    }
 }
 
 void TelemetryCANInterface::message_handler() {
     while (true) {
         ThisThread::flags_wait_all(0x1);
         CANMessage message;
-        while (can.read(message)) {
-            char message_data[17];
-
-            // TODO: Write to serial message_id, message_data
-
-            CANInterface::write_CAN_message_data_to_buffer(message_data,
-                                                           &message);
-            log_debug(
-                "Received CAN message with ID 0x%03X Length %d Data 0x%s ",
-                message.id, message.len, message_data);
-            if (message.id == BPSError_MESSAGE_ID) {
-                BPSError can_struct;
-                can_struct.deserialize(&message);
-                handle(&can_struct);
-            }
-            // else if (message.id == DASHBOARD_COMMANDS_ID) {
-            //     DashboardCommands can_struct;
-            //     can_struct.deserialize(&message);
-            //     handle(&can_struct);
-            // }
-
+        if (can.read(&message)) { 
+            log_debug("Received CAN message with ID: %d", message.id);
+            send_to_sd(&message, message.id);
+            send_to_radio(&message, message.id);
         }
+        ThisThread::sleep_for(10ms);
     }
 }
-

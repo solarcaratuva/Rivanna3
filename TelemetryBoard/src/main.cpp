@@ -3,6 +3,7 @@
 #include "pindef.h"
 #include "EEPROMDriver.h"
 #include "log.h"
+#include "TelemetryCANInterface.h"
 
 #define LOG_LEVEL          LOG_DEBUG
 #define EEPROM_START_ADDR  0x0100   // EEPROM start address for message storage
@@ -90,4 +91,12 @@ void write_eeprom_message(const char *message) {
     pc.write(message, len);
     pc.write("\r\n", 2);
     log_debug("EEPROM: Stored message '%s' (size: %d)", message, (int)len);
+}
+
+void TelemetryCANInterface::handle(BPSError *can_struct) {
+    CANMessage message;
+    can_struct->serialize(&message);
+    log_debug("Handling BPSError message, ID: %d", BPSError_MESSAGE_ID);
+    send_to_sd(&message, BPSError_MESSAGE_ID);
+    send_to_radio(&message, BPSError_MESSAGE_ID);
 }
