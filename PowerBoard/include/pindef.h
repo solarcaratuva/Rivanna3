@@ -64,7 +64,9 @@
 #define DIS_CHARGE_EN   NC
 #define CONT_12         NC
 #define AUX             NC
-#define RC_VOLTAGE      NC 
+#define RC_VOLTAGE_MOTOR NC 
+#define RC_VOLTAGE_BATTERY NC
+
 #define PACK_VOLTAGE    NC
 
 #define DEBUG_SWITCH    NC

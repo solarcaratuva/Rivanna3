@@ -61,6 +61,10 @@ bool cruise_control_enabled = false;
 bool cruise_control_increase = false;
 bool cruise_control_decrease = false;
 
+//Starting Threads
+Thread precharge_check;
+Thread discharge_check;
+
 
 
 /**
