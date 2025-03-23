@@ -16,3 +16,8 @@ void mainPresenter::deactivate()
 {
 
 }
+
+void mainPresenter::function1()
+{
+    
+}

@@ -25,6 +25,8 @@ public:
      */
     virtual void deactivate();
 
+    virtual void function1();
+
     virtual ~mainPresenter() {}
 
 private:

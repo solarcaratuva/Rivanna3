@@ -141,15 +141,19 @@
             "Name": "textArea1_2",
             "X": 158,
             "Y": 480,
-            "Width": 47,
+            "Width": 101,
             "Height": 24,
-            "TextId": "__SingleUse_E4H2",
+            "TextId": "__SingleUse_2STF",
             "TextRotation": "0",
             "Color": {
               "Red": 55,
               "Green": 255
             },
-            "AutoSize": true
+            "Wildcard1": {
+              "TextId": "__SingleUse_HTPR",
+              "UseBuffer": true,
+              "BufferSize": 10
+            }
           },
           {
             "Type": "TextArea",
@@ -454,7 +458,19 @@
             "AutoSize": true
           }
         ],
-        "Interactions": []
+        "Interactions": [
+          {
+            "InteractionName": "Interaction1",
+            "Trigger": {
+              "Type": "TriggerOnEveryTick",
+              "TickCount": 60
+            },
+            "Action": {
+              "Type": "ActionCustom",
+              "FunctionName": "function1"
+            }
+          }
+        ]
       }
     ],
     "CustomContainerDefinitions": [],
@@ -508,6 +524,6 @@
     ],
     "AdditionalFeatures": []
   },
-  "Version": "4.24.2",
+  "Version": "4.25.0",
   "CreatedBy": "4.24.0"
 }

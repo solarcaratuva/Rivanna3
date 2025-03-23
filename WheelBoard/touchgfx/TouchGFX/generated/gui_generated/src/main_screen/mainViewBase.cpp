@@ -6,7 +6,8 @@
 #include <texts/TextKeysAndLanguages.hpp>
 #include <images/BitmapDatabase.hpp>
 
-mainViewBase::mainViewBase()
+mainViewBase::mainViewBase() :
+    frameCountInteraction1Interval(0)
 {
     __background.setPosition(0, 0, 480, 800);
     __background.setColor(touchgfx::Color::getColorFromRGB(0, 0, 0));
@@ -52,10 +53,12 @@ mainViewBase::mainViewBase()
     textArea1_3_1.setTypedText(touchgfx::TypedText(T___SINGLEUSE_3LS9));
     add(textArea1_3_1);
 
-    textArea1_2.setXY(158, 480);
+    textArea1_2.setPosition(158, 480, 101, 24);
     textArea1_2.setColor(touchgfx::Color::getColorFromRGB(55, 255, 0));
     textArea1_2.setLinespacing(0);
-    textArea1_2.setTypedText(touchgfx::TypedText(T___SINGLEUSE_E4H2));
+    Unicode::snprintf(textArea1_2Buffer, TEXTAREA1_2_SIZE, "%s", touchgfx::TypedText(T___SINGLEUSE_HTPR).getText());
+    textArea1_2.setWildcard(textArea1_2Buffer);
+    textArea1_2.setTypedText(touchgfx::TypedText(T___SINGLEUSE_2STF));
     add(textArea1_2);
 
     textArea1_2_1.setXY(158, 504);
@@ -214,4 +217,17 @@ mainViewBase::~mainViewBase()
 void mainViewBase::setupScreen()
 {
 
+}
+
+void mainViewBase::handleTickEvent()
+{
+    frameCountInteraction1Interval++;
+    if(frameCountInteraction1Interval == TICK_INTERACTION1_INTERVAL)
+    {
+        //Interaction1
+        //When every N tick call virtual function
+        //Call function1
+        function1();
+        frameCountInteraction1Interval = 0;
+    }
 }

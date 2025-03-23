@@ -10,6 +10,7 @@
 #include <touchgfx/widgets/Box.hpp>
 #include <touchgfx/widgets/BoxWithBorder.hpp>
 #include <touchgfx/widgets/TextArea.hpp>
+#include <touchgfx/widgets/TextAreaWithWildcard.hpp>
 #include <touchgfx/containers/clock/DigitalClock.hpp>
 #include <touchgfx/widgets/ButtonWithLabel.hpp>
 
@@ -19,6 +20,15 @@ public:
     mainViewBase();
     virtual ~mainViewBase();
     virtual void setupScreen();
+    virtual void handleTickEvent();
+
+    /*
+     * Virtual Action Handlers
+     */
+    virtual void function1()
+    {
+        // Override and implement this function in main
+    }
 
 protected:
     FrontendApplication& application() {
@@ -36,7 +46,7 @@ protected:
     touchgfx::TextArea textArea1;
     touchgfx::TextArea textArea1_3;
     touchgfx::TextArea textArea1_3_1;
-    touchgfx::TextArea textArea1_2;
+    touchgfx::TextAreaWithOneWildcard textArea1_2;
     touchgfx::TextArea textArea1_2_1;
     touchgfx::TextArea textArea1_2_1_1;
     touchgfx::TextArea textArea1_2_1_1_1;
@@ -62,7 +72,19 @@ protected:
     touchgfx::TextArea textArea3;
     touchgfx::TextArea textArea4;
 
+    /*
+     * Wildcard Buffers
+     */
+    static const uint16_t TEXTAREA1_2_SIZE = 10;
+    touchgfx::Unicode::UnicodeChar textArea1_2Buffer[TEXTAREA1_2_SIZE];
+
 private:
+
+    /*
+     * Tick Counter Declarations
+     */
+    static const uint32_t TICK_INTERACTION1_INTERVAL = 60;
+    uint32_t frameCountInteraction1Interval;
 
 };
 

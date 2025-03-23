@@ -7,7 +7,8 @@
           {
             "Type": "Image",
             "Name": "image1",
-            "Y": -60,
+            "X": -320,
+            "Y": 62,
             "Width": 800,
             "Height": 600,
             "RelativeFilename": "solarcarimage1.png"
@@ -15,8 +16,7 @@
           {
             "Type": "Image",
             "Name": "image2",
-            "X": 11,
-            "Y": 11,
+            "Y": 62,
             "Width": 180,
             "Height": 59,
             "RelativeFilename": "SolarCarTeamLogo1.png"
@@ -66,7 +66,7 @@
           {
             "Type": "BoxWithBorder",
             "Name": "boxWithBorder1",
-            "Y": 17,
+            "Y": 3,
             "Width": 280,
             "Height": 463,
             "Color": {
@@ -79,9 +79,10 @@
           {
             "Type": "BoxWithBorder",
             "Name": "boxWithBorder1_2",
-            "X": 510,
+            "X": 280,
+            "Y": 480,
             "Width": 290,
-            "Height": 303,
+            "Height": 320,
             "Color": {
               "Red": 250,
               "Green": 249,
@@ -92,10 +93,10 @@
           {
             "Type": "BoxWithBorder",
             "Name": "boxWithBorder1_1_1",
-            "X": 512,
-            "Y": 319,
+            "X": -10,
+            "Y": 480,
             "Width": 290,
-            "Height": 161,
+            "Height": 320,
             "Color": {
               "Red": 250,
               "Green": 249,
@@ -106,8 +107,7 @@
           {
             "Type": "TextArea",
             "Name": "textArea1",
-            "X": 516,
-            "Y": 8,
+            "Y": 480,
             "Width": 130,
             "Height": 24,
             "TextId": "__SingleUse_0I0I",
@@ -117,9 +117,9 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_3",
-            "X": 516,
-            "Y": 326,
-            "Width": 228,
+            "X": 280,
+            "Y": 540,
+            "Width": 197,
             "Height": 24,
             "TextId": "__SingleUse_2AGF",
             "TextRotation": "0",
@@ -128,9 +128,9 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_3_1",
-            "X": 516,
-            "Y": 397,
-            "Width": 199,
+            "X": 281,
+            "Y": 606,
+            "Width": 175,
             "Height": 24,
             "TextId": "__SingleUse_3LS9",
             "TextRotation": "0",
@@ -139,8 +139,8 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_2",
-            "X": 729,
-            "Y": 8,
+            "X": 158,
+            "Y": 480,
             "Width": 47,
             "Height": 24,
             "TextId": "__SingleUse_E4H2",
@@ -154,8 +154,8 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_2_1",
-            "X": 729,
-            "Y": 40,
+            "X": 158,
+            "Y": 504,
             "Width": 73,
             "Height": 24,
             "TextId": "__SingleUse_61H7",
@@ -168,8 +168,8 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_2_1_1",
-            "X": 729,
-            "Y": 73,
+            "X": 158,
+            "Y": 528,
             "Width": 47,
             "Height": 24,
             "TextId": "__SingleUse_5173",
@@ -183,8 +183,8 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_2_1_1_1",
-            "X": 729,
-            "Y": 106,
+            "X": 158,
+            "Y": 552,
             "Width": 39,
             "Height": 24,
             "TextId": "__SingleUse_YOPN",
@@ -198,8 +198,8 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_2_1_1_1_1",
-            "X": 729,
-            "Y": 140,
+            "X": 158,
+            "Y": 576,
             "Width": 47,
             "Height": 24,
             "TextId": "__SingleUse_KKYN",
@@ -213,8 +213,8 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_2_1_1_1_1_1",
-            "X": 729,
-            "Y": 174,
+            "X": 158,
+            "Y": 600,
             "Width": 60,
             "Height": 24,
             "TextId": "__SingleUse_Z9JE",
@@ -228,8 +228,8 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_2_1_1_1_1_1_1",
-            "X": 729,
-            "Y": 240,
+            "X": 229,
+            "Y": 648,
             "Width": 30,
             "Height": 24,
             "TextId": "__SingleUse_Z25H",
@@ -243,8 +243,8 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_2_1_1_1_1_1_1_1",
-            "X": 729,
-            "Y": 209,
+            "X": 158,
+            "Y": 624,
             "Width": 71,
             "Height": 24,
             "TextId": "__SingleUse_WSHO",
@@ -257,8 +257,8 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_2_1_1_1_1_1_1_1_1",
-            "X": 729,
-            "Y": 271,
+            "X": 158,
+            "Y": 672,
             "Width": 30,
             "Height": 24,
             "TextId": "__SingleUse_QA52",
@@ -272,8 +272,8 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_2_1_1_1_1_1_1_1_1_1",
-            "X": 568,
-            "Y": 361,
+            "X": 329,
+            "Y": 576,
             "Width": 95,
             "Height": 24,
             "TextId": "__SingleUse_DCK3",
@@ -283,8 +283,8 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_2_1_1_1_1_1_1_1_1_1_1",
-            "X": 568,
-            "Y": 434,
+            "X": 318,
+            "Y": 640,
             "Width": 121,
             "Height": 24,
             "TextId": "__SingleUse_TBWX",
@@ -294,8 +294,7 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_1",
-            "X": 516,
-            "Y": 40,
+            "Y": 504,
             "Width": 105,
             "Height": 24,
             "TextId": "__SingleUse_I1HZ",
@@ -305,8 +304,7 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_1_1",
-            "X": 516,
-            "Y": 73,
+            "Y": 528,
             "Width": 126,
             "Height": 24,
             "TextId": "__SingleUse_15K0",
@@ -316,8 +314,7 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_1_1_1",
-            "X": 516,
-            "Y": 106,
+            "Y": 552,
             "Width": 109,
             "Height": 24,
             "TextId": "__SingleUse_APHG",
@@ -327,8 +324,7 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_1_1_1_1",
-            "X": 516,
-            "Y": 140,
+            "Y": 576,
             "Width": 150,
             "Height": 24,
             "TextId": "__SingleUse_Q71M",
@@ -338,8 +334,8 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_1_1_1_1_1",
-            "X": 516,
-            "Y": 174,
+            "X": -1,
+            "Y": 600,
             "Width": 129,
             "Height": 24,
             "TextId": "__SingleUse_3XPC",
@@ -349,8 +345,7 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_1_1_1_1_1_1",
-            "X": 516,
-            "Y": 209,
+            "Y": 624,
             "Width": 152,
             "Height": 24,
             "TextId": "__SingleUse_170P",
@@ -360,8 +355,8 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_1_1_1_1_1_1_1",
-            "X": 516,
-            "Y": 240,
+            "X": -1,
+            "Y": 648,
             "Width": 209,
             "Height": 24,
             "TextId": "__SingleUse_I3OA",
@@ -371,8 +366,7 @@
           {
             "Type": "TextArea",
             "Name": "textArea1_1_1_1_1_1_1_1_1",
-            "X": 516,
-            "Y": 271,
+            "Y": 672,
             "Width": 92,
             "Height": 24,
             "TextId": "__SingleUse_60S6",
@@ -395,7 +389,7 @@
           {
             "Type": "TextArea",
             "Name": "textArea2",
-            "X": 362,
+            "X": 350,
             "Y": 162,
             "Width": 76,
             "Height": 24,
@@ -406,8 +400,8 @@
           {
             "Type": "TextArea",
             "Name": "textArea2_1",
-            "X": 304,
-            "Y": 192,
+            "X": 288,
+            "Y": 189,
             "Width": 192,
             "Height": 41,
             "TextId": "__SingleUse_0L5N",
@@ -417,8 +411,8 @@
           {
             "Type": "ButtonWithLabel",
             "Name": "buttonWithLabel1",
-            "X": 313,
-            "Y": 396,
+            "X": 301,
+            "Y": 384,
             "Width": 175,
             "Height": 50,
             "Pressed": "__generated\\alternate_theme_images_widgets_button_regular_height_50_small_round_pressed.png",
@@ -502,7 +496,7 @@
     "LandscapeSkinY": 0,
     "PortraitSkinX": 0,
     "PortraitSkinY": 0,
-    "DisplayOrientation": "Landscape",
+    "DisplayOrientation": "Portrait",
     "Family": "STM32U5",
     "SubFamily": "STM32U599/5A9",
     "Toolchain": "STM32CubeIDE",
@@ -514,6 +508,6 @@
     ],
     "AdditionalFeatures": []
   },
-  "Version": "4.24.0",
+  "Version": "4.24.2",
   "CreatedBy": "4.24.0"
 }

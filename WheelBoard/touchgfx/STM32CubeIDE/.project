@@ -595,6 +595,16 @@
 			<locationURI>PARENT-1-PROJECT_LOC/TouchGFX/generated/fonts/src/CachedFont.cpp</locationURI>
 		</link>
 		<link>
+			<name>Application/User/generated/CompressedFontCache.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/TouchGFX/generated/fonts/src/CompressedFontCache.cpp</locationURI>
+		</link>
+		<link>
+			<name>Application/User/generated/CompressedUnmappedFontCache.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/TouchGFX/generated/fonts/src/CompressedUnmappedFontCache.cpp</locationURI>
+		</link>
+		<link>
 			<name>Application/User/generated/FontCache.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/TouchGFX/generated/fonts/src/FontCache.cpp</locationURI>
