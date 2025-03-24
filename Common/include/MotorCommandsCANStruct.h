@@ -2,9 +2,9 @@
     #ifndef motor_commands_CAN_Struct
     #define motor_commands_CAN_Struct
 
-    #include "CANStruct.h"
-    #include "dbc/structs/rivanna3.h"
-    #include "log.h"
+#include "CANStruct.h"
+#include "dbc/structs/rivanna3.h"
+#include "log.h"
 
     typedef struct MotorCommands : CANStruct, rivanna3_motor_commands_t {
         void serialize(CANMessage *message) {
@@ -12,6 +12,24 @@
                 RIVANNA3_MOTOR_COMMANDS_LENGTH);
             message->len = RIVANNA3_MOTOR_COMMANDS_LENGTH;
         }
+typedef struct MotorCommands : CANStruct, rivanna3_motor_commands_t {
+    MotorCommands() {
+        braking = 0;
+        regen_drive = 0;
+        manual_drive = 0;
+        cruise_drive = 0;
+        brake_pedal = 0;
+        throttle = 0;
+        cruise_speed = 0;
+        regen_braking = 0;
+        throttle_pedal = 0;
+    }
+
+    void serialize(CANMessage *message) {
+        rivanna3_motor_commands_pack(message->data, this,
+                                         RIVANNA3_MOTOR_COMMANDS_LENGTH);
+        message->len = RIVANNA3_MOTOR_COMMANDS_LENGTH;
+    }
 
         void deserialize(CANMessage *message) {
             rivanna3_motor_commands_unpack(this, message->data,

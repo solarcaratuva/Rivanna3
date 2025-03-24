@@ -16,6 +16,7 @@ class PowerCANInterface : public CANInterface {
     void handle(DashboardCommands *can_struct);
     void handle(HeartBeat *can_struct);
     int send(CANStruct *can_struct);
+    int send_message(CANMessage *message);
 
   private:
     void message_handler() override;
