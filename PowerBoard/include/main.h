@@ -14,4 +14,6 @@ extern bool has_faulted;
 extern bool cruise_control_enabled;
 extern bool cruise_control_brake_latch;
 
+void fault_occurred();
+
 #endif

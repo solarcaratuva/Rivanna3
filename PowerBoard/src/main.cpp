@@ -1,4 +1,3 @@
-// #include "ECUCANStructs.h"
 #include "PowerCANInterface.h"
 #include "Printing.h"
 #include "ThisThread.h"
@@ -58,10 +57,11 @@ bool contact_12_error = false; //TODO currently does nothing
 bool has_faulted = false; // true if there is any fault that locks the car until reset
 bool regen_enabled = false;
 bool cruise_control_enabled = false;
-
 bool cruise_control_brake_latch = false;
 
 CruiseControl cruise_control;
+
+HeartBeatSystem heartbeatSystem(fault_occurred, &queue, HB_POWER_BOARD);
 
 /**
  * Function that handles the flashing of the turn signals and hazard lights.
@@ -177,41 +177,30 @@ void fault_occurred() {
     set_motor_status();
 }
 
-Callback<void()> handle_wheel_timeout = fault_occurred;
-
-HeartBeatSystem hbs(handle_wheel_timeout, &queue, HB_POWER_BOARD);
-
-// Handle heartbeat message from powerboard
-void PowerCANInterface::handle(HeartBeat *can_struct){
-    hbs.refreshTimer(can_struct);
-}
-
-/**
-* Function that when called creates and sends a Heartbeat can message from PowerBoard
- */
+// Function that when called creates and sends a Heartbeat can message from PowerBoard
 void send_powerboard_heartbeat() {
-    HeartBeat power_board_hb = hbs.send_heartbeat();
-
+    HeartBeat power_board_hb = heartbeatSystem.send_heartbeat();
     vehicle_can_interface.send(&power_board_hb);
 }
 
 // main method
 int main() {
-    // set initial heartbeat timer (Call handle_powerborad_timeout in 100ms)
-    hbs.initializeTimeouts(true, true, false);
-    
-    // Send powerboard heartbeat out every 50 ms
-    queue.call_every(50ms, send_powerboard_heartbeat);
-
     log_set_level(LOG_LEVEL);
+    log_info("PowerBoard starting up");
 
     drl.write(PIN_ON); // the digital running light is always on
+
+    heartbeatSystem.initializeTimeouts(false, false, false); // set initial heartbeat timer (Call handle_powerborad_timeout in 100ms)
+    queue.call_every(50ms, send_powerboard_heartbeat); // Send powerboard heartbeat out every 50 ms
+
     queue.call_every(MOTOR_CONTROL_PERIOD, set_motor_status);
     queue.call_every(SIGNAL_FLASH_PERIOD, signal_flash_handler);
     queue.call_every(BRAKE_LIGHTS_UPDATE_PERIOD, set_brake_lights);
     queue.call_every(MOTOR_REQUEST_FRAMES_PERIOD, request_motor_frames);
     queue.dispatch_forever();
 }
+
+// CAN Message handlers
 
 // DashboardCommands CAN message handler
 void PowerCANInterface::handle(DashboardCommands *can_struct){
@@ -236,7 +225,10 @@ void PowerCANInterface::handle(DashboardCommands *can_struct){
     queue.call(set_motor_status);
 }
 
-// CAN Message handlers
+// Handle heartbeat message
+void PowerCANInterface::handle(HeartBeat *can_struct){
+    heartbeatSystem.refreshTimer(can_struct);
+}
 
 // Message_forwarder is called whenever the MotorControllerCANInterface gets a CAN message.
 // This forwards the message to the vehicle can bus.
