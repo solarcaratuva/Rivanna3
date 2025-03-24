@@ -6,12 +6,12 @@
 #include "dbc/structs/rivanna3.h"
 #include "log.h"
 
-    typedef struct MotorCommands : CANStruct, rivanna3_motor_commands_t {
-        void serialize(CANMessage *message) {
-            rivanna3_motor_commands_pack(message->data, this,
-                RIVANNA3_MOTOR_COMMANDS_LENGTH);
-            message->len = RIVANNA3_MOTOR_COMMANDS_LENGTH;
-        }
+    // typedef struct MotorCommands : CANStruct, rivanna3_motor_commands_t {
+    //     void serialize(CANMessage *message) {
+    //         rivanna3_motor_commands_pack(message->data, this,
+    //             RIVANNA3_MOTOR_COMMANDS_LENGTH);
+    //         message->len = RIVANNA3_MOTOR_COMMANDS_LENGTH;
+    //     }
 typedef struct MotorCommands : CANStruct, rivanna3_motor_commands_t {
     MotorCommands() {
         braking = 0;

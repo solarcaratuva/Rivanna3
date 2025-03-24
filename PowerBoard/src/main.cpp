@@ -62,24 +62,6 @@ bool cruise_control_enabled = false;
 bool cruise_control_brake_latch = false;
 
 CruiseControl cruise_control;
-void wheel_timeout() { log_error("Wheel Board Timeout"); }
-
-Callback<void()> handle_wheel_timeout = wheel_timeout;
-HeartBeatSystem hbs(handle_wheel_timeout, &queue, HB_POWER_BOARD);
-
-// Handle heartbeat message from powerboard
-void PowerCANInterface::handle(HeartBeat *can_struct){
-    hbs.refreshTimer(can_struct);
-}
-
-/**
-* Function that when called creates and sends a Heartbeat can message from PowerBoard
- */
-void send_powerboard_heartbeat() {
-    HeartBeat power_board_hb = hbs.send_heartbeat();
-
-    vehicle_can_interface.send(&power_board_hb);
-}
 
 /**
  * Function that handles the flashing of the turn signals and hazard lights.
@@ -193,6 +175,24 @@ void fault_occurred() {
     log_error("A fault occurred! Now putting the car in a safe state.");
     has_faulted = true;
     set_motor_status();
+}
+
+Callback<void()> handle_wheel_timeout = fault_occurred;
+
+HeartBeatSystem hbs(handle_wheel_timeout, &queue, HB_POWER_BOARD);
+
+// Handle heartbeat message from powerboard
+void PowerCANInterface::handle(HeartBeat *can_struct){
+    hbs.refreshTimer(can_struct);
+}
+
+/**
+* Function that when called creates and sends a Heartbeat can message from PowerBoard
+ */
+void send_powerboard_heartbeat() {
+    HeartBeat power_board_hb = hbs.send_heartbeat();
+
+    vehicle_can_interface.send(&power_board_hb);
 }
 
 // main method
