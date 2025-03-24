@@ -1,109 +1,73 @@
-#include <mbed.h>
-#include <events/EventQueue.h>
-#include "HeartBeatCANStruct.h"
+#include "HeartBeatSystem.h"
 
-#define TELEMETRY_BOARD 1
-#define WHEEL_BOARD 2
-#define POWER_BOARD 3
-#define TIME_BEFORE_TIMEOUT_MS 100ms
-#define HEARTBEAT_SEND_PERIOD_MS 50ms
+HeartBeatSystem::HeartBeatSystem(Callback<void()> timeout_function, EventQueue* queue, uint8_t which_board) :
+queue(queue), which_board(which_board), timeout_function(timeout_function) {}
 
-class HeartBeat {
-    private:
-        CANInterface* can_interface;
-        Timeout WheelBoard_timeout;
-        Timeout TelemetryBoard_timeout;
-        Timeout PowerBoard_timeout;
-        EventQueue* queue;
-        uint8_t which_board;
-        void (*timeout_function)();
-    
-        void send_heartbeat(uint8_t to_which_board) {
-            HeartBeat heartbeat_struct;
-
-            heartbeat_struct.from_telemetry_board = 0;
-            heartbeat_struct.from_wheel_board = 0;
-            heartbeat_struct.from_power_board = 0;
-
-            switch (to_which_board)
-            {
-            case WHEEL_BOARD:
-                heartbeat_struct.from_wheel_board = 1;
-                break;
-            
-            case TELEMETRY_BOARD:
-                heartbeat_struct.from_telemetry_board = 1;
-                break;
-
-            case POWER_BOARD:
-                heartbeat_struct.from_power_board = 1;
-                break;
-            default:
-                log_error("Invalid Board in Heartbeat Library send_heartbeat");
-                break;
-            }
-            
-            vehicle_can_interface->send(&heartbeat_struct);
-        }      
-    
-    public:
-        HeartBeat(Callback<void()> timeout_function, EventQueue* queue, CANInterface* can_interface, uint8_t which_board) :
-        timeout_function(timeout_function), queue(queue), can_interface(can_interface), which_board(which_board) {
-            switch (which_board)
-            {
-            case WHEEL_BOARD:
-                queue->call_every(HEARTBEAT_SEND_PERIOD_MS, send_heartbeat, WHEEL_BOARD);
-                break;
-
-            case TELEMETRY_BOARD:
-                queue->call_every(HEARTBEAT_SEND_PERIOD_MS, send_heartbeat, TELEMETRY_BOARD);
-                break;
-
-            case POWER_BOARD:
-                queue->call_every(HEARTBEAT_SEND_PERIOD_MS, send_heartbeat, POWER_BOARD);
-                break;
-
-            default:
-                log_error("Invalid which_board in Heartbeat Library Constructor");
-                break;
-            }
-        }
-
-        void initializeTimeout(bool start_telemetry_timeout, bool start_wheel_timeout, bool start_power_timeout) {
-            if (start_telemetry_timeout) {
-                TelemetryBoard_timeout->attach(queue->event(timeout_function), TIME_BEFORE_TIMEOUT_MS);
-            }
-
-            if (start_wheel_timeout) {
-                WheelBoard_timeout->attach(queue->event(timeout_function), TIME_BEFORE_TIMEOUT_MS);
-            }
-
-            if (start_power_timeout) {
-                PowerBoard_timeout->attach(queue->event(timeout_function), TIME_BEFORE_TIMEOUT_MS);
-            }
-        }
-
-        void refreshTimer(HeartBeat *can_struct) {
-            // if it received a heartbeat message for itself (should not happen), it will have a null pointer exception
-
-            if (can_struct->from_power_board == 0 && can_struct->from_wheel_board == 1 && can_struct->from_telemetry_board == 0) {
-                // Reset current timeout
-                WheelBoard_timeout->detach();
-                // Set new timeout for TIME_BEFORE_TIMEOUT_MS from now
-                WheelBoard_timeout->attach(queue->event(timeout_function), TIME_BEFORE_TIMEOUT_MS);
-            }
-            else if (can_struct->from_power_board == 0 && can_struct->from_wheel_board == 0 && can_struct->from_telemetry_board == 1){
-                TelemetryBoard_timeout->detach();
-
-                TelemetryBoard_timeout->attach(queue->event(timeout_function), TIME_BEFORE_TIMEOUT_MS);
-            }
-            else if (can_struct->from_power_board == 1 && can_struct->from_wheel_board == 0 && can_struct->from_telemetry_board == 0){
-                PowerBoard_timeout->detach();
-
-                PowerBoard_timeout->attach(queue->event(timeout_function), TIME_BEFORE_TIMEOUT_MS);
-            }
-        }
+void HeartBeatSystem::initializeTimeouts(bool start_telemetry_timeout, bool start_wheel_timeout, bool start_power_timeout) {
+    if (start_telemetry_timeout) {
+        TelemetryBoard_timeout.attach(queue->event(timeout_function), TIME_BEFORE_TIMEOUT_MS);
+        listenTelemetry = true;
     }
+
+    if (start_wheel_timeout) {
+        WheelBoard_timeout.attach(queue->event(timeout_function), TIME_BEFORE_TIMEOUT_MS);
+        listenWheel = true;
+    }
+
+    if (start_power_timeout) {
+        PowerBoard_timeout.attach(queue->event(timeout_function), TIME_BEFORE_TIMEOUT_MS);
+        listenPower = true;
+    }
+}
+
+void HeartBeatSystem::refreshTimer(HeartBeat *can_struct) {
+    // if it received a heartbeat message for itself (should not happen), it will have a null pointer exception
+
+    if (can_struct->from_wheel_board == 1 && listenWheel) {
+        // Reset current timeout
+        WheelBoard_timeout.detach();
+        // Set new timeout for TIME_BEFORE_TIMEOUT_MS from now
+        WheelBoard_timeout.attach(queue->event(timeout_function), TIME_BEFORE_TIMEOUT_MS);
+    }
+    else if (can_struct->from_telemetry_board == 1 && listenTelemetry){
+        TelemetryBoard_timeout.detach();
+
+        TelemetryBoard_timeout.attach(queue->event(timeout_function), TIME_BEFORE_TIMEOUT_MS);
+    }
+    else if (can_struct->from_power_board == 1 && listenPower){
+        PowerBoard_timeout.detach();
+
+        PowerBoard_timeout.attach(queue->event(timeout_function), TIME_BEFORE_TIMEOUT_MS);
+    }
+}
+
+HeartBeat* HeartBeatSystem::send_heartbeat(uint8_t to_which_board) {
+    HeartBeat heartbeat_struct;
+
+    heartbeat_struct.from_telemetry_board = 0;
+    heartbeat_struct.from_wheel_board = 0;
+    heartbeat_struct.from_power_board = 0;
+
+    switch (to_which_board)
+    {
+    case HB_WHEEL_BOARD:
+        heartbeat_struct.from_wheel_board = 1;
+        break;
+    
+    case HB_TELEMETRY_BOARD:
+        heartbeat_struct.from_telemetry_board = 1;
+        break;
+
+    case HB_POWER_BOARD:
+        heartbeat_struct.from_power_board = 1;
+        break;
+    default:
+        log_error("Invalid Board in Heartbeat Library send_heartbeat");
+        break;
+    }
+    
+    return &heartbeat_struct;
+}    
     // // send xyz_heartbeat
     // void send_heartbeat(std::string to_which_board) {
     //     HeartBeat heartbeat_struct;

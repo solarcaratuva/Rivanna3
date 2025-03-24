@@ -12,6 +12,7 @@
 #include "main.h"
 #include "MotorCommandsCANStruct.h"
 #include "MotorControllerCANInterface.h"
+#include "HeartBeatSystem.h"
 
 #define LOG_LEVEL                       LOG_DEBUG
 #define SIGNAL_FLASH_PERIOD             1s
@@ -19,7 +20,6 @@
 #define MOTOR_CONTROL_PERIOD            10ms
 
 #define MAX_REGEN                       256
-
 
 EventQueue queue(32 * EVENTS_EVENT_SIZE);
 
@@ -61,40 +61,21 @@ bool cruise_control_enabled = false;
 bool cruise_control_increase = false;
 bool cruise_control_decrease = false;
 
-Timeout WheelBoard_timeout;
-Timeout TelemetryBoard_timeout;
+void wheel_timeout() { log_error("Wheel Board Timeout"); }
 
-void handle_wheel_timeout() { printf("Wheel Board Timeout"); }
-void handle_telemetry_timeout() { printf("Telemetry Board Timeout"); }
+Callback<void()> handle_wheel_timeout = wheel_timeout;
+HeartBeatSystem hbs(handle_wheel_timeout, &queue, HB_POWER_BOARD);
 
 // Handle heartbeat message from powerboard
 void PowerCANInterface::handle(HeartBeat *can_struct){
-    // from wheel
-    if (can_struct->from_power_board == 0 && can_struct->from_wheel_board == 1 && can_struct->from_telemetry_board == 0) {
-        // Reset current timeout
-        WheelBoard_timeout.detach();
-        // Set new timeout for 100ms from now
-        WheelBoard_timeout.attach(
-        queue.event(handle_wheel_timeout), 100ms); // was event_queue in original motor main.cpp
-    }
-    else if (can_struct->from_power_board == 0 && can_struct->from_wheel_board == 0 && can_struct->from_telemetry_board == 1){
-        // Reset current timeout
-        TelemetryBoard_timeout.detach();
-        // Set new timeout for 100ms from now
-        TelemetryBoard_timeout.attach(
-        queue.event(handle_telemetry_timeout), 100ms); // was event_queue in original motor main.cpp
-    }
+    hbs.refreshTimer(can_struct);
 }
 
 /**
 * Function that when called creates and sends a Heartbeat can message from PowerBoard
  */
 void send_powerboard_heartbeat() {
-    HeartBeat powerboard_heartbeat_struct;
-    powerboard_heartbeat_struct.from_telemetry_board = 0;
-    powerboard_heartbeat_struct.from_wheel_board = 0;
-    powerboard_heartbeat_struct.from_power_board = 1;
-    vehicle_can_interface.send(&powerboard_heartbeat_struct);
+    vehicle_can_interface.send(hbs.send_heartbeat(HB_POWER_BOARD));
 }
 
 /**
@@ -214,10 +195,7 @@ void set_brake_lights(){
 // main method
 int main() {
     // set initial heartbeat timer (Call handle_powerborad_timeout in 100ms)
-    WheelBoard_timeout.attach(
-        queue.event(handle_wheel_timeout), 100ms); // was event_queue in original motor main.cpp
-    TelemetryBoard_timeout.attach(
-        queue.event(handle_telemetry_timeout), 100ms); // was event_queue in original motor main.cpp
+    hbs.initializeTimeouts(true, true, false);
     
     // Send powerboard heartbeat out every 50 ms
     queue.call_every(50ms, send_powerboard_heartbeat);
