@@ -75,7 +75,7 @@ void PowerCANInterface::handle(HeartBeat *can_struct){
 * Function that when called creates and sends a Heartbeat can message from PowerBoard
  */
 void send_powerboard_heartbeat() {
-    HeartBeat power_board_hb = hbs.send_heartbeat(HB_POWER_BOARD);
+    HeartBeat power_board_hb = hbs.send_heartbeat();
 
     vehicle_can_interface.send(&power_board_hb);
 }
