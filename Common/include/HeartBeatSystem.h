@@ -39,7 +39,7 @@ public:
     void refreshTimer(HeartBeat* can_struct);
 
     // Return a heartbeat message to specified board
-    HeartBeat* send_heartbeat(uint8_t to_which_board);
+    HeartBeat send_heartbeat(uint8_t to_which_board);
 };
 
 #endif // HEARTBEAT_SYSTEM_H

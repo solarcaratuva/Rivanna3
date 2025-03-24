@@ -41,7 +41,7 @@ void HeartBeatSystem::refreshTimer(HeartBeat *can_struct) {
     }
 }
 
-HeartBeat* HeartBeatSystem::send_heartbeat(uint8_t to_which_board) {
+HeartBeat HeartBeatSystem::send_heartbeat(uint8_t to_which_board) {
     HeartBeat heartbeat_struct;
 
     heartbeat_struct.from_telemetry_board = 0;
@@ -66,7 +66,7 @@ HeartBeat* HeartBeatSystem::send_heartbeat(uint8_t to_which_board) {
         break;
     }
     
-    return &heartbeat_struct;
+    return heartbeat_struct;
 }    
     // // send xyz_heartbeat
     // void send_heartbeat(std::string to_which_board) {
