@@ -3,8 +3,8 @@
 
 #include <mbed.h>
 
-#define THROTTLE_ADR    0x01 // TODO
-#define REGEN_ADR       0x02
+#define THROTTLE_ADR    (0b0101111 << 1)
+#define REGEN_ADR       (0b0101110 << 1)
 
 class MotorInterface {
 
