@@ -14,9 +14,12 @@ class PowerCANInterface : public CANInterface {
     void handle(BPSError *can_struct);
     void handle(DashboardCommands *can_struct);
     int send(CANStruct *can_struct);
-
+    void handle(BPSPackInformation *can_struct);
   private:
     void message_handler() override;
+
 };
+
+
 
 #endif

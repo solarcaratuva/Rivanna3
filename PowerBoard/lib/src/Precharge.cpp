@@ -11,6 +11,7 @@
 #include "main.h"
 #include <mbed.h>
 #include <rtos.h>
+#include "CAN.h"
 
 #define LOG_LEVEL          LOG_DEBUG
 #define MAIN_LOOP_PERIOD   1s
@@ -41,6 +42,7 @@ bool has_faulted = false;
 int low_cell_voltage_threshold = 27500;
 int high_cell_voltage_threshold = 42000;
 uint16_t BPS_Cell_Messages = 0;
+CAN precharge_can(MAIN_CAN_RX, MAIN_CAN_TX);
 
 void start_precharge() {
     //check conditions
@@ -55,6 +57,17 @@ void start_discharge() {
 
 void battery_precharge(){
     //precharge for battery & mppt
+    CANMessage message;
+    if (precharge_can.read(message)) {
+        if (message.id == BPSPackInformation_MESSAGE_ID) {
+            BPSPackInformation can_struct;
+            can_struct.deserialize(&message);
+            pack_voltage = static_cast<double>(can_struct.pack_voltage) / 100.0;
+            //debug statement
+            log_debug("Updated pack voltage from CAN: %.2f V", pack_voltage);
+        }
+    }
+
     while (true) {
         //check for faulting
         if (has_faulted) {
@@ -124,6 +137,7 @@ void motor_precharge(){
         ThisThread::sleep_for(CHARGE_PAUSE);
     }
 }
+
 
 
 //NOTE: ADD TO MAIN
