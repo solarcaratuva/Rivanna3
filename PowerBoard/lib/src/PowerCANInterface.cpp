@@ -76,14 +76,13 @@ void PowerCANInterface::message_handler() {
                 can_struct.deserialize(&message);
                 handle(&can_struct);
             }
-            // else if (message.id == DASHBOARD_COMMANDS_ID) {
-            //     DashboardCommands can_struct;
-            //     can_struct.deserialize(&message);
-            //     handle(&can_struct);
-            // }
-
             else if (message.id == DASHBOARD_COMMANDS_ID) {
                 DashboardCommands can_struct;
+                can_struct.deserialize(&message);
+                handle(&can_struct);
+            }
+            else if (message.id == BPSPackInformation_MESSAGE_ID) {
+                BPSPackInformation can_struct;
                 can_struct.deserialize(&message);
                 handle(&can_struct);
             }
