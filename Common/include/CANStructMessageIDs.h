@@ -25,6 +25,7 @@
 #define BPSCellVoltage_MESSAGE_ID                      BPS_BPS_CELL_VOLTAGE_FRAME_ID
 #define BPSCellTemperature_MESSAGE_ID                  BPS_BPS_CELL_TEMPERATURE_FRAME_ID
 #define DASHBOARD_COMMANDS_ID           RIVANNA3_DASHBOARD_COMMANDS_FRAME_ID           
+#define HEARTBEAT_ID           RIVANNA3_HEART_BEAT_FRAME_ID           
 
 
 // Motor Controller message IDs

@@ -4,6 +4,7 @@ add_library(PowerBoard-lib
     src/MotorInterface.cpp
     src/ReadPedals.cpp
     src/Precharge.cpp
+    src/CruiseControl.cpp
 )
 
 target_include_directories(PowerBoard-lib PUBLIC include)
