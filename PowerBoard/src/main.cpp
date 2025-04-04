@@ -23,8 +23,6 @@
 #define MOTOR_REQUEST_FRAMES_PERIOD     10ms
 #define MAX_REGEN                       256
 
-EventQueue queue(32 * EVENTS_EVENT_SIZE);
-
 const bool PIN_ON = true;
 const bool PIN_OFF = false;
 
@@ -217,6 +215,11 @@ int main() {
 
 // CAN Message handlers
 
+// Handle heartbeat message
+void PowerCANInterface::handle(HeartBeat *can_struct){
+    heartbeatSystem.refreshTimer(can_struct);
+}
+
 // DashboardCommands CAN message handler
 void PowerCANInterface::handle(DashboardCommands *can_struct){
     flashHazards = can_struct->hazards;
@@ -238,12 +241,6 @@ void PowerCANInterface::handle(DashboardCommands *can_struct){
     }
     
     queue.call(set_motor_status);
-}
-
-// BPSError CAN message handler
-void PowerCANInterface::handle(BPSError *can_struct) {
-    bms_error = can_struct->internal_communications_fault || can_struct-> low_cell_voltage_fault || can_struct->open_wiring_fault || can_struct->current_sensor_fault || can_struct->pack_voltage_sensor_fault || can_struct->thermistor_fault || can_struct->canbus_communications_fault || can_struct->high_voltage_isolation_fault || can_struct->charge_limit_enforcement_fault || can_struct->discharge_limit_enforcement_fault || can_struct->charger_safety_relay_fault || can_struct->internal_thermistor_fault || can_struct->internal_memory_fault;
-    has_faulted = true;
 }
 
 void PowerCANInterface::handle(BPSPackInformation *can_struct) {
@@ -269,6 +266,7 @@ void MotorControllerCANInterface::handle(MotorControllerDriveStatus *can_struct)
 
 // CAN Message error handlers 
 
+// BPSError CAN message handler
 void PowerCANInterface::handle(BPSError *can_struct) {
     bms_error = can_struct->internal_communications_fault || can_struct-> low_cell_voltage_fault || can_struct->open_wiring_fault || can_struct->current_sensor_fault || can_struct->pack_voltage_sensor_fault || can_struct->thermistor_fault || can_struct->canbus_communications_fault || can_struct->high_voltage_isolation_fault || can_struct->charge_limit_enforcement_fault || can_struct->discharge_limit_enforcement_fault || can_struct->charger_safety_relay_fault || can_struct->internal_thermistor_fault || can_struct->internal_memory_fault;
     if (bms_error) {

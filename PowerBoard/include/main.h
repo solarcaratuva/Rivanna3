@@ -13,11 +13,11 @@ extern MotorInterface motor_interface;
 extern bool has_faulted;
 extern bool cruise_control_enabled;
 extern bool cruise_control_brake_latch;
+extern double pack_voltage;
+extern DigitalIn aux_input;
 
 void fault_occurred();
-extern DigitalIn aux_input;
-extern double pack_voltage;
-extern bool has_faulted;
+
 
 // precharge
 extern bool discharge_relay_status;
