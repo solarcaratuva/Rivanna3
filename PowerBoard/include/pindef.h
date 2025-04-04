@@ -4,8 +4,8 @@
 #ifdef TARGET_POWER_BOARD // if compiling for PowerBoard
 
 #define DEBUG_BTN       PC_13
-#define DEBUG_LED_1     PC_0
-#define DEBUG_LED_2     PC_1
+#define DEBUG_LED_1     PC_1
+#define DEBUG_LED_2     PC_2
 #define STROBE_EN       PC_2
 #define BRAKE_LIGHT_EN  PC_3
 #define RIGHT_TURN_EN   PA_0
