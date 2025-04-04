@@ -23,6 +23,22 @@
 #define PRECHARGE_CHARGING 2500ms
 #define PRECHARGE_OVERLAP  500ms
 
+//initializing pins
+AnalogIn throttle_pedal(THROTTLE_WIPER, 5.0f);
+AnalogIn brake_pedal(BRAKE_WIPER, 5.0f);
+AnalogIn cont_12(CONT_12);
+AnalogIn rc_voltage_motor(RC_VOLTAGE_MOTOR);
+AnalogIn rc_voltage_battery(RC_VOLTAGE_BATTERY);
+
+
+DigitalIn aux_input(AUX);
+double pack_voltage = 0.0;
+
+DigitalOut mppt_precharge(MPPT_PRE_EN);
+DigitalOut discharge_enable(DIS_CHARGE_EN);
+DigitalOut motor_precharge_output(MTR_PRE_EN);
+DigitalOut charge_enable(CHARGE_EN);
+
 
 //initializing can interface
 PowerCANInterface vehicle_can_interface(MAIN_CAN_RX, MAIN_CAN_TX, MAIN_CAN_STBY);
@@ -133,7 +149,7 @@ void motor_precharge(){
 
     //main loop
     while (true) {
-        Fault_trap();
+        fault_trap();
         ThisThread::sleep_for(CHARGE_PAUSE);
     }
 }

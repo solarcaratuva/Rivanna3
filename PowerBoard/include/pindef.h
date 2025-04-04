@@ -16,6 +16,9 @@
 #define THROTTLE_WIPER  PA_3
 #define BRAKE_WIPER     PA_4
 
+#define RC_VOLTAGE_MOTOR    PA_5   
+#define RC_VOLTAGE_BATTERY  PA_6 
+
 
 #define MTR_CAN_TX      PA_12
 #define MTR_CAN_RX      PA_11
