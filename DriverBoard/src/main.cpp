@@ -8,7 +8,7 @@
 #include <rtos.h>
 
 #define LOG_LEVEL          LOG_ERROR
-#define MAIN_LOOP_PERIOD   1s
+#define MAIN_LOOP_PERIOD   2s
 #define MOTOR_LOOP_PERIOD  10ms
 #define ERROR_CHECK_PERIOD 100ms
 #define FLASH_PERIOD       500ms
@@ -41,9 +41,6 @@ bool left_on = false;
 bool left_off = true;
 Thread signalFlashThread;
 Thread motor_thread;
-
-
-
 
 
 DigitalOut brake_lights(BRAKE_LIGHTS_OUT);
@@ -266,8 +263,8 @@ int main() {
     log_set_level(LOG_LEVEL);
     log_debug("Start main()");
     
-    motor_thread.start(motor_message_handler);
-    signalFlashThread.start(signalFlashHandler);
+    // motor_thread.start(motor_message_handler);
+    // signalFlashThread.start(signalFlashHandler);
 
     drl = PIN_ON;
 
@@ -280,13 +277,13 @@ int main() {
 
         //  hazards, brake_lights, headlights, left_turn_signal,
         //              right_turn_signal
-        power_aux_out.hazards = flashHazards;
-        power_aux_out.brake_lights = brakeLightsSwitch;
-        power_aux_out.headlights = 0;
-        power_aux_out.left_turn_signal = flashLSignal;
-        power_aux_out.right_turn_signal = flashRSignal;
+        // power_aux_out.hazards = flashHazards;
+        // power_aux_out.brake_lights = brakeLightsSwitch;
+        // power_aux_out.headlights = 0;
+        // power_aux_out.left_turn_signal = flashLSignal;
+        // power_aux_out.right_turn_signal = flashRSignal;
 
-        vehicle_can_interface.send(&power_aux_out);
+        // vehicle_can_interface.send(&power_aux_out);
     }
 }
 
