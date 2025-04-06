@@ -31,8 +31,9 @@ void TelemetryCANInterface::send_to_sd(CANMessage *message, uint16_t message_id)
     }
     FILE *fp = fopen("/sd/log.txt", "w");
     char message_data[17];
-    CANInterface::write_CAN_message_data_to_buffer(message_data, &message);
+    CANInterface::write_CAN_message_data_to_buffer(message_data, message);
     fprintf(fp, "Received message with ID: %d, Data: %s\n", message_id, message_data);
+    fclose(fp);
     // Example: Open file, write message->id and message->data, then close file.
 }
 
@@ -44,10 +45,11 @@ void TelemetryCANInterface::send_to_radio(CANMessage *message, uint16_t message_
     pc.set_format(8, BufferedSerial::None, 1);
 
     char message_data[17];
-    CANInterface::write_CAN_message_data_to_buffer(message_data, &message);
+    CANInterface::write_CAN_message_data_to_buffer(message_data, message);
     xbee.write(message_data, std::strlen(message_data));
 
     auto start = std::chrono::steady_clock::now();
+    char buffer[128];
     while (chrono::steady_clock::now() - start < 500ms) {
         if (xbee.readable()) {
             int n = xbee.read(buffer, sizeof(buffer));
@@ -62,11 +64,98 @@ void TelemetryCANInterface::message_handler() {
     while (true) {
         ThisThread::flags_wait_all(0x1);
         CANMessage message;
-        if (can.read(&message)) { 
-            log_debug("Received CAN message with ID: %d", message.id);
-            send_to_sd(&message, message.id);
-            send_to_radio(&message, message.id);
+        while (can.read(message)) {
+            char message_data[17];
+
+            //TODO: Write to serial message_id, message_data
+
+            CANInterface::write_CAN_message_data_to_buffer(message_data,
+                                                           &message);
+            log_debug("Received CAN message with ID 0x%03X Length %d Data 0x%s ", message.id, message.len, message_data);
+            if (message.id == PowerAuxError_MESSAGE_ID) {
+                PowerAuxError can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+            }
+            else if (message.id == MotorControllerError_MESSAGE_ID) {
+                MotorControllerError can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+            }
+            else if (message.id == BPSError_MESSAGE_ID) {
+                BPSError can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+            } 
+            else if (message.id == ECUMotorCommands_MESSAGE_ID) {
+                ECUMotorCommands can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+            }
+            else if (message.id == MotorControllerDriveStatus_MESSAGE_ID) {
+                MotorControllerDriveStatus can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+            }
+            else if (message.id == SolarCurrent_MESSAGE_ID) {
+                SolarCurrent can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+            }
+            else if (message.id == SolarTemp_MESSAGE_ID) {
+                SolarTemp can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+            }
+            else if (message.id == SolarVoltage_MESSAGE_ID) {
+                SolarVoltage can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+            }
+            else if (message.id == SolarPhoto_MESSAGE_ID) {
+                SolarPhoto can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+            }
+            else if (message.id == BPSPackInformation_MESSAGE_ID) {
+                BPSPackInformation can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+            }
+            else if (message.id == BPSCellVoltage_MESSAGE_ID) {
+                BPSCellVoltage can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+            }
+            else if (message.id == BPSCellTemperature_MESSAGE_ID) {
+                BPSCellTemperature can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+            }
+            else if (message.id == MotorControllerPowerStatus_MESSAGE_ID) {
+                MotorControllerPowerStatus can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+            }
+            else if(message.id == ECUPowerAuxCommands_MESSAGE_ID) {
+                ECUPowerAuxCommands can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+            }
         }
-        ThisThread::sleep_for(10ms);
     }
 }
