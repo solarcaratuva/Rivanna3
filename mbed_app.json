@@ -3,7 +3,9 @@
       "*": {
         "platform.stdio-baud-rate": 921600,
         "platform.stdio-buffered-serial": 1,
-        "platform.callback-nontrivial": true
+        "platform.callback-nontrivial": true,
+        "target.stdio_uart_tx": "PC_12",
+        "target.stdio_uart_rx": "PD_2"
       }
     }
   }
