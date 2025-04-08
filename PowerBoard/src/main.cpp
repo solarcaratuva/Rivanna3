@@ -46,7 +46,7 @@ I2C motor_control_serial_bus(MTR_SDA, MTR_SCL);
 MotorInterface motor_interface(motor_control_serial_bus);
 
 PowerCANInterface vehicle_can_interface(MAIN_CAN_RX, MAIN_CAN_TX, MAIN_CAN_STBY);
-MotorControllerCANInterface motor_controller_can_interface(MTR_CAN_RX, MTR_CAN_TX, NC); // TODO add standby pin
+MotorControllerCANInterface motor_controller_can_interface(MTR_CAN_RX, MTR_CAN_TX, MAIN_CAN_STBY);
 
 // these are global control variables, mostly set by received CAN messages
 bool flashLeftTurnSignal = false;
