@@ -271,19 +271,24 @@ int main() {
     while (true) {
         log_debug("Main thread loop");
 
-        read_inputs();
+        // read_inputs();
+
+        to_motor.throttle = 1;
+        to_motor.cruise_control_speed = 16;
+
+        vehicle_can_interface.send(&to_motor);
 
         ThisThread::sleep_for(MAIN_LOOP_PERIOD);
 
         //  hazards, brake_lights, headlights, left_turn_signal,
         //              right_turn_signal
-        // power_aux_out.hazards = flashHazards;
-        // power_aux_out.brake_lights = brakeLightsSwitch;
-        // power_aux_out.headlights = 0;
-        // power_aux_out.left_turn_signal = flashLSignal;
-        // power_aux_out.right_turn_signal = flashRSignal;
+        power_aux_out.hazards = true;
+        power_aux_out.brake_lights = true;
+        power_aux_out.headlights = 0;
+        power_aux_out.left_turn_signal = true;
+        power_aux_out.right_turn_signal = true;
 
-        // vehicle_can_interface.send(&power_aux_out);
+        vehicle_can_interface.send(&power_aux_out);
     }
 }
 
