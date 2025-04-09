@@ -29,7 +29,7 @@ void TelemetryCANInterface::send_to_sd(CANMessage *message, uint16_t message_id)
         log_error("SD Card: Error initializing SD card");
         return;
     }
-    FILE *fp = fopen("/sd/log.txt", "w");
+    FILE *fp = fopen("/sd/log.txt", "a");
     char message_data[17];
     CANInterface::write_CAN_message_data_to_buffer(message_data, message);
     fprintf(fp, "Received message with ID: %d, Data: %s\n", message_id, message_data);
