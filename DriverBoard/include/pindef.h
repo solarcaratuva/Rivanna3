@@ -63,8 +63,8 @@
 #define DRL_OUT PA_0
 #define BMS_STROBE_OUT PA_3
 
-#define CAN_RX PA_11
-#define CAN_TX PA_12
+#define CAN_RX PC_11
+#define CAN_TX PC_10
 #define CAN_STBY PB_10
 // Nucleo pins
 

@@ -8,7 +8,7 @@
 #include <rtos.h>
 
 #define LOG_LEVEL          LOG_ERROR
-#define MAIN_LOOP_PERIOD   2s
+#define MAIN_LOOP_PERIOD   1s
 #define MOTOR_LOOP_PERIOD  10ms
 #define ERROR_CHECK_PERIOD 100ms
 #define FLASH_PERIOD       500ms
