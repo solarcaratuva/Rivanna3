@@ -22,13 +22,13 @@ int PowerCANInterface::send(CANStruct *can_struct) {
 
     CANInterface::write_CAN_message_data_to_buffer(message_data, &message);
     if (result == 1) {
-        log_debug("Sent CAN message with ID 0x%03X Length %d Data 0x%s",
+        log_info("Sent CAN message with ID 0x%03X Length %d Data 0x%s",
                   message.id, message.len, message_data);
     } else {
         // this error logging requires changes to mbed-os. make the _can field
         // in CAN.h public instead of private log_error("%d",
         // HAL_FDCAN_GetError(&can._can.CanHandle));
-        log_error(
+        log_warn(
             "Failed to send CAN message with ID 0x%03X Length %d Data 0x%s",
             message.id, message.len, message_data);
     }
@@ -42,10 +42,10 @@ int PowerCANInterface::send_message(CANMessage *message) {
     char message_data[17];
     CANInterface::write_CAN_message_data_to_buffer(message_data, message);
     if (result == 1) {
-        log_debug("Sent CAN message with ID 0x%03X Length %d Data 0x%s",
+        log_info("Sent CAN message with ID 0x%03X Length %d Data 0x%s",
                   message->id, message->len, message_data);
     } else {
-        log_error(
+        log_warn(
             "Failed to send CAN message with ID 0x%03X Length %d Data 0x%s",
             message->id, message->len, message_data);
     }
