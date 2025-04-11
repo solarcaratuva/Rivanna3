@@ -16,42 +16,44 @@ void CANInterface::CANSetFrequency(int freq) { } //do nothing
 
 int CANInterface::CANWrite(CANMessage message) {
     uint8_t* CAN_messageData = message.data; //message data
-    uint8_t CAN_messageLength = message.len; //message length (excluding ID length)
+    uint8_t CAN_messageLength = message.len; //message length (excluding ID & Length bytes) (MAX: 8)
     uint16_t CAN_messageID = message.id;
 
-    char message_buffer[10];
+    char message_buffer[11];
     
     //first 2 bytes is the ID
     message_buffer[0] = (uint8_t) (CAN_messageID >> 8);
     message_buffer[1] = (uint8_t) (CAN_messageID & 0xFF);
 
+    //third byte is length
+    message_buffer[2] = CAN_messageLength;
+
     //fill rest of message:
     for(int i = 0; i < (int) CAN_messageLength; i++) {
-        message_buffer[i + 2] = CAN_messageData[i];
+        message_buffer[i + 3] = CAN_messageData[i];
     }
 
-    message_buffer[CAN_messageLength] = 10; //Raspberry PI needs a newline character 
-
-    if(serial.write(message_buffer, CAN_messageLength + 2) >= 0)
+    if(serial.write(message_buffer, CAN_messageLength + 3) >= 0)
         return 1;
     else
         return -1;
 }
 
 //Assumes first 2 bytes is the message ID
+//Third byte is length
 int CANInterface::CANRead(CANMessage &message) {
     //hang until it can read
     while(!serial.readable()){
         ThisThread::sleep_for(10ms); //sleep for 10ms
     }
 
-    char serial_buffer[10]; //max fake CANMessage size is 2 byte ID + 8 byte data
+    char serial_buffer[11]; //max fake CANMessage size is 2 byte ID + 8 byte data
     size_t bytes_read = serial.read(serial_buffer, sizeof(serial_buffer));
 
     //minimum length for a fake CAN message
     if (bytes_read >= 3) {
         message.id = (((int) serial_buffer[0])<<8) | (serial_buffer[1]); 
-        message.len = bytes_read - 2; 
+        message.len = bytes_read - 3; 
 
         //copy data
         for (int i = 0; i < (int) message.len; i++) {
