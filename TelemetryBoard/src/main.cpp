@@ -4,93 +4,42 @@
 #include "EEPROMDriver.h"
 #include "log.h"
 #include "TelemetryCANInterface.h"
+#include "ThisThread.h"
 
 #define LOG_LEVEL          LOG_DEBUG
-#define EEPROM_START_ADDR  0x0100   // EEPROM start address for message storage
-#define MESSAGE_SIZE       64       // Max size of stored message
 
-// Debug console over USB (ST-Link)
+BufferedSerial xbee(RADIO_TX, RADIO_RX, 9600);
 BufferedSerial pc(USB_TX, USB_RX, 115200);
+Thread listening_thread;
 
-// EEPROM interface (1MHz clock speed)
-EEPROMDriver eeprom(SPI2_MOSI, SPI2_MISO, SPI2_SCK, EEPROM_SELECT, 1000000);
-
-bool read_eeprom_message(char *buffer, size_t size);
-void write_eeprom_message(const char *message);
+// This thread function periodically sends out a “listening for CAN messages” message.
+void periodic_listening_message() {
+    const char *listening_message = "Listening for CAN messages\n";
+    
+    while (true) {
+        // Send the listening message to both the radio and the PC console
+        xbee.write(listening_message, strlen(listening_message));
+        pc.write(listening_message, strlen(listening_message));
+        
+        // Wait 5 seconds before sending again
+        ThisThread::sleep_for(5s);
+    }
+}
 
 int main() {
     log_set_level(LOG_LEVEL);
     log_debug("System startup...");
 
-    char message[MESSAGE_SIZE] = "Time to test EEPROM!";
-    write_eeprom_message(message);
-    // Attempt to read a valid message from EEPROM
-    bool validMessageFound = read_eeprom_message(message, MESSAGE_SIZE);
+    listening_thread.start(periodic_listening_message);
 
-    // If nothing valid is stored, fall back to a default
-    if (!validMessageFound) {
-        strcpy(message, "Default EEPROM Message");
-        write_eeprom_message(message);
-        log_debug("No valid message found. Stored default message in EEPROM.");
-    }
+    // Configure the serial interfaces.
+    xbee.set_format(8, BufferedSerial::None, 1);
+    pc.set_format(8, BufferedSerial::None, 1);
 
-    // Main loop: continuously send the EEPROM message over ST-Link
+    // Main thread can be left idle or used for other application tasks.
     while (true) {
-        log_debug("Sending over ST-Link: %s", message);
-
-        // Send the message to the USB debug console
-        pc.write(message, strlen(message));
-        pc.write("\r\n", 2);  // Newline for readability
-
-        ThisThread::sleep_for(1s);
+         ThisThread::sleep_for(1s);
     }
-}
-
-// Read message from EEPROM
-// Returns true if a valid message is found, false otherwise.
-bool read_eeprom_message(char *buffer, size_t size) {
-    memset(buffer, 0, size);
-
-    // Read stored message length
-    uint8_t len = eeprom.read_byte(EEPROM_START_ADDR);
-    // Check for invalid length (0xFF indicates an erased or empty EEPROM cell)
-    if (len == 0xFF || len == 0 || len > size - 1) {
-        log_debug("EEPROM: No valid message found.");
-        return false;
-    }
-
-    // Read each character
-    for (size_t i = 0; i < len; i++) {
-        buffer[i] = eeprom.read_byte(EEPROM_START_ADDR + 1 + i);
-    }
-    buffer[len] = '\0';  // Null-terminate
-    pc.write("EEPROM: Read message: ", 22);
-    pc.write(buffer, len);
-    pc.write("\r\n", 2);
-
-    return true;
-}
-
-// Write message to EEPROM
-void write_eeprom_message(const char *message) {
-    size_t len = strlen(message);
-
-    // Prevent overflow if message is too large
-    if (len > MESSAGE_SIZE - 1) {
-        len = MESSAGE_SIZE - 1;
-    }
-
-    // Store length at the first byte
-    eeprom.write_byte(EEPROM_START_ADDR, (uint8_t)len);
-
-    // Store message characters
-    for (size_t i = 0; i < len; i++) {
-        eeprom.write_byte(EEPROM_START_ADDR + 1 + i, message[i]);
-    }
-    pc.write("EEPROM: Wrote message: ", 22);
-    pc.write(message, len);
-    pc.write("\r\n", 2);
-    log_debug("EEPROM: Stored message '%s' (size: %d)", message, (int)len);
 }
 
 void TelemetryCANInterface::handle(PowerAuxError* can_struct) {
