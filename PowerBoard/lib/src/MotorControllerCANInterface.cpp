@@ -25,10 +25,10 @@ int MotorControllerCANInterface::request_frames(bool power_status_frame,
     char message_data[17];
     CANInterface::write_CAN_message_data_to_buffer(message_data, &message);
     if (result == 1) {
-        log_debug("Sent MotorControllerFrameRequest CAN message with Data 0x%s",
+        log_info("Sent MotorControllerFrameRequest CAN message with Data 0x%s",
                   message_data);
     } else {
-        log_error("Failed to send MotorControllerFrameRequest CAN message with "
+        log_warn("Failed to send MotorControllerFrameRequest CAN message with "
                   "Data 0x%s",
                   message_data);
     }

@@ -3,6 +3,7 @@ add_library(PowerBoard-lib
     src/MotorControllerCANInterface.cpp
     src/MotorInterface.cpp
     src/ReadPedals.cpp
+    src/Precharge.cpp
     src/CruiseControl.cpp
 )
 

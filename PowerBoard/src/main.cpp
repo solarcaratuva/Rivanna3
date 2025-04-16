@@ -13,34 +13,38 @@
 #include "MotorControllerCANInterface.h"
 #include "HeartBeatSystem.h"
 #include "CruiseControl.h"
+#include "Precharge.h"
+
 
 #define LOG_LEVEL                       LOG_DEBUG
 #define SIGNAL_FLASH_PERIOD             1s
 #define BRAKE_LIGHTS_UPDATE_PERIOD      10ms
 #define MOTOR_CONTROL_PERIOD            10ms
 #define MOTOR_REQUEST_FRAMES_PERIOD     10ms
-
 #define MAX_REGEN                       256
 
-EventQueue queue(32 * EVENTS_EVENT_SIZE);
+const bool PIN_ON = true;
+const bool PIN_OFF = false;
 
-constexpr bool PIN_ON = true;
-constexpr bool PIN_OFF = false;
+EventQueue queue(32 * EVENTS_EVENT_SIZE);
 
 DigitalOut bms_strobe(STROBE_EN);
 DigitalOut brake_lights(BRAKE_LIGHT_EN);
 DigitalOut right_turn_signal(RIGHT_TURN_EN);
 DigitalOut left_turn_signal(LEFT_TURN_EN);
 DigitalOut drl(DRL_EN);
-DigitalOut mppt_precharge(MPPT_PRE_EN);
-DigitalOut charge(CHARGE_EN);
-DigitalOut motor_precharge(MTR_PRE_EN);
-DigitalOut discharge(DIS_CHARGE_EN);
+DigitalOut mppt_precharge_en(MPPT_PRE_EN);
+DigitalOut charge_en(CHARGE_EN);
+DigitalOut motor_precharge_en(MTR_PRE_EN);
+DigitalOut discharge_en(DIS_CHARGE_EN);
 
 AnalogIn throttle_pedal(THROTTLE_WIPER, 5.0f);
 AnalogIn brake_pedal(BRAKE_WIPER, 5.0f);
 AnalogIn contactor(CONT_12);
 AnalogIn aux_battery(AUX);
+AnalogIn rc_voltage_motor(RC_VOLTAGE_MOTOR);
+AnalogIn rc_voltage_battery(RC_VOLTAGE_BATTERY);
+AnalogIn cont_12(CONT_12);
 
 I2C motor_control_serial_bus(MTR_SDA, MTR_SCL);
 MotorInterface motor_interface(motor_control_serial_bus);
@@ -58,8 +62,13 @@ bool has_faulted = false; // true if there is any fault that locks the car until
 bool regen_enabled = false;
 bool cruise_control_enabled = false;
 bool cruise_control_brake_latch = false;
+bool discharge_relay_status = false;
+bool charge_relay_status = false;
+double pack_voltage = 0.0;
 
 CruiseControl cruise_control;
+Thread motor_precharge_thread;
+Thread mppt_precharge_thread;
 
 HeartBeatSystem heartbeatSystem(fault_occurred, &queue, HB_POWER_BOARD);
 
@@ -197,10 +206,19 @@ int main() {
     queue.call_every(SIGNAL_FLASH_PERIOD, signal_flash_handler);
     queue.call_every(BRAKE_LIGHTS_UPDATE_PERIOD, set_brake_lights);
     queue.call_every(MOTOR_REQUEST_FRAMES_PERIOD, request_motor_frames);
+
+    motor_precharge_thread.start(motor_precharge);
+    mppt_precharge_thread.start(mppt_precharge);
+
     queue.dispatch_forever();
 }
 
 // CAN Message handlers
+
+// Handle heartbeat message
+void PowerCANInterface::handle(HeartBeat *can_struct){
+    heartbeatSystem.refreshTimer(can_struct);
+}
 
 // DashboardCommands CAN message handler
 void PowerCANInterface::handle(DashboardCommands *can_struct){
@@ -225,9 +243,10 @@ void PowerCANInterface::handle(DashboardCommands *can_struct){
     queue.call(set_motor_status);
 }
 
-// Handle heartbeat message
-void PowerCANInterface::handle(HeartBeat *can_struct){
-    heartbeatSystem.refreshTimer(can_struct);
+void PowerCANInterface::handle(BPSPackInformation *can_struct) {
+    discharge_relay_status = can_struct->discharge_relay_status;
+    charge_relay_status = can_struct->charge_relay_status;
+    pack_voltage = can_struct->pack_voltage / 100.0;
 }
 
 // Message_forwarder is called whenever the MotorControllerCANInterface gets a CAN message.
@@ -247,6 +266,7 @@ void MotorControllerCANInterface::handle(MotorControllerDriveStatus *can_struct)
 
 // CAN Message error handlers 
 
+// BPSError CAN message handler
 void PowerCANInterface::handle(BPSError *can_struct) {
     bms_error = can_struct->internal_communications_fault || can_struct-> low_cell_voltage_fault || can_struct->open_wiring_fault || can_struct->current_sensor_fault || can_struct->pack_voltage_sensor_fault || can_struct->thermistor_fault || can_struct->canbus_communications_fault || can_struct->high_voltage_isolation_fault || can_struct->charge_limit_enforcement_fault || can_struct->discharge_limit_enforcement_fault || can_struct->charger_safety_relay_fault || can_struct->internal_thermistor_fault || can_struct->internal_memory_fault;
     if (bms_error) {

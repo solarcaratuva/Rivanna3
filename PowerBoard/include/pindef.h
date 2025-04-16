@@ -15,6 +15,9 @@
 #define THROTTLE_WIPER  PA_3
 #define BRAKE_WIPER     PA_4
 
+#define RC_VOLTAGE_MOTOR    PB_14
+#define RC_VOLTAGE_BATTERY  PB_13
+
 #define AUX             PB_11
 #define CONT_12         PB_12
 #define MPPT_HAL_SENSE  PB_13
@@ -71,6 +74,10 @@
 #define MAIN_CAN_STBY   NC
 #define MAIN_CAN_RX     NC
 #define MAIN_CAN_TX     NC
+#define RC_VOLTAGE_MOTOR NC 
+#define RC_VOLTAGE_BATTERY NC
+
+#define PACK_VOLTAGE    NC
 
 #define DEBUG_SWITCH    NC
 
