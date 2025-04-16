@@ -5,91 +5,58 @@ import subprocess
 
 import re
 
+
 BOARD_MAP = {
-    "driver": {"cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/DriverBoard/DriverBoard.bin 0x8000000"},
-    "battery": {"cmd": "st-flash",  "args":"--connect-under-reset --reset write", "path": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/BatteryBoard/BatteryBoard.bin 0x8000000"},
-    "motor": {"cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/Motor/Motor.bin 0x8000000"},
-    "power": {"cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/POWER_BOARD/develop/GCC_ARM/PowerBoard/PowerBoard.bin 0x8000000"},
-    "wheel": {"cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/POWER_BOARD/develop/GCC_ARM/WheelBoard/WheelBoard.bin 0x8000000"}}
+    "driver": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/DriverBoard/DriverBoard.bin",
+    "battery": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/BatteryBoard/BatteryBoard.bin",
+    "motor": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/Motor/Motor.bin",
+    "power": "cmake_build/POWER_BOARD/develop/GCC_ARM/PowerBoard/PowerBoard.bin",
+    "wheel": "cmake_build/POWER_BOARD/develop/GCC_ARM/WheelBoard/WheelBoard.bin"}
+
 op_sys = platform.system()
 
-def list_cmd() -> str:
-    ST_link_num = ''
-
+def get_stlink() -> str:
     pattern = r'^(\d+-\d+)'
 
     cmd = f"usbipd.exe list"
     process = subprocess.run(cmd, shell=True, capture_output=True, check=False)
-
     if process.returncode != 0: # if error...
-        if process.stdout:
-            print(process.stdout.decode())
-        if process.stderr:
-            print(process.stderr.decode())
+        if process.stdout: print(process.stdout.decode())
+        if process.stderr: print(process.stderr.decode())
+        exit(process.returncode)
 
-    else: # no error...
-        lines = process.stdout.split('\n')
-        for line in lines[2:]:
-            if line == '':
-                break
-            else:
-                if 'ST-Link' in line:
-                    ST_link_num = re.search(pattern,line)
-                    break
+    lines = process.stdout.split('\n')
+    for line in lines[2:]: # skip first two lines (headers)
+        if line == '': # end of list
+            break
+        if 'ST-Link' in line:
+            stlink_id = re.search(pattern,line).group(1)
+            return stlink_id
 
-    if ST_link_num == '':
-        print("No ST Link in USB Device List")
-        exit(1)
-
-    return ST_link_num
+    print("No ST-Link found")
+    exit(1)
 
 
-def attach_cmd(STM_num) -> None:
+def attach_stlink(stlink_id: str) -> None:
     # attach (if attach fails, if error is because not bound, then print out)
-    cmd = f"usbipd attach --busid {STM_num} --wsl"
-
+    cmd = f"usbipd attach --busid {stlink_id} --wsl"
     process = subprocess.run(cmd, shell=True, capture_output=True, check=False)
     if process.returncode != 0: # if error...
-        if process.stdout:
-            print(process.stdout.decode())
-        if process.stderr:
-            print(process.stderr.decode())
+        if process.stdout: print(process.stdout.decode())
+        if process.stderr: print(process.stderr.decode())
+        exit(process.returncode)
 
-def detach_cmd(STM_num) -> None:
+
+def detach_cmd(stlink_id: str) -> None:
     # attach (if attach fails, if error is because not bound, then print out)
-    cmd = f"usbipd detach --busid {STM_num}"
-
+    cmd = f"usbipd detach --busid {stlink_id}"
     process = subprocess.run(cmd, shell=True, capture_output=True, check=False)
     if process.returncode != 0: # if error...
-        if process.stdout:
-            print(process.stdout.decode())
-        if process.stderr:
-            print(process.stderr.decode())
+        if process.stdout: print(process.stdout.decode())
+        if process.stderr: print(process.stderr.decode())
+        exit(process.returncode)
 
-def create_net_map(STM_num) -> None:
-    """
-    Runs the `net` command in Windows (yes even in WSL) to mount the WSL filesystem path as a network drive in Windows, named `W:`
-    """
-    cmd = f"powershell.exe -Command \"net.exe use W: \\\\\\\\wsl$\\\\{os.getenv('WSL_DISTRO_NAME')}\""
-    process = subprocess.run(cmd, shell=True, check=False, capture_output=True)
-    if process.returncode != 0:
-        if process.stdout:
-            print(process.stdout.decode())
-        if process.stderr:
-            print(process.stderr.decode())
-        sys.exit(1)
 
-def delete_net_map() -> None:
-    """
-    Deletes the network drive mount `W:`
-    """
-    cmd = "powershell.exe -Command \"net.exe use W: /delete \""
-    process = subprocess.run(cmd, shell=True, check=False, capture_output=True)
-    if process.returncode != 0:
-        if process.stdout:
-            print(process.stdout.decode())
-        if process.stderr:
-            print(process.stderr.decode())
 
 def main() -> None:
     if len(sys.argv) != 2:
