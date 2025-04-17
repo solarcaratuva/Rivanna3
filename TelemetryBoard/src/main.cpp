@@ -14,9 +14,11 @@ Thread listening_thread;
 
 // This thread function periodically sends out a “listening for CAN messages” message.
 void periodic_listening_message() {
+    log_set_level(LOG_LEVEL);
     const char *listening_message = "Listening for CAN messages\n";
     
     while (true) {
+        log_debug("Sending listening message to radio and PC console");
         // Send the listening message to both the radio and the PC console
         xbee.write(listening_message, strlen(listening_message));
         pc.write(listening_message, strlen(listening_message));
