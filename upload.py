@@ -90,10 +90,14 @@ def main() -> None:
         detach_cmd(ST_link_num)
 
     elif op_sys == "Darwin": # Mac
-        cmdlts = BOARD_MAP[board]
-        cmd = f"{cmdlts['cmd']} {cmdlts['args']} {cmdlts['path']}"
+        cmd = f"st-flash --connect-under-reset --reset write {BOARD_MAP[board]}"
         process = subprocess.run(cmd, shell=True, check=False)
         sys.exit(process.returncode)
+
+        # cmdlts = BOARD_MAP[board]
+        # cmd = f"{cmdlts['cmd']} {cmdlts['args']} {cmdlts['path']}"
+        # process = subprocess.run(cmd, shell=True, check=False)
+        # sys.exit(process.returncode)
 
     elif op_sys == "Windows":
         print("ERROR: This script must be run in WSL")
