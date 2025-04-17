@@ -47,7 +47,7 @@ def attach_stlink(stlink_id: str) -> None:
         exit(process.returncode)
 
 
-def detach_cmd(stlink_id: str) -> None:
+def detach_stlink(stlink_id: str) -> None:
     # attach (if attach fails, if error is because not bound, then print out)
     cmd = f"usbipd detach --busid {stlink_id}"
     process = subprocess.run(cmd, shell=True, capture_output=True, check=False)
@@ -79,15 +79,15 @@ def main() -> None:
         # sys.exit(process.returncode)
 
         # list
-        ST_link_num = list_cmd()
+        ST_link_num = get_stlink()
 
         # attach (if attach fails, if error is because not bound, then print out)
-        attach_cmd(ST_link_num)
+        attach_stlink(ST_link_num)
 
         # st tools BOARD_MAP
 
         # detach
-        detach_cmd(ST_link_num)
+        detach_stlink(ST_link_num)
 
     elif op_sys == "Darwin": # Mac
         cmd = f"st-flash --connect-under-reset --reset write {BOARD_MAP[board]}"
