@@ -2,6 +2,7 @@ import platform
 import subprocess
 import argparse
 import re
+import time
 
 
 BOARD_MAP = {
@@ -21,6 +22,7 @@ def get_args():
     parser = argparse.ArgumentParser(description="Upload firmware to the board through a ST-Link")
     parser.add_argument("board", type=str, help="Name of the board to upload firmware to")
     parser.add_argument("-s", "--silent", action="store_true", help="Suppress upload output")
+    parser.add_argument("-p", "--sudo", help="WSL sudo password, required for uploading on Windows computers")
     parser.add_argument("--hil", action="store_true", help="Upload firmware to the HIL testing system")
     return parser.parse_args()
 
@@ -81,19 +83,34 @@ def upload(path: str, silent: bool) -> int:
         print("Upload failed")
     return process.returncode
 
+def upload_as_sudo(path: str, silent: bool, sudo: str) -> int:
+    """Run the ST-Tools upload command AS SUDO to upload the firmware to the board"""
+
+    cmd = f"echo {sudo} | sudo -S st-flash --connect-under-reset --reset write {path} 0x8000000"
+    process = subprocess.run(cmd, shell=True, check=False, capture_output=silent)
+    if silent and process.returncode != 0:
+        print("Upload failed")
+    return process.returncode
+
 
 def main() -> None:
     args = get_args()
+    sudo = args.sudo if args.sudo else None
     board = args.board.lower().replace("board", "")
     if board not in BOARD_MAP:
         print(f"ERROR: Invalid board name given. Valid board names are: {', '.join(BOARD_MAP.keys())}")
         exit(1)
 
     if OS == "Linux" and not args.hil: # WSL, actually Windows
+        if not sudo:
+            print("ERROR: Sudo password required for uploading on Windows computers")
+            exit(1)
+
         stlink_id = get_stlink()
         attach_stlink(stlink_id)
+        time.sleep(1)
 
-        exit_code = upload(BOARD_MAP[board], args.silent)
+        exit_code = upload_as_sudo(BOARD_MAP[board], args.silent, sudo)
 
         detach_stlink(stlink_id)
         exit(exit_code)
