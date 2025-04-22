@@ -66,6 +66,7 @@ DriverCANInterface vehicle_can_interface(CAN_RX, CAN_TX, CAN_STBY);
 
 ECUMotorCommands to_motor;
 ECUPowerAuxCommands power_aux_out;
+BPSError bps_error;
 
 const bool LOG_ECU_POWERAUX_COMMANDS = false;
 const bool LOG_BPS_PACK_INFORMATION = true;
@@ -263,15 +264,24 @@ int main() {
     log_set_level(LOG_LEVEL);
     log_debug("Start main()");
     
-    motor_thread.start(motor_message_handler);
+    while (true){
+        log_debug("Main thread loop");
+        vehicle_can_interface.send(&bps_error);
+        ThisThread::sleep_for(MOTOR_LOOP_PERIOD);
+    }
+
+    // motor_thread.start(motor_message_handler);
     // signalFlashThread.start(signalFlashHandler);
 
     // drl = PIN_ON;
 
     // while (true) {
     //     log_debug("Main thread loop");
+    //     CANMessage message;
+    //     if (CANRead(message) == 1){
 
-    //     // read_inputs();
+    //     }
+        // read_inputs();
 
     //     to_motor.throttle = 1;
     //     to_motor.cruise_control_speed = 16;

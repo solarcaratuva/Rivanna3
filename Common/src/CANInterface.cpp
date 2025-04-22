@@ -5,7 +5,7 @@
 
 #ifdef TARGET_NUCLEO_F413ZH //HIL Testing CAN simulation with BufferedSerial
 
-BufferedSerial serial(PD_1, PD_0, 9600);
+BufferedSerial serial(PD_1, PD_0, 14400);
 
 CANInterface::CANInterface(PinName rd, PinName td, PinName standby_pin) 
     : can(rd, td), standby(standby_pin) { 
