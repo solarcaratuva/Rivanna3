@@ -188,6 +188,15 @@ void TelemetryCANInterface::message_handler() {
             else if(message.id == 1024) {
                 continue;
             }
+            else if (message.id == DASHBOARD_COMMANDS_ID) {
+                DashboardCommands can_struct;
+                can_struct.deserialize(&message);
+                std::string msg = can_struct.toString();
+                xbee.write(msg.c_str(), msg.length());
+                // send_to_sd(&message, message.id);
+                // send_to_radio(&message, message.id);
+                can_struct.log(LOG_LEVEL);
+            }
             else {
                 std::string msg = "Unknown CAN message ID: " + std::to_string(message.id) + "\n";
                 xbee.write(msg.c_str(), msg.length());
