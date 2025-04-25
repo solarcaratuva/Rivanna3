@@ -2,7 +2,6 @@
 #include "CANStruct.h"
 #include "log.h"
 #include <mbed.h>
-#include <iostream>
 
 #ifdef TARGET_NUCLEO_F413ZH //HIL Testing CAN simulation with BufferedSerial
 
@@ -59,8 +58,7 @@ int CANInterface::CANRead(CANMessage &message) {
         message.data[i] = serial_buffer[i + 2];
     }
 
-    std::cout << "THIS IS A TEST" << std::endl;
-    printf("THIS IS THE MESSAGE ID: %d \n THIS IS THE MESSAGE LENGTH: %d \n THIS IS THE MESSAGE: %d", message.id, message.len, message.data[0]);
+    log_debug("THIS IS THE MESSAGE ID: %d \n THIS IS THE MESSAGE LENGTH: %d \n THIS IS THE MESSAGE: %d", message.id, message.len, message.data[0]);
 
     return 1;
     
