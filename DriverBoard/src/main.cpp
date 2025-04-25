@@ -48,6 +48,7 @@ DigitalOut leftTurnSignal(LEFT_TURN_OUT);
 DigitalOut rightTurnSignal(RIGHT_TURN_OUT);
 DigitalOut drl(DRL_OUT);
 DigitalOut bms_strobe(BMS_STROBE_OUT);
+DigitalOut debug_CANBUS(PB_0);
 
 DigitalIn brakeLightsSwitch(MECHANICAL_BRAKE_IN);
 DigitalIn leftTurnSwitch(LEFT_TURN_IN);
@@ -267,6 +268,7 @@ int main() {
     while (true){
         log_debug("Main thread loop");
         // vehicle_can_interface.send(&bps_error);
+        vehicle_can_interface.message_handler();
         ThisThread::sleep_for(MOTOR_LOOP_PERIOD);
     }
 
@@ -311,7 +313,9 @@ void DriverCANInterface::handle(MotorControllerPowerStatus *can_struct) {
 
 void DriverCANInterface::handle(BPSError *can_struct) {
     bms_error = can_struct->internal_communications_fault || can_struct-> low_cell_voltage_fault || can_struct->open_wiring_fault || can_struct->current_sensor_fault || can_struct->pack_voltage_sensor_fault || can_struct->thermistor_fault || can_struct->canbus_communications_fault || can_struct->high_voltage_isolation_fault || can_struct->charge_limit_enforcement_fault || can_struct->discharge_limit_enforcement_fault || can_struct->charger_safety_relay_fault || can_struct->internal_thermistor_fault || can_struct->internal_memory_fault;
-    vehicle_can_interface.send(can_struct);
+    debug_CANBUS = PIN_ON;
+    ThisThread::sleep_for(MAIN_LOOP_PERIOD);
+    debug_CANBUS = PIN_OFF;
 }
 
 void DriverCANInterface::handle(ECUPowerAuxCommands *can_struct) {
