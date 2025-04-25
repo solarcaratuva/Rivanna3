@@ -42,7 +42,6 @@ int CANInterface::CANWrite(CANMessage message) {
 //Assumes first 2 bytes is the message ID
 //Third byte is length
 int CANInterface::CANRead(CANMessage &message) {
-    log_debug("STARTING CANRead");
     //hang until it can read
     while(!serial.readable()){
         ThisThread::sleep_for(1ms); //sleep for 10ms
@@ -50,7 +49,7 @@ int CANInterface::CANRead(CANMessage &message) {
 
     char id_len_buffer[3];
     serial.read(id_len_buffer, sizeof(id_len_buffer));
-    message.id = (((int) id_len_buffer[0])<<8) | (id_len_buffer[1]); 
+    message.id = (((u_int16_t) id_len_buffer[0])<<8) | (id_len_buffer[1]); 
     message.len = id_len_buffer[2]; 
 
     char serial_buffer[message.len]; //max fake CANMessage size is 2 byte ID + 8 byte data
