@@ -188,7 +188,7 @@ void fault_occurred() {
 
 // Function that when called creates and sends a Heartbeat can message from PowerBoard
 void send_powerboard_heartbeat() {
-    HeartBeat power_board_hb = heartbeatSystem.send_heartbeat();
+    Heartbeat power_board_hb = heartbeatSystem.send_heartbeat();
     vehicle_can_interface.send(&power_board_hb);
 }
 
@@ -216,7 +216,7 @@ int main() {
 // CAN Message handlers
 
 // Handle heartbeat message
-void PowerCANInterface::handle(HeartBeat *can_struct){
+void PowerCANInterface::handle(Heartbeat *can_struct){
     heartbeatSystem.refreshTimer(can_struct);
 }
 
