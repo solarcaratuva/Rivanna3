@@ -6,8 +6,10 @@
 #include "FATFileSystem.h"
 #include "EEPROMDriver.h"
 #include "SDBlockDevice.h"
+#include "dbc/structs/rivanna2.h"
+#include "CANStruct.h"
 
-#define LOG_LEVEL LOG_DEBUG\
+#define LOG_LEVEL LOG_DEBUG
 
 BufferedSerial xbee(RADIO_TX, RADIO_RX, 9600);
 BufferedSerial pc(USB_TX, USB_RX, 115200);
@@ -80,63 +82,63 @@ void TelemetryCANInterface::message_handler() {
                 PowerAuxError can_struct;
                 can_struct.deserialize(&message);
                 send_to_sd(&message, message.id);
-                // send_to_radio(&message, message.id);
+                send_to_radio(&message, message.id);
                 can_struct.log(LOG_LEVEL);
             }
             else if (message.id == MotorControllerError_MESSAGE_ID) {
                 MotorControllerError can_struct;
                 can_struct.deserialize(&message);
                 send_to_sd(&message, message.id);
-                // send_to_radio(&message, message.id);
+                send_to_radio(&message, message.id);
                 can_struct.log(LOG_LEVEL);
             }
             else if (message.id == BPSError_MESSAGE_ID) {
                 BPSError can_struct;
                 can_struct.deserialize(&message);
                 send_to_sd(&message, message.id);
-                // send_to_radio(&message, message.id);
+                send_to_radio(&message, message.id);
                 can_struct.log(LOG_LEVEL);
             } 
             else if (message.id == ECUMotorCommands_MESSAGE_ID) {
                 ECUMotorCommands can_struct;
                 can_struct.deserialize(&message);
                 send_to_sd(&message, message.id);
-                // send_to_radio(&message, message.id);
+                send_to_radio(&message, message.id);
                 can_struct.log(LOG_LEVEL);
             }
             else if (message.id == MotorControllerDriveStatus_MESSAGE_ID) {
                 MotorControllerDriveStatus can_struct;
                 can_struct.deserialize(&message);
                 send_to_sd(&message, message.id);
-                // send_to_radio(&message, message.id);
+                send_to_radio(&message, message.id);
                 can_struct.log(LOG_LEVEL);
             }
             else if (message.id == SolarCurrent_MESSAGE_ID) {
                 SolarCurrent can_struct;
                 can_struct.deserialize(&message);
                 send_to_sd(&message, message.id);
-                // send_to_radio(&message, message.id);
+                send_to_radio(&message, message.id);
                 can_struct.log(LOG_LEVEL);
             }
             else if (message.id == SolarTemp_MESSAGE_ID) {
                 SolarTemp can_struct;
                 can_struct.deserialize(&message);
                 send_to_sd(&message, message.id);
-                // send_to_radio(&message, message.id);
+                send_to_radio(&message, message.id);
                 can_struct.log(LOG_LEVEL);
             }
             else if (message.id == SolarVoltage_MESSAGE_ID) {
                 SolarVoltage can_struct;
                 can_struct.deserialize(&message);
                 send_to_sd(&message, message.id);
-                // send_to_radio(&message, message.id);
+                send_to_radio(&message, message.id);
                 can_struct.log(LOG_LEVEL);
             }
             else if (message.id == SolarPhoto_MESSAGE_ID) {
                 SolarPhoto can_struct;
                 can_struct.deserialize(&message);
                 send_to_sd(&message, message.id);
-                // send_to_radio(&message, message.id);
+                send_to_radio(&message, message.id);
                 can_struct.log(LOG_LEVEL);
             }
             else if (message.id == BPSPackInformation_MESSAGE_ID) {
