@@ -7,38 +7,14 @@
 #include "ThisThread.h"
 
 #define LOG_LEVEL          LOG_DEBUG
-
-BufferedSerial xbee(RADIO_TX, RADIO_RX, 9600);
-BufferedSerial pc(USB_TX, USB_RX, 115200);
-Thread listening_thread;
-
-// This thread function periodically sends out a “listening for CAN messages” message.
-void periodic_listening_message() {
-    log_set_level(LOG_LEVEL);
-    const char *listening_message = "Listening for CAN messages\n";
-    
-    while (true) {
-        log_debug("Sending listening message to radio and PC console");
-        // Send the listening message to both the radio and the PC console
-        xbee.write(listening_message, strlen(listening_message));
-        pc.write(listening_message, strlen(listening_message));
-        
-        // Wait 5 seconds before sending again
-        ThisThread::sleep_for(5s);
-    }
-}
+// Thread listening_thread;
+TelemetryCANInterface can_interface(MAIN_CAN_RX, MAIN_CAN_TX, MAIN_CAN_STBY);
 
 int main() {
+    
     log_set_level(LOG_LEVEL);
     log_debug("System startup...");
-
-    listening_thread.start(periodic_listening_message);
-
-    // Configure the serial interfaces.
-    xbee.set_format(8, BufferedSerial::None, 1);
-    pc.set_format(8, BufferedSerial::None, 1);
-
-    // Main thread can be left idle or used for other application tasks.
+    
     while (true) {
          ThisThread::sleep_for(1s);
     }
