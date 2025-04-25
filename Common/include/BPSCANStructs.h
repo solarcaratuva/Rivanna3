@@ -37,6 +37,26 @@ typedef struct BPSPackInformation : CANStruct, bps_bps_pack_information_t {
             multipurpose_input_signal_status, always_on_signal_status,
             is_ready_signal_status, is_charging_signal_status);
     }
+    
+    std::string toString() const {
+        static constexpr const char* FORMAT =
+        "BPSPackInformation: pack_voltage %u, pack_current %d, pack_soc "
+            "%u, discharge_relay_status %u, charge_relay_status %u, "
+            "charger_safety_status %u, dtc_status %u, "
+            "multipurpose_input_signal_status %u, always_on_signal_status %u, "
+            "is_ready_signal_status %u, is_charging_signal_status %u";
+        char buf[256];
+        int len = std::snprintf(
+            buf, sizeof(buf),
+            FORMAT,
+            pack_voltage, pack_current, pack_soc, discharge_relay_status,
+            charge_relay_status, charger_safety_status, dtc_status,
+            multipurpose_input_signal_status, always_on_signal_status,
+            is_ready_signal_status, is_charging_signal_status
+        );
+        return std::string(buf, (len > 0 && len < int(sizeof(buf))) ? len : sizeof(buf)-1);
+    }
+
 } BPSPackInformation;
 
 /**
