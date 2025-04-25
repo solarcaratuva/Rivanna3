@@ -5,6 +5,7 @@
 #include "CANInterface.h"
 #include "ECUCANStructs.h"
 #include "MotorControllerCANStructs.h"
+#include "HeartBeatCANStruct.h" // heartbeat
 
 class WheelCANInterface : public CANInterface {
   public:

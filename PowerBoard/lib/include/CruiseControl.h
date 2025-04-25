@@ -3,6 +3,9 @@
 
 #include <cstdint>
 #include <rtos.h>
+#include "MotorInterface.h"
+
+constexpr double MOTOR_RPM_TO_MPH_RATIO = (double) 0.0596;
 
 constexpr double CRUISE_CONTROL_MAX_SPEED = 40; // TODO fine tune
 constexpr double CRUISE_CONTROL_MIN_SPEED = 0;
@@ -20,6 +23,8 @@ void reset_cruise_control_integral();
 void increase_cruise_target();
 void decrease_cruise_target();
 uint8_t get_cruise_target();
+void send_cruise_control_to_motor(uint16_t motor_rpm);
+
 private:
 uint64_t prev_time = Kernel::get_ms_count();
 double cruise_control_integral = 0;

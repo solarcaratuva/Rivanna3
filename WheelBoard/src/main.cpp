@@ -57,7 +57,7 @@ void cruise_control_decrease_rise() {
 
 int main() {
     log_set_level(LOG_LEVEL);
-
+    
     // toggle buttons have a rise and fall interrupt, press buttons only have a rise interrupt
     left_signal.rise(edge_handler);
     right_signal.rise(edge_handler);
@@ -75,5 +75,6 @@ int main() {
     cruise_control_enable.fall(edge_handler);
     regen_enable.fall(edge_handler);
 
+    //queue.
     queue.dispatch_forever();
 }
