@@ -65,150 +65,150 @@ void TelemetryCANInterface::send_to_radio(CANMessage *message, uint16_t message_
     }
 }
 
-// void TelemetryCANInterface::message_handler() {
-//     log_set_level(LOG_LEVEL);
-//     while (true) {
-//         ThisThread::flags_wait_all(0x1);
-//         CANMessage message;
-//         while (can.read(message)) {
-//             char message_data[17];
-
-//             //TODO: Write to serial message_id, message_data
-
-//             CANInterface::write_CAN_message_data_to_buffer(message_data,
-//                                                            &message);
-//             log_debug("Received CAN message with ID 0x%03X Length %d Data 0x%s ", message.id, message.len, message_data);
-//             if (message.id == PowerAuxError_MESSAGE_ID) {
-//                 PowerAuxError can_struct;
-//                 can_struct.deserialize(&message);
-//                 send_to_sd(&message, message.id);
-//                 send_to_radio(&message, message.id);
-//                 can_struct.log(LOG_LEVEL);
-//             }
-//             else if (message.id == MotorControllerError_MESSAGE_ID) {
-//                 MotorControllerError can_struct;
-//                 can_struct.deserialize(&message);
-//                 send_to_sd(&message, message.id);
-//                 send_to_radio(&message, message.id);
-//                 can_struct.log(LOG_LEVEL);
-//             }
-//             else if (message.id == BPSError_MESSAGE_ID) {
-//                 BPSError can_struct;
-//                 can_struct.deserialize(&message);
-//                 send_to_sd(&message, message.id);
-//                 send_to_radio(&message, message.id);
-//                 can_struct.log(LOG_LEVEL);
-//             } 
-//             else if (message.id == ECUMotorCommands_MESSAGE_ID) {
-//                 ECUMotorCommands can_struct;
-//                 can_struct.deserialize(&message);
-//                 send_to_sd(&message, message.id);
-//                 send_to_radio(&message, message.id);
-//                 can_struct.log(LOG_LEVEL);
-//             }
-//             else if (message.id == MotorControllerDriveStatus_MESSAGE_ID) {
-//                 MotorControllerDriveStatus can_struct;
-//                 can_struct.deserialize(&message);
-//                 send_to_sd(&message, message.id);
-//                 send_to_radio(&message, message.id);
-//                 can_struct.log(LOG_LEVEL);
-//             }
-//             else if (message.id == SolarCurrent_MESSAGE_ID) {
-//                 SolarCurrent can_struct;
-//                 can_struct.deserialize(&message);
-//                 send_to_sd(&message, message.id);
-//                 send_to_radio(&message, message.id);
-//                 can_struct.log(LOG_LEVEL);
-//             }
-//             else if (message.id == SolarTemp_MESSAGE_ID) {
-//                 SolarTemp can_struct;
-//                 can_struct.deserialize(&message);
-//                 send_to_sd(&message, message.id);
-//                 send_to_radio(&message, message.id);
-//                 can_struct.log(LOG_LEVEL);
-//             }
-//             else if (message.id == SolarVoltage_MESSAGE_ID) {
-//                 SolarVoltage can_struct;
-//                 can_struct.deserialize(&message);
-//                 send_to_sd(&message, message.id);
-//                 send_to_radio(&message, message.id);
-//                 can_struct.log(LOG_LEVEL);
-//             }
-//             else if (message.id == SolarPhoto_MESSAGE_ID) {
-//                 SolarPhoto can_struct;
-//                 can_struct.deserialize(&message);
-//                 send_to_sd(&message, message.id);
-//                 send_to_radio(&message, message.id);
-//                 can_struct.log(LOG_LEVEL);
-//             }
-//             else if (message.id == BPSPackInformation_MESSAGE_ID) {
-//                 BPSPackInformation can_struct;
-//                 can_struct.deserialize(&message);
-//                 send_to_sd(&message, message.id);
-//                 send_to_radio(&message, message.id);
-//                 can_struct.log(LOG_LEVEL);
-//             }
-//             else if (message.id == BPSCellVoltage_MESSAGE_ID) {
-//                 BPSCellVoltage can_struct;
-//                 can_struct.deserialize(&message);
-//                 send_to_sd(&message, message.id);
-//                 send_to_radio(&message, message.id);
-//                 can_struct.log(LOG_LEVEL);
-//             }
-//             else if (message.id == BPSCellTemperature_MESSAGE_ID) {
-//                 BPSCellTemperature can_struct;
-//                 can_struct.deserialize(&message);
-//                 send_to_sd(&message, message.id);
-//                 send_to_radio(&message, message.id);
-//                 can_struct.log(LOG_LEVEL);
-//             }
-//             else if (message.id == MotorControllerPowerStatus_MESSAGE_ID) {
-//                 MotorControllerPowerStatus can_struct;
-//                 can_struct.deserialize(&message);
-//                 send_to_sd(&message, message.id);
-//                 send_to_radio(&message, message.id);
-//                 can_struct.log(LOG_LEVEL);
-//             }
-//             else if(message.id == ECUPowerAuxCommands_MESSAGE_ID) {
-//                 ECUPowerAuxCommands can_struct;
-//                 can_struct.deserialize(&message);
-//                 send_to_sd(&message, message.id);
-//                 send_to_radio(&message, message.id);
-//                 can_struct.log(LOG_LEVEL);
-//             }
-//             else if(message.id == 512) {
-//                 MotorCommands can_struct;
-//                 can_struct.deserialize(&message);
-//                 std::string msg = can_struct.toString();
-//                 xbee.write(msg.c_str(), msg.length());
-//                 // send_to_sd(&message, message.id);
-//                 // send_to_radio(&message, message.id);
-//                 can_struct.log(LOG_LEVEL);
-//             }
-//             else if(message.id == 1024) {
-//                 continue;
-//             }
-//             else {
-//                 std::string msg = "Unknown CAN message ID: " + std::to_string(message.id) + "\n";
-//                 xbee.write(msg.c_str(), msg.length());
-//                 pc.write(msg.c_str(), msg.length());
-//                 // log_debug("Unknown CAN message ID: %d", message.id);
-//             }
-//         }
-//     }
-// }
-
 void TelemetryCANInterface::message_handler() {
+    log_set_level(LOG_LEVEL);
     while (true) {
         ThisThread::flags_wait_all(0x1);
         CANMessage message;
         while (can.read(message)) {
             char message_data[17];
-            CANInterface::write_CAN_message_data_to_buffer(message_data, &message);
 
-            char *msg = new char[100];
-            snprintf(msg, 100, "Received CAN message with ID 0x%03X Length %d Data 0x%s ", message.id, message.len, message_data);
-            xbee.write(msg, strlen(msg));
+            //TODO: Write to serial message_id, message_data
+
+            CANInterface::write_CAN_message_data_to_buffer(message_data,
+                                                           &message);
+            log_debug("Received CAN message with ID 0x%03X Length %d Data 0x%s ", message.id, message.len, message_data);
+            if (message.id == PowerAuxError_MESSAGE_ID) {
+                PowerAuxError can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+                can_struct.log(LOG_LEVEL);
+            }
+            else if (message.id == MotorControllerError_MESSAGE_ID) {
+                MotorControllerError can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+                can_struct.log(LOG_LEVEL);
+            }
+            else if (message.id == BPSError_MESSAGE_ID) {
+                BPSError can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+                can_struct.log(LOG_LEVEL);
+            } 
+            else if (message.id == ECUMotorCommands_MESSAGE_ID) {
+                ECUMotorCommands can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+                can_struct.log(LOG_LEVEL);
+            }
+            else if (message.id == MotorControllerDriveStatus_MESSAGE_ID) {
+                MotorControllerDriveStatus can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+                can_struct.log(LOG_LEVEL);
+            }
+            else if (message.id == SolarCurrent_MESSAGE_ID) {
+                SolarCurrent can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+                can_struct.log(LOG_LEVEL);
+            }
+            else if (message.id == SolarTemp_MESSAGE_ID) {
+                SolarTemp can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+                can_struct.log(LOG_LEVEL);
+            }
+            else if (message.id == SolarVoltage_MESSAGE_ID) {
+                SolarVoltage can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+                can_struct.log(LOG_LEVEL);
+            }
+            else if (message.id == SolarPhoto_MESSAGE_ID) {
+                SolarPhoto can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+                can_struct.log(LOG_LEVEL);
+            }
+            else if (message.id == BPSPackInformation_MESSAGE_ID) {
+                BPSPackInformation can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+                can_struct.log(LOG_LEVEL);
+            }
+            else if (message.id == BPSCellVoltage_MESSAGE_ID) {
+                BPSCellVoltage can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+                can_struct.log(LOG_LEVEL);
+            }
+            else if (message.id == BPSCellTemperature_MESSAGE_ID) {
+                BPSCellTemperature can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+                can_struct.log(LOG_LEVEL);
+            }
+            else if (message.id == MotorControllerPowerStatus_MESSAGE_ID) {
+                MotorControllerPowerStatus can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+                can_struct.log(LOG_LEVEL);
+            }
+            else if(message.id == ECUPowerAuxCommands_MESSAGE_ID) {
+                ECUPowerAuxCommands can_struct;
+                can_struct.deserialize(&message);
+                send_to_sd(&message, message.id);
+                send_to_radio(&message, message.id);
+                can_struct.log(LOG_LEVEL);
+            }
+            else if(message.id == 512) {
+                MotorCommands can_struct;
+                can_struct.deserialize(&message);
+                std::string msg = can_struct.toString();
+                xbee.write(msg.c_str(), msg.length());
+                // send_to_sd(&message, message.id);
+                // send_to_radio(&message, message.id);
+                can_struct.log(LOG_LEVEL);
+            }
+            else if(message.id == 1024) {
+                continue;
+            }
+            else {
+                std::string msg = "Unknown CAN message ID: " + std::to_string(message.id) + "\n";
+                xbee.write(msg.c_str(), msg.length());
+                pc.write(msg.c_str(), msg.length());
+                // log_debug("Unknown CAN message ID: %d", message.id);
+            }
         }
     }
 }
+
+// void TelemetryCANInterface::message_handler() {
+//     while (true) {
+//         ThisThread::flags_wait_all(0x1);
+//         CANMessage message;
+//         while (can.read(message)) {
+//             char message_data[17];
+//             CANInterface::write_CAN_message_data_to_buffer(message_data, &message);
+
+//             char *msg = new char[100];
+//             snprintf(msg, 100, "Received CAN message with ID 0x%03X Length %d Data 0x%s ", message.id, message.len, message_data);
+//             xbee.write(msg, strlen(msg));
+//         }
+//     }
+// }
