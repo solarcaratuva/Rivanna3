@@ -179,9 +179,14 @@ void TelemetryCANInterface::message_handler() {
             else if(message.id == 512) {
                 MotorCommands can_struct;
                 can_struct.deserialize(&message);
-                send_to_sd(&message, message.id);
-                send_to_radio(&message, message.id);
+                std::string msg = can_struct.toString();
+                xbee.write(msg.c_str(), msg.length());
+                // send_to_sd(&message, message.id);
+                // send_to_radio(&message, message.id);
                 can_struct.log(LOG_LEVEL);
+            }
+            else if(message.id == 1024) {
+                continue;
             }
             else {
                 std::string msg = "Unknown CAN message ID: " + std::to_string(message.id) + "\n";
