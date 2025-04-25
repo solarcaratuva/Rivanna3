@@ -115,6 +115,38 @@ typedef struct BPSError : CANStruct, bps_bps_error_t {
             charger_safety_relay_fault, internal_memory_fault,
             internal_thermistor_fault, internal_logic_fault);
     }
+
+    std::string toString() const {
+        static constexpr const char* FORMAT =
+        "BPSError: internal_communications_fault %u, "
+            "internal_conversion_fault %u, weak_cell_fault %u, "
+            "low_cell_voltage_fault %u, open_wiring_fault %u, "
+            "current_sensor_fault %u, pack_voltage_sensor_fault %u, "
+            "weak_pack_fault %u, voltage_redundancy_fault %u, "
+            "fan_monitor_fault %u, thermistor_fault %u, "
+            "CANBUS_communications_fault %u, always_on_supply_fault %u, "
+            "high_voltage_isolation_fault %u, power_supply_12v_fault %u, "
+            "charge_limit_enforcement_fault %u, "
+            "discharge_limit_enforcement_fault %u, charger_safety_relay_fault "
+            "%u, internal_memory_fault %u, internal_thermistor_fault %u, "
+            "internal_logic_fault %u";
+        char buf[256];
+        int len = std::snprintf(
+            buf, sizeof(buf),
+            FORMAT,
+            internal_communications_fault, internal_conversion_fault,
+            weak_cell_fault, low_cell_voltage_fault, open_wiring_fault,
+            current_sensor_fault, pack_voltage_sensor_fault, weak_pack_fault,
+            voltage_redundancy_fault, fan_monitor_fault, thermistor_fault,
+            canbus_communications_fault, always_on_supply_fault,
+            high_voltage_isolation_fault, power_supply_12v_fault,
+            charge_limit_enforcement_fault, discharge_limit_enforcement_fault,
+            charger_safety_relay_fault, internal_memory_fault,
+            internal_thermistor_fault, internal_logic_fault
+        );
+        return std::string(buf, (len > 0 && len < int(sizeof(buf))) ? len : sizeof(buf)-1);
+    }
+
 } BPSError;
 
 /**
@@ -143,6 +175,21 @@ typedef struct BPSCellVoltage : CANStruct, bps_bps_cell_voltage_t {
                      low_cell_voltage, low_cell_voltage_id, high_cell_voltage,
                      high_cell_voltage_id);
     }
+
+    std::string toString() const {
+        static constexpr const char* FORMAT =
+        "BPSCellVoltage: low_cell_voltage %u, low_cell_voltage_id "
+                     "%u, high_cell_voltage %u, high_cell_voltage_id %u";
+        char buf[256];
+        int len = std::snprintf(
+            buf, sizeof(buf),
+            FORMAT,
+            low_cell_voltage, low_cell_voltage_id, high_cell_voltage,
+                     high_cell_voltage_id
+        );
+        return std::string(buf, (len > 0 && len < int(sizeof(buf))) ? len : sizeof(buf)-1);
+    }
+    
 } BPSCellVoltage;
 
 /**
@@ -172,6 +219,21 @@ typedef struct BPSCellTemperature : CANStruct, bps_bps_cell_temperature_t {
             low_temperature, low_thermistor_id, high_temperature,
             high_thermistor_id);
     }
+
+    std::string toString() const {
+        static constexpr const char* FORMAT =
+        "BPSCellTemperature: low_temperature %u, low_thermistor_id %u, "
+            "high_temperature %u, high_thermistor_id %u";
+        char buf[256];
+        int len = std::snprintf(
+            buf, sizeof(buf),
+            FORMAT,
+            low_temperature, low_thermistor_id, high_temperature,
+            high_thermistor_id
+        );
+        return std::string(buf, (len > 0 && len < int(sizeof(buf))) ? len : sizeof(buf)-1);
+    }
+
 } BPSCellTemperature;
 
 #endif
