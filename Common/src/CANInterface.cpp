@@ -48,24 +48,36 @@ int CANInterface::CANRead(CANMessage &message) {
     }
 
     char serial_buffer[11]; //max fake CANMessage size is 2 byte ID + 8 byte data
-    size_t bytes_read = serial.read(serial_buffer, sizeof(serial_buffer));
+    serial.read(serial_buffer, sizeof(serial_buffer));
 
-    //minimum length for a fake CAN message
-    if (bytes_read >= 3) {
-        message.id = (((int) serial_buffer[0])<<8) | (serial_buffer[1]); 
-        message.len = bytes_read - 3; 
+    message.id = (((int) serial_buffer[0])<<8) | (serial_buffer[1]); 
+    message.len = serial_buffer[2]; 
 
-        //copy data
-        for (int i = 0; i < (int) message.len; i++) {
-            message.data[i] = serial_buffer[i + 2];
-        }
-
-        return 1;
+    //copy data
+    for (int i = 0; i < (int) message.len; i++) {
+        message.data[i] = serial_buffer[i + 2];
     }
-    else {
-        //invalid CAN message recieved
-        return 0; 
-    }
+
+    return 1;
+    
+
+    // //minimum length for a fake CAN message
+    // if (bytes_read >= 3) {
+    //     message.id = (((int) serial_buffer[0])<<8) | (serial_buffer[1]); 
+    //     message.len = bytes_read - 3; 
+
+    //     //copy data
+    //     for (int i = 0; i < (int) message.len; i++) {
+    //         message.data[i] = serial_buffer[i + 2];
+    //     }
+
+    //     return 1;
+    // }
+
+    // else {
+    //     //invalid CAN message recieved
+    //     return 0; 
+    // }
     
 }
 

@@ -268,7 +268,6 @@ int main() {
     while (true){
         log_debug("Main thread loop");
         // vehicle_can_interface.send(&bps_error);
-        vehicle_can_interface.message_handler();
         ThisThread::sleep_for(MOTOR_LOOP_PERIOD);
     }
 
