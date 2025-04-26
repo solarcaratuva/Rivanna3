@@ -42,6 +42,13 @@ typedef struct ECUMotorCommands : CANStruct, rivanna2_ecu_motor_commands_t {
         return std::string(buf, (len > 0 && len < int(sizeof(buf))) ? len : sizeof(buf)-1);
     }
 
+    size_t format(char* buf, size_t buf_sz) const {
+        return std::snprintf(buf, buf_sz,
+            "ECU: thr=%u, regen=%u, cspd=%u, en=%u, fwd=%u, rev=%u, on=%u\n",
+            throttle, regen, cruise_control_speed, cruise_control_en, forward_en, reverse_en, motor_on
+        );
+    }
+
 } ECUMotorCommands;
 
 typedef struct ECUPowerAuxCommands : CANStruct,
@@ -79,6 +86,13 @@ typedef struct ECUPowerAuxCommands : CANStruct,
                      right_turn_signal
         );
         return std::string(buf, (len > 0 && len < int(sizeof(buf))) ? len : sizeof(buf)-1);
+    }
+
+    size_t format(char* buf, size_t buf_sz) const {
+        return std::snprintf(buf, buf_sz,
+            "Aux: hz=%u, brk=%u, hd=%u, L=%u, R=%u\n",
+            hazards, brake_lights, headlights, left_turn_signal, right_turn_signal
+        );
     }
 
 } ECUPowerAuxCommands;

@@ -40,6 +40,14 @@
             );
             return std::string(buf, (len > 0 && len < int(sizeof(buf))) ? len : sizeof(buf)-1);
         }
+
+        size_t format(char* buf, size_t buf_sz) const {
+            return std::snprintf(buf, buf_sz,
+                "DashCmd: hz=%u, L=%u, R=%u, regen=%u, c+=%u, c-=%u\n",
+                hazards, left_turn_signal, right_turn_signal, regen_en, cruise_inc, cruise_dec
+            );
+        }
+        
     } DashboardCommands;
 
     #endif

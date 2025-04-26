@@ -30,11 +30,12 @@ class TelemetryCANInterface : public CANInterface {
 
         int send(CANStruct *can_struct);
         int send_message(CANMessage *message);
-        static void send_to_sd(CANMessage *message, uint16_t message_id);
         static void send_to_radio(CANMessage *message, uint16_t message_id);
   
     private:
       void message_handler() override;
+      char _logFilename[32];
+      void send_to_sd(CANMessage *message, uint16_t message_id);
   };
 
 #endif
