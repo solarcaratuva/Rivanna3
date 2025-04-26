@@ -130,7 +130,7 @@ typedef struct BPSError : CANStruct, bps_bps_error_t {
             "discharge_limit_enforcement_fault %u, charger_safety_relay_fault "
             "%u, internal_memory_fault %u, internal_thermistor_fault %u, "
             "internal_logic_fault %u";
-        char buf[256];
+        char buf[1024];
         int len = std::snprintf(
             buf, sizeof(buf),
             FORMAT,

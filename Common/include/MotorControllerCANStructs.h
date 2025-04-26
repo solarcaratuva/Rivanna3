@@ -224,7 +224,7 @@ typedef struct MotorControllerError
             "overcurrent_err %u, overvoltage_err %u, overcurrent_limit %u, "
             "motor_system_err %u, motor_lock %u, hall_sensor_short %u, "
             "hall_sensor_open %u, overheat_level %u";
-        char buf[256];
+        char buf[1024];
         int len = std::snprintf(
             buf, sizeof(buf),
             FORMAT,
