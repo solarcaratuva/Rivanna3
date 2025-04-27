@@ -80,8 +80,7 @@ def get_correct_port() -> str:
     sys.exit(1)
 
 
-def log(args) -> None:
-    port = get_correct_port()        
+def log(args, port: str) -> None:
     ser = Serial(port, baudrate=921600)
     print(f"Serial connection to {port} established. Now listening...")
 
@@ -118,15 +117,18 @@ def main() -> None:
         stlink_id = get_stlink()
         attach_stlink(stlink_id)
         time.sleep(1)
-        process = subprocess.run(f"echo {sudo} | sudo -S chmod 666 /dev/ttyACM0", shell=True, capture_output=False, check=False) # give access to the serial port to WSL user accounts 
+        
+        port = get_correct_port()
+        process = subprocess.run(f"echo {sudo} | sudo -S chmod 666 {port}", shell=True, capture_output=False, check=False) # give access to the serial port to WSL user accounts 
         if process.returncode != 0: sys.exit(1)
 
-        log(args)
+        log(args, port)
 
         detach_stlink(stlink_id)
 
     elif OS == "Darwin": # Mac
-        log(args)
+        port = get_correct_port()
+        log(args, port)
     
     elif OS == "Windows":
         print("ERROR: This script must be run in WSL")
