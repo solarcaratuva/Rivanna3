@@ -5,11 +5,13 @@
 
 #ifdef TARGET_NUCLEO_F413ZH //HIL Testing CAN simulation with BufferedSerial
 
+                    //TX, RX, Baudrate
 BufferedSerial serial(PD_1, PD_0, 14400);
 
 CANInterface::CANInterface(PinName rd, PinName td, PinName standby_pin) 
     : can(rd, td), standby(standby_pin) { 
-    //do nothing
+    can_thread.start(callback(this, &CANInterface::message_handler));
+
 }
 
 void CANInterface::CANSetFrequency(int freq) { } //do nothing

@@ -65,6 +65,7 @@ AnalogIn throttle(THROTTLE_VALUE_IN, 5.0f);
 
 DriverCANInterface vehicle_can_interface(CAN_RX, CAN_TX, CAN_STBY);
 
+
 ECUMotorCommands to_motor;
 ECUPowerAuxCommands power_aux_out;
 BPSError bps_error;
@@ -265,15 +266,12 @@ int main() {
     log_set_level(LOG_LEVEL);
     log_debug("Start main()");
     
+    CANMessage message;
+
     while (true){
         log_debug("Main thread loop");
         // vehicle_can_interface.send(&bps_error);
-        ThisThread::sleep_for(MOTOR_LOOP_PERIOD);
-
-        //Test LED
-        // debug_CANBUS = PIN_ON;
-        // thread_sleep_for(100);
-        // debug_CANBUS = PIN_OFF;
+        ThisThread::sleep_for(MAIN_LOOP_PERIOD);
     }
 
     // motor_thread.start(motor_message_handler);
@@ -318,7 +316,7 @@ void DriverCANInterface::handle(MotorControllerPowerStatus *can_struct) {
 void DriverCANInterface::handle(BPSError *can_struct) {
     bms_error = can_struct->internal_communications_fault || can_struct-> low_cell_voltage_fault || can_struct->open_wiring_fault || can_struct->current_sensor_fault || can_struct->pack_voltage_sensor_fault || can_struct->thermistor_fault || can_struct->canbus_communications_fault || can_struct->high_voltage_isolation_fault || can_struct->charge_limit_enforcement_fault || can_struct->discharge_limit_enforcement_fault || can_struct->charger_safety_relay_fault || can_struct->internal_thermistor_fault || can_struct->internal_memory_fault;
     debug_CANBUS = PIN_ON;
-    thread_sleep_for(1000);
+    ThisThread::sleep_for(FLASH_PERIOD);
     debug_CANBUS = PIN_OFF;
 }
 
