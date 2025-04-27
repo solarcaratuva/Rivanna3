@@ -11,7 +11,7 @@
 #define LOG_LEVEL LOG_DEBUG
 
 BufferedSerial xbee(RADIO_TX, RADIO_RX, 9600);
-BufferedSerial pc(USB_TX, USB_RX, 115200);
+// BufferedSerial pc(USB_TX, USB_RX, 115200);
 SDBlockDevice sd(SPI2_MOSI, SPI2_MISO, SPI2_SCK, SD_SELECT);
 FATFileSystem fs("sd");
 
@@ -153,7 +153,6 @@ void TelemetryCANInterface::send_to_sd(CANMessage *message, uint16_t message_id)
 
 void TelemetryCANInterface::send_to_radio(CANMessage *message, uint16_t message_id) {
     xbee.set_format(8, BufferedSerial::None, 1);
-    pc.set_format(8, BufferedSerial::None, 1);
 
     char message_data[17];
     CANInterface::write_CAN_message_data_to_buffer(message_data, message);
@@ -164,9 +163,9 @@ void TelemetryCANInterface::send_to_radio(CANMessage *message, uint16_t message_
     while (chrono::steady_clock::now() - start < 500ms) {
         if (xbee.readable()) {
             int n = xbee.read(buffer, sizeof(buffer));
-            if (n > 0) {
-                pc.write(buffer, n);
-            }
+            // if (n > 0) {
+            //     pc.write(buffer, n);
+            // }
         }
     }
 }
@@ -285,3 +284,19 @@ void TelemetryCANInterface::message_handler() {
         }
     }
 }
+
+
+// void TelemetryCANInterface::message_handler() {
+//     while (true) {
+//         ThisThread::flags_wait_all(0x1);
+//         CANMessage message;
+//         while (can.read(message)) {
+//             char message_data[17];
+//             CANInterface::write_CAN_message_data_to_buffer(message_data, &message);
+
+//             char *msg = new char[100];
+//             snprintf(msg, 100, "Received CAN message with ID 0x%03X Length %d Data 0x%s ", message.id, message.len, message_data);
+//             xbee.write(msg, strlen(msg));
+//         }
+//     }
+// }
