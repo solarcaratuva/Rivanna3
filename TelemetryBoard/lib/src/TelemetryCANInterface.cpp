@@ -36,14 +36,12 @@ TelemetryCANInterface::TelemetryCANInterface(PinName rd, PinName td,
 int TelemetryCANInterface::send_message(CANMessage *message) {
     log_debug("Sending CAN message with ID: %d", message->id);
     // send_to_sd(message, message->id);
-    send_to_radio(message, message->id);
     return 0;
 }
 
 
 void TelemetryCANInterface::send_to_sd(CANMessage *message, uint16_t message_id) {
     log_debug("SD Card: Sent message with ID: %d", message_id);
-
     char buf[128];
     size_t len = 0;
 
@@ -151,27 +149,9 @@ void TelemetryCANInterface::send_to_sd(CANMessage *message, uint16_t message_id)
 }
 
 
-void TelemetryCANInterface::send_to_radio(CANMessage *message, uint16_t message_id) {
-    xbee.set_format(8, BufferedSerial::None, 1);
-
-    char message_data[17];
-    CANInterface::write_CAN_message_data_to_buffer(message_data, message);
-    xbee.write(message_data, std::strlen(message_data));
-
-    auto start = std::chrono::steady_clock::now();
-    char buffer[128];
-    while (chrono::steady_clock::now() - start < 500ms) {
-        if (xbee.readable()) {
-            int n = xbee.read(buffer, sizeof(buffer));
-            // if (n > 0) {
-            //     pc.write(buffer, n);
-            // }
-        }
-    }
-}
-
 void TelemetryCANInterface::message_handler() {
     log_set_level(LOG_LEVEL);
+    xbee.set_format(8, BufferedSerial::None, 1);
     char *message = "got here";
     xbee.write(message, strlen(message));
     while (true) {
@@ -284,19 +264,3 @@ void TelemetryCANInterface::message_handler() {
         }
     }
 }
-
-
-// void TelemetryCANInterface::message_handler() {
-//     while (true) {
-//         ThisThread::flags_wait_all(0x1);
-//         CANMessage message;
-//         while (can.read(message)) {
-//             char message_data[17];
-//             CANInterface::write_CAN_message_data_to_buffer(message_data, &message);
-
-//             char *msg = new char[100];
-//             snprintf(msg, 100, "Received CAN message with ID 0x%03X Length %d Data 0x%s ", message.id, message.len, message_data);
-//             xbee.write(msg, strlen(msg));
-//         }
-//     }
-// }

@@ -16,7 +16,10 @@ int main() {
     log_debug("System startup...");
     
     while (true) {
-         ThisThread::sleep_for(1s);
+        // BufferedSerial xbee(RADIO_TX, RADIO_RX, 9600);
+        // const char *message = "Telemetry CAN Interface is running";
+        // xbee.write(message, strlen(message));
+        ThisThread::sleep_for(1s);
     }
 }
 

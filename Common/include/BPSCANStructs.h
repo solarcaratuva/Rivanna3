@@ -60,7 +60,7 @@ typedef struct BPSPackInformation : CANStruct, bps_bps_pack_information_t {
     size_t format(char *buf, size_t buf_sz) const {
         return std::snprintf(
             buf, buf_sz,
-            "BPSPackInfo: V=%u mV, I=%d mA, SOC=%u%%",
+            "BPSPackInfo: V=%u mV, I=%d A, SOC=%u%%",
             pack_voltage, pack_current, pack_soc
         );
     }    
