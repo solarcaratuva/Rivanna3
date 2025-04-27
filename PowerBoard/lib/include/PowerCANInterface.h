@@ -7,6 +7,7 @@
 #include "MotorControllerCANStructs.h"
 #include "DashboardCommandsCANStruct.h"
 #include "MotorCommandsCANStruct.h"
+#include "AUXBATTERYCANStructs.h"
 #include "HeartBeatCANStruct.h" // heartbeat
 
 class PowerCANInterface : public CANInterface {
@@ -19,6 +20,7 @@ class PowerCANInterface : public CANInterface {
     void handle(DashboardCommands *can_struct);
     void handle(Heartbeat *can_struct);
     void handle(BPSPackInformation *can_struct);
+    void handle(AuxBatteryStatus *can_struct);
   private:
     void message_handler() override;
 
