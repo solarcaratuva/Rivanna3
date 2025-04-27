@@ -19,6 +19,7 @@ def get_args():
     parser = argparse.ArgumentParser(description="Monitor a board's debug log through a ST-Link")
     parser.add_argument("-s", "--silent", action="store_true", help="Suppress monitor output")
     parser.add_argument("-p", "--sudo", help="WSL sudo password, required for monitoring on Windows computers")
+    parser.add_argument("-l", "--log", type=str, help="Log file path")
     return parser.parse_args()
 
 def get_stlink() -> str:
@@ -75,13 +76,11 @@ def get_correct_port() -> str:
         if "stlink" in port.description.lower() or "st-link" in port.description.lower():
             return port.device
     
-    print("ERROR: ST-Link not found.")
+    print("ERROR: ST-Link could not be found in WSL. Something is wrong.")
     sys.exit(1)
 
 
-def log():
-    log_file_path = None
-
+def log(args) -> None:
     port = get_correct_port()        
     ser = Serial(port, baudrate=921600)
     print(f"Serial connection to {port} established. Now listening...")
@@ -97,10 +96,11 @@ def log():
             except Exception as e:
                 text = f"EXCEPTION THROWN: {e}"
                 errorCount += 1
-            print(text)
-            if log_file_path:
-                with open(log_file_path, "a") as log:
-                    log.write(text + "\n")
+            if not args.silent:
+                print(text)
+            if args.log:
+                with open(args.log, "a", encoding="utf-8") as logFile:
+                    logFile.write(text + "\n")
     except KeyboardInterrupt:
         ser.close()
         print(f"Serial connection closed. {messageCount} messages received, {errorCount} exceptions.")
@@ -113,20 +113,20 @@ def main() -> None:
         sudo = args.sudo if args.sudo else None
         if not sudo:
             print("ERROR: Sudo password required for monitoring on Windows computers")
-            exit(1)
+            sys.exit(1)
 
         stlink_id = get_stlink()
         attach_stlink(stlink_id)
         time.sleep(1)
         process = subprocess.run(f"echo {sudo} | sudo -S chmod 666 /dev/ttyACM0", shell=True, capture_output=False, check=False) # give access to the serial port to WSL user accounts 
-        if process.returncode != 0: exit(1)
+        if process.returncode != 0: sys.exit(1)
 
-        log()
+        log(args)
 
         detach_stlink(stlink_id)
 
     elif OS == "Darwin": # Mac
-        log()
+        log(args)
     
     elif OS == "Windows":
         print("ERROR: This script must be run in WSL")
