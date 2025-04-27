@@ -2,9 +2,10 @@
 #include "AUXBATTERYCANStructs.h"
 #include "pindef.h"
 #include "PowerCANInterface.h"
+#include "main.h"
 
 
-AnalogIn aux_battery(AUX);
+
 
 //read voltage in mV; send to CAN as % full (9V empty, 12V full)
 void update_aux_battery() {
@@ -15,13 +16,11 @@ void update_aux_battery() {
     battery_status.aux_voltage = static_cast<uint16_t>(voltage * 1000.0f); 
 
     //9-12 volt range
-    float percent_full = (voltage - 9.0f) / 3.0f * 100.0f; 
+    float percent_full = (voltage - 9.0f) / 3.0f * 255.0f; 
     if (percent_full < 0) percent_full = 0;
-    if (percent_full > 100) percent_full = 100;
+    if (percent_full > 255) percent_full = 255; //hex percent based
 
     battery_status.aux_percent_full = static_cast<uint8_t>(percent_full);
 
-    battery_status.log(LOG_DEBUG);
     vehicle_can_interface.send(&battery_status);
 }
-

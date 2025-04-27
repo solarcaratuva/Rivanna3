@@ -18,6 +18,8 @@ extern DigitalIn aux_input;
 
 void fault_occurred();
 
+extern AnalogIn aux_battery;
+
 
 // precharge
 extern bool discharge_relay_status;
