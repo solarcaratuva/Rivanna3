@@ -20,22 +20,22 @@ TelemetryCANInterface::TelemetryCANInterface(PinName rd, PinName td,
     : CANInterface(rd, td, standby_pin) {
     can.frequency(250000);
 
-    sd.init();
-    if (fs.mount(&sd) != 0) {
-        log_error("SD Card: mount failed");
-    }
+    // sd.init();
+    // if (fs.mount(&sd) != 0) {
+    //     log_error("SD Card: mount failed");
+    // }
 
-    static const char *LOG_FILE = "/sd/log.txt";
-    FILE *f_init = fopen(LOG_FILE, "a");
-    if (f_init) {
-        fclose(f_init);
-    }
-    strncpy(_logFilename, LOG_FILE, sizeof(_logFilename));
+    // static const char *LOG_FILE = "/sd/log.txt";
+    // FILE *f_init = fopen(LOG_FILE, "a");
+    // if (f_init) {
+    //     fclose(f_init);
+    // }
+    // strncpy(_logFilename, LOG_FILE, sizeof(_logFilename));
 }
 
 int TelemetryCANInterface::send_message(CANMessage *message) {
     log_debug("Sending CAN message with ID: %d", message->id);
-    send_to_sd(message, message->id);
+    // send_to_sd(message, message->id);
     send_to_radio(message, message->id);
     return 0;
 }
@@ -172,13 +172,15 @@ void TelemetryCANInterface::send_to_radio(CANMessage *message, uint16_t message_
 }
 
 void TelemetryCANInterface::message_handler() {
+    log_set_level(LOG_LEVEL);
+    char *message = "got here";
+    xbee.write(message, strlen(message));
     while (true) {
         ThisThread::flags_wait_all(0x1);
         CANMessage msg;
         while (can.read(msg)) {
             // Always log to SD
-            send_to_sd(&msg, msg.id);
-
+            // send_to_sd(&msg, msg.id);
             char buf[128];
             size_t len = 0;
 
@@ -276,22 +278,10 @@ void TelemetryCANInterface::message_handler() {
             if (len > 0) {
                 xbee.write(buf, len);
             }
+            else {
+                char *zero_length = "length is 0";
+                xbee.write(zero_length, strlen(zero_length));
+            }
         }
     }
 }
-
-
-// void TelemetryCANInterface::message_handler() {
-//     while (true) {
-//         ThisThread::flags_wait_all(0x1);
-//         CANMessage message;
-//         while (can.read(message)) {
-//             char message_data[17];
-//             CANInterface::write_CAN_message_data_to_buffer(message_data, &message);
-
-//             char *msg = new char[100];
-//             snprintf(msg, 100, "Received CAN message with ID 0x%03X Length %d Data 0x%s ", message.id, message.len, message_data);
-//             xbee.write(msg, strlen(msg));
-//         }
-//     }
-// }
