@@ -29,4 +29,5 @@ typedef struct AuxBatteryStatus : CANStruct, rivanna3_aux_battery_status_t {
     }
 } AuxBatteryStatus;
 
+
 #endif

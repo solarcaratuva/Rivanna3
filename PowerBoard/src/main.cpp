@@ -14,6 +14,7 @@
 #include "HeartBeatSystem.h"
 #include "CruiseControl.h"
 #include "Precharge.h"
+#include "AUXBattery.h"
 
 
 #define LOG_LEVEL                       LOG_DEBUG
@@ -21,6 +22,7 @@
 #define BRAKE_LIGHTS_UPDATE_PERIOD      10ms
 #define MOTOR_CONTROL_PERIOD            10ms
 #define MOTOR_REQUEST_FRAMES_PERIOD     10ms
+#define AUX_BATTERY_PERIOD              10ms
 #define MAX_REGEN                       256
 
 const bool PIN_ON = true;
@@ -206,7 +208,9 @@ int main() {
     queue.call_every(SIGNAL_FLASH_PERIOD, signal_flash_handler);
     queue.call_every(BRAKE_LIGHTS_UPDATE_PERIOD, set_brake_lights);
     queue.call_every(MOTOR_REQUEST_FRAMES_PERIOD, request_motor_frames);
-
+    queue.call_every(AUX_BATTERY_PERIOD, update_aux_battery);
+    
+   
     motor_precharge_thread.start(motor_precharge);
     mppt_precharge_thread.start(mppt_precharge);
 
@@ -279,3 +283,5 @@ void MotorControllerCANInterface::handle(MotorControllerError *can_struct) {
     can_struct->log(LOG_ERROR);
     fault_occurred();
 }
+
+

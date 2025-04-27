@@ -3,10 +3,11 @@
 #include "pindef.h"
 #include "PowerCANInterface.h"
 #include "main.h"
+#include "AUXBattery.h"
 
-#DEFINE SCALING_FACTOR (3.3/3.23)
-#DEFINE NO_VOLTAGE 9.0f
-#DEFINE PERCENTAGE_SCALING 3.0f * 255.0f
+#define SCALING_FACTOR          (3.3/3.23)
+#define NO_VOLTAGE              9.0f
+#define PERCENTAGE_SCALING      (3.0f * 255.0f)
 
 
 
@@ -25,7 +26,7 @@ void update_aux_battery() {
     if (percent_full < 0) percent_full = 0;
     if (percent_full > 255) percent_full = 255; //hex percent based
 
-    battery_status.aux_percent_full = static_cast<uint8_t>(percent_full);
+    battery_status.percent_full = static_cast<uint8_t>(percent_full);
 
     vehicle_can_interface.send(&battery_status);
 }
