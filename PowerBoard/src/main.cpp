@@ -22,7 +22,7 @@
 #define BRAKE_LIGHTS_UPDATE_PERIOD      10ms
 #define MOTOR_CONTROL_PERIOD            10ms
 #define MOTOR_REQUEST_FRAMES_PERIOD     10ms
-#define AUX_BATTERY_PERIOD              10ms
+#define AUX_BATTERY_PERIOD              10s
 #define MAX_REGEN                       256
 
 const bool PIN_ON = true;
