@@ -127,41 +127,50 @@ void regen_drive(MotorCommands *motor_CAN_struct, uint16_t* throttleValue, uint1
  */
 void set_motor_status() {
     MotorCommands motor_CAN_struct = MotorCommands(); // constructor sets all values to 0
-    uint16_t throttle = read_throttle();
-    uint16_t brake = read_brake();
-    uint16_t regen = 0;
+    motor_CAN_struct.braking = 1;
+    motor_CAN_struct.regen_drive = 0;
+    motor_CAN_struct.manual_drive = 0;
+    motor_CAN_struct.cruise_drive = 1;
+    motor_CAN_struct.brake_pedal = 99;
+    motor_CAN_struct.throttle = 100;
+    motor_CAN_struct.cruise_speed = 101;
+    motor_CAN_struct.regen_braking = 102;
+    motor_CAN_struct.throttle_pedal = 103;
+    // uint16_t throttle = read_throttle();
+    // uint16_t brake = read_brake();
+    // uint16_t regen = 0;
 
-    motor_CAN_struct.throttle_pedal = throttle;
-    motor_CAN_struct.brake_pedal = brake;
+    // motor_CAN_struct.throttle_pedal = throttle;
+    // motor_CAN_struct.brake_pedal = brake;
 
-    if (has_faulted) { // fault case
-        throttle = 0;
-        brake = 0;
-    } else if (brake > 0) { // brake case
-        throttle = 0;
-        if (regen_enabled) {
-            regen = MAX_REGEN;
-        } else {
-            regen = 0;
-        }
-        cruise_control_brake_latch = true;
-        motor_CAN_struct.braking = true;
-    } else if (cruise_control_enabled && !cruise_control_brake_latch) { // cruise control case, logic handled elsewhere
-        // TODO: get throttle
-        motor_CAN_struct.cruise_speed = motor_CAN_struct.cruise_drive ? cruise_control.get_cruise_target() : 0;
-        motor_CAN_struct.cruise_drive = true;
-    } else if(regen_enabled) { // regen drive case
-        regen_drive(&motor_CAN_struct, &throttle, &regen);
-        motor_CAN_struct.throttle = throttle;
-        motor_CAN_struct.regen_braking = regen;
-        motor_CAN_struct.regen_drive = true;
-    } else { // normal drive case
-        // do nothing; throttle, brake, and regen are already set
-        motor_CAN_struct.manual_drive = true;
-    }
+    // if (has_faulted) { // fault case
+    //     throttle = 0;
+    //     brake = 0;
+    // } else if (brake > 0) { // brake case
+    //     throttle = 0;
+    //     if (regen_enabled) {
+    //         regen = MAX_REGEN;
+    //     } else {
+    //         regen = 0;
+    //     }
+    //     cruise_control_brake_latch = true;
+    //     motor_CAN_struct.braking = true;
+    // } else if (cruise_control_enabled && !cruise_control_brake_latch) { // cruise control case, logic handled elsewhere
+    //     // TODO: get throttle
+    //     motor_CAN_struct.cruise_speed = motor_CAN_struct.cruise_drive ? cruise_control.get_cruise_target() : 0;
+    //     motor_CAN_struct.cruise_drive = true;
+    // } else if(regen_enabled) { // regen drive case
+    //     regen_drive(&motor_CAN_struct, &throttle, &regen);
+    //     motor_CAN_struct.throttle = throttle;
+    //     motor_CAN_struct.regen_braking = regen;
+    //     motor_CAN_struct.regen_drive = true;
+    // } else { // normal drive case
+    //     // do nothing; throttle, brake, and regen are already set
+    //     motor_CAN_struct.manual_drive = true;
+    // }
 
-    motor_interface.sendThrottle(throttle);
-    motor_interface.sendRegen(regen);
+    // motor_interface.sendThrottle(throttle);
+    // motor_interface.sendRegen(regen);
 
     vehicle_can_interface.send(&motor_CAN_struct);
 }

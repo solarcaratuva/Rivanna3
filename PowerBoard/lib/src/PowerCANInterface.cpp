@@ -79,6 +79,7 @@ void PowerCANInterface::message_handler() {
             else if (message.id == DASHBOARD_COMMANDS_ID) {
                 DashboardCommands can_struct;
                 can_struct.deserialize(&message);
+                can_struct.log(LOG_ERROR);
                 handle(&can_struct);
             }
             else if (message.id == BPSPackInformation_MESSAGE_ID) {
