@@ -38,7 +38,7 @@ typedef struct MotorControllerFrameRequest
                      "drive_status_frame %u, error_frame %u",
                      power_status_frame, drive_status_frame, error_frame);
     }
-    
+
     size_t format(char* buf, size_t buf_sz) const {
         return std::snprintf(buf, buf_sz,
             "MCReq: pwr=%u, drv=%u, err=%u\n",
@@ -82,21 +82,6 @@ typedef struct MotorControllerPowerStatus
             "fet_temp %u, motor_rpm %u, pwm_duty %u, lead_angle %u",
             battery_voltage, battery_current, battery_current_direction,
             motor_current, fet_temp, motor_rpm, pwm_duty, lead_angle);
-    }
-
-    std::string toString() const {
-        static constexpr const char* FORMAT =
-        "MotorControllerPowerStatus: battery_voltage %u, battery_current "
-            "%u, battery_current_direction %u, motor_current %u, "
-            "fet_temp %u, motor_rpm %u, pwm_duty %u, lead_angle %u";
-        char buf[256];
-        int len = std::snprintf(
-            buf, sizeof(buf),
-            FORMAT,
-            battery_voltage, battery_current, battery_current_direction,
-            motor_current, fet_temp, motor_rpm, pwm_duty, lead_angle
-        );
-        return std::string(buf, (len > 0 && len < int(sizeof(buf))) ? len : sizeof(buf)-1);
     }
 
     size_t format(char* buf, size_t buf_sz) const {
@@ -143,23 +128,6 @@ typedef struct MotorControllerDriveStatus
                      power_mode, control_mode, accelerator_vr_position,
                      regen_vr_position, digital_sw_position,
                      output_target_value, motor_status, regen_status);
-    }
-
-    std::string toString() const {
-        static constexpr const char* FORMAT =
-        "MotorControllerDriveStatus: power_mode %u, control_mode "
-                     "%u, accelerator_vr_position %u, regen_vr_position %u, "
-                     "digital_sw_position %u, output_target_value %u, "
-                     "motor_status %u, regen_status %u";
-        char buf[256];
-        int len = std::snprintf(
-            buf, sizeof(buf),
-            FORMAT,
-            power_mode, control_mode, accelerator_vr_position,
-                     regen_vr_position, digital_sw_position,
-                     output_target_value, motor_status, regen_status
-        );
-        return std::string(buf, (len > 0 && len < int(sizeof(buf))) ? len : sizeof(buf)-1);
     }
 
     size_t format(char* buf, size_t buf_sz) const {
@@ -219,33 +187,6 @@ typedef struct MotorControllerError
             power_system_err, overcurrent_err, overvoltage_err,
             overcurrent_limit, motor_system_err, motor_lock, hall_sensor_short,
             hall_sensor_open, overheat_level);
-    }
-
-    std::string toString() const {
-        static constexpr const char* FORMAT =
-        "MotorControllerError: analog_sensor_err %u, "
-            "motor_current_sensor_u_err %u, motor_current_sensor_w_err %u, "
-            "fet_thermistor_err %u, battery_voltage_sensor_err %u, "
-            "battery_current_sensor_err %u, battery_current_sensor_adj_err %u, "
-            "motor_current_sensor_adj_err %u, accelerator_position_err %u, "
-            "controller_voltage_sensor_err %u, power_system_err %u, "
-            "overcurrent_err %u, overvoltage_err %u, overcurrent_limit %u, "
-            "motor_system_err %u, motor_lock %u, hall_sensor_short %u, "
-            "hall_sensor_open %u, overheat_level %u";
-        char buf[1024];
-        int len = std::snprintf(
-            buf, sizeof(buf),
-            FORMAT,
-            analog_sensor_err, motor_current_sensor_u_err,
-            motor_current_sensor_w_err, fet_thermistor_err,
-            battery_voltage_sensor_err, battery_current_sensor_err,
-            battery_current_sensor_adj_err, motor_current_sensor_adj_err,
-            accelerator_position_err, controller_voltage_sensor_err,
-            power_system_err, overcurrent_err, overvoltage_err,
-            overcurrent_limit, motor_system_err, motor_lock, hall_sensor_short,
-            hall_sensor_open, overheat_level
-        );
-        return std::string(buf, (len > 0 && len < int(sizeof(buf))) ? len : sizeof(buf)-1);
     }
 
     size_t format(char* buf, size_t buf_sz) const {
