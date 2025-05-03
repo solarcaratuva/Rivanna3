@@ -4,6 +4,7 @@
 #include <mbed.h>
 #include <rtos.h>
 #include "MotorInterface.h"
+#include "PowerCANInterface.h"
 
 extern AnalogIn throttle_pedal;
 extern AnalogIn brake_pedal;
@@ -15,8 +16,11 @@ extern bool cruise_control_enabled;
 extern bool cruise_control_brake_latch;
 extern double pack_voltage;
 extern DigitalIn aux_input;
+extern PowerCANInterface vehicle_can_interface;
 
 void fault_occurred();
+
+extern AnalogIn aux_battery;
 
 
 // precharge
