@@ -20,7 +20,7 @@ void HeartBeatSystem::initializeTimeouts(bool start_telemetry_timeout, bool star
     }
 }
 
-void HeartBeatSystem::refreshTimer(HeartBeat *can_struct) {
+void HeartBeatSystem::refreshTimer(Heartbeat *can_struct) {
     // if it received a heartbeat message for itself (should not happen), it will have a null pointer exception
 
     if (can_struct->from_wheel_board == 1 && listenWheel) {
@@ -41,8 +41,8 @@ void HeartBeatSystem::refreshTimer(HeartBeat *can_struct) {
     }
 }
 
-HeartBeat HeartBeatSystem::send_heartbeat() {
-    HeartBeat heartbeat_struct;
+Heartbeat HeartBeatSystem::send_heartbeat() {
+    Heartbeat heartbeat_struct;
 
     heartbeat_struct.from_telemetry_board = 0;
     heartbeat_struct.from_wheel_board = 0;

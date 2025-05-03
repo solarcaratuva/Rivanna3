@@ -72,7 +72,7 @@ void PowerCANInterface::message_handler() {
                 handle(&can_struct);
             }
             else if (message.id == HEARTBEAT_ID) {
-                HeartBeat can_struct;
+                Heartbeat can_struct;
                 can_struct.deserialize(&message);
                 handle(&can_struct);
             }

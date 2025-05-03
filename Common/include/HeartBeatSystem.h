@@ -36,10 +36,10 @@ public:
     void initializeTimeouts(bool start_telemetry_timeout, bool start_wheel_timeout, bool start_power_timeout);
 
     // Refresh timeout for received heartbeat message
-    void refreshTimer(HeartBeat* can_struct);
+    void refreshTimer(Heartbeat* can_struct);
 
     // Return a heartbeat message to specified board
-    HeartBeat send_heartbeat();
+    Heartbeat send_heartbeat();
 };
 
 #endif // HEARTBEAT_SYSTEM_H

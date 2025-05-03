@@ -5,6 +5,7 @@ add_library(PowerBoard-lib
     src/ReadPedals.cpp
     src/Precharge.cpp
     src/CruiseControl.cpp
+    src/AUXBattery.cpp
 )
 
 target_include_directories(PowerBoard-lib PUBLIC include)
