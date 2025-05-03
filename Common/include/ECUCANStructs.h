@@ -28,20 +28,6 @@ typedef struct ECUMotorCommands : CANStruct, rivanna2_ecu_motor_commands_t {
             forward_en, reverse_en, motor_on);
     }
 
-    std::string toString() const {
-        static constexpr const char* FORMAT =
-        "ECUMotorCommands: throttle %u, regen %u, cruise_control_speed %u, "
-            "cruise_control_en %u, forward_en %u, reverse_en %u, motor_on %u";
-        char buf[256];
-        int len = std::snprintf(
-            buf, sizeof(buf),
-            FORMAT,
-            throttle, regen, cruise_control_speed, cruise_control_en,
-            forward_en, reverse_en, motor_on
-        );
-        return std::string(buf, (len > 0 && len < int(sizeof(buf))) ? len : sizeof(buf)-1);
-    }
-
     size_t format(char* buf, size_t buf_sz) const {
         return std::snprintf(buf, buf_sz,
             "ECU: thr=%u, regen=%u, cspd=%u, en=%u, fwd=%u, rev=%u, on=%u\n",
@@ -72,20 +58,6 @@ typedef struct ECUPowerAuxCommands : CANStruct,
                      "headlights %u, left_turn_signal %u, right_turn_signal %u",
                      hazards, brake_lights, headlights, left_turn_signal,
                      right_turn_signal);
-    }
-
-    std::string toString() const {
-        static constexpr const char* FORMAT =
-        "ECUPowerAuxCommands: hazards %u, brake_lights %u, "
-                     "headlights %u, left_turn_signal %u, right_turn_signal %u";
-        char buf[256];
-        int len = std::snprintf(
-            buf, sizeof(buf),
-            FORMAT,
-            hazards, brake_lights, headlights, left_turn_signal,
-                     right_turn_signal
-        );
-        return std::string(buf, (len > 0 && len < int(sizeof(buf))) ? len : sizeof(buf)-1);
     }
 
     size_t format(char* buf, size_t buf_sz) const {

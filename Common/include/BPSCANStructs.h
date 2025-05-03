@@ -192,20 +192,6 @@ typedef struct BPSCellVoltage : CANStruct, bps_bps_cell_voltage_t {
                      high_cell_voltage_id);
     }
 
-    std::string toString() const {
-        static constexpr const char* FORMAT =
-        "BPSCellVoltage: low_cell_voltage %u, low_cell_voltage_id "
-                     "%u, high_cell_voltage %u, high_cell_voltage_id %u";
-        char buf[256];
-        int len = std::snprintf(
-            buf, sizeof(buf),
-            FORMAT,
-            low_cell_voltage, low_cell_voltage_id, high_cell_voltage,
-                     high_cell_voltage_id
-        );
-        return std::string(buf, (len > 0 && len < int(sizeof(buf))) ? len : sizeof(buf)-1);
-    }
-
     size_t format(char* buf, size_t buf_sz) const {
         return std::snprintf(buf, buf_sz,
             "CellVolt: low=%u mV@%u, high=%u mV@%u\n",

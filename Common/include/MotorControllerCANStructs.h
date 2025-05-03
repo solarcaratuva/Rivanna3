@@ -38,20 +38,7 @@ typedef struct MotorControllerFrameRequest
                      "drive_status_frame %u, error_frame %u",
                      power_status_frame, drive_status_frame, error_frame);
     }
-
-    std::string toString() const {
-        static constexpr const char* FORMAT =
-        "MotorControllerFrameRequest: power_status_frame %u, "
-                     "drive_status_frame %u, error_frame %u";
-        char buf[256];
-        int len = std::snprintf(
-            buf, sizeof(buf),
-            FORMAT,
-            power_status_frame, drive_status_frame, error_frame
-        );
-        return std::string(buf, (len > 0 && len < int(sizeof(buf))) ? len : sizeof(buf)-1);
-    }
-
+    
     size_t format(char* buf, size_t buf_sz) const {
         return std::snprintf(buf, buf_sz,
             "MCReq: pwr=%u, drv=%u, err=%u\n",

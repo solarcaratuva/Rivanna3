@@ -26,20 +26,6 @@
                 "DashboardCommands: hazards %u, left_turn_signal %u, right_turn_signal %u, regen_en %u, cruise_inc %u, cruise_en %u, cruise_dec %u",
                 hazards, left_turn_signal, right_turn_signal, regen_en, cruise_inc, cruise_en, cruise_dec);
         }
-        
-        std::string toString() const {
-            static constexpr const char* FORMAT =
-            "DashboardCommands: hazards %u, left_turn_signal %u, right_turn_signal %u, "
-            "regen_en %u, cruise_inc %u, cruise_en %u, cruise_dec %u";
-            char buf[256];
-            int len = std::snprintf(
-                buf, sizeof(buf),
-                FORMAT,
-                hazards, left_turn_signal, right_turn_signal,
-                regen_en, cruise_inc, cruise_en, cruise_dec
-            );
-            return std::string(buf, (len > 0 && len < int(sizeof(buf))) ? len : sizeof(buf)-1);
-        }
 
         size_t format(char* buf, size_t buf_sz) const {
             return std::snprintf(buf, buf_sz,
