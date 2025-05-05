@@ -37,6 +37,15 @@ typedef struct BPSPackInformation : CANStruct, bps_bps_pack_information_t {
             multipurpose_input_signal_status, always_on_signal_status,
             is_ready_signal_status, is_charging_signal_status);
     }
+
+    size_t format(char *buf, size_t buf_sz) const {
+        return std::snprintf(
+            buf, buf_sz,
+            "BPSPackInfo: V=%u mV, I=%d A, SOC=%u%%",
+            pack_voltage, pack_current, pack_soc
+        );
+    }    
+
 } BPSPackInformation;
 
 /**
@@ -95,6 +104,15 @@ typedef struct BPSError : CANStruct, bps_bps_error_t {
             charger_safety_relay_fault, internal_memory_fault,
             internal_thermistor_fault, internal_logic_fault);
     }
+
+    size_t format(char* buf, size_t buf_sz) const {
+        return std::snprintf(buf, buf_sz,
+            "BPSError: comm=%u, conv=%u, weak=%u, lowVolt=%u, openWire=%u\n",
+            internal_communications_fault, internal_conversion_fault,
+            weak_cell_fault, low_cell_voltage_fault, open_wiring_fault
+        );
+    }
+
 } BPSError;
 
 /**
@@ -123,6 +141,15 @@ typedef struct BPSCellVoltage : CANStruct, bps_bps_cell_voltage_t {
                      low_cell_voltage, low_cell_voltage_id, high_cell_voltage,
                      high_cell_voltage_id);
     }
+
+    size_t format(char* buf, size_t buf_sz) const {
+        return std::snprintf(buf, buf_sz,
+            "CellVolt: low=%u mV@%u, high=%u mV@%u\n",
+            low_cell_voltage, low_cell_voltage_id,
+            high_cell_voltage, high_cell_voltage_id
+        );
+    }
+    
 } BPSCellVoltage;
 
 /**
@@ -152,6 +179,15 @@ typedef struct BPSCellTemperature : CANStruct, bps_bps_cell_temperature_t {
             low_temperature, low_thermistor_id, high_temperature,
             high_thermistor_id);
     }
+
+    size_t format(char* buf, size_t buf_sz) const {
+        return std::snprintf(buf, buf_sz,
+            "CellTemp: low=%u°C@%u, high=%u°C@%u\n",
+            low_temperature, low_thermistor_id,
+            high_temperature, high_thermistor_id
+        );
+    }
+
 } BPSCellTemperature;
 
 #endif

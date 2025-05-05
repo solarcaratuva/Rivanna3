@@ -1,5 +1,6 @@
 #include "DriverCANInterface.h"
 #include "MotorControllerCANStructs.h"
+#include "CANStructs.h"
 #include "log.h"
 
 DriverCANInterface::DriverCANInterface(PinName rd, PinName td, PinName standby_pin)

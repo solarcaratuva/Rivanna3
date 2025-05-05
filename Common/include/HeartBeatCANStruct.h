@@ -26,6 +26,14 @@ typedef struct Heartbeat : CANStruct, rivanna3_heartbeat_t {
             "Heartbeat: FromWheelBoard %u, FromPowerBoard %u, FromTelemetryBoard %u",
             from_wheel_board, from_power_board, from_telemetry_board);
     }
+
+    size_t format(char* buf, size_t buf_sz) const {
+        return std::snprintf(buf, buf_sz,
+            "Beat: whl=%u, pwr=%u, tel=%u\n",
+            from_wheel_board, from_power_board, from_telemetry_board
+        );
+    }
+    
 } Heartbeat;
 
 #endif

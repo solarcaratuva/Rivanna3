@@ -26,6 +26,14 @@
                 "DashboardCommands: hazards %u, left_turn_signal %u, right_turn_signal %u, regen_en %u, cruise_inc %u, cruise_en %u, cruise_dec %u",
                 hazards, left_turn_signal, right_turn_signal, regen_en, cruise_inc, cruise_en, cruise_dec);
         }
+
+        size_t format(char* buf, size_t buf_sz) const {
+            return std::snprintf(buf, buf_sz,
+                "DashCmd: hz=%u, L=%u, R=%u, regen=%u, c+=%u, c-=%u\n",
+                hazards, left_turn_signal, right_turn_signal, regen_en, cruise_inc, cruise_dec
+            );
+        }
+        
     } DashboardCommands;
 
     #endif

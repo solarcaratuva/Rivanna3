@@ -32,6 +32,15 @@ typedef struct PowerAuxError : CANStruct, rivanna2_power_aux_error_t {
                      fan_error, brake_light_error, headlight_error,
                      bps_strobe_error, left_turn_error, right_turn_error);
     }
+
+    size_t format(char* buf, size_t buf_sz) const {
+        return std::snprintf(buf, buf_sz,
+            "PAErr: fan=%u, brake=%u, head=%u\n",
+            fan_error, brake_light_error, headlight_error
+        );
+    }
+
+    
 } PowerAuxError;
 
 #endif
