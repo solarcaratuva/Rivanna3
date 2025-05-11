@@ -280,8 +280,10 @@ void PowerCANInterface::handle(BPSError *can_struct) {
 }
 
 void MotorControllerCANInterface::handle(MotorControllerError *can_struct) {
-    can_struct->log(LOG_ERROR);
-    fault_occurred();
+    if (can_struct->analog_sensor_err || can_struct->motor_current_sensor_u_err || can_struct->motor_current_sensor_w_err || can_struct->fet_thermistor_err || can_struct->battery_voltage_sensor_err || can_struct->battery_current_sensor_err || can_struct->battery_current_sensor_adj_err || can_struct->motor_current_sensor_adj_err || can_struct->accelerator_position_err || can_struct->controller_voltage_sensor_err || can_struct->power_system_err || can_struct->overcurrent_err || can_struct->overvoltage_err || can_struct->overcurrent_limit || can_struct->motor_system_err || can_struct->motor_lock || can_struct->hall_sensor_short || can_struct->hall_sensor_open || can_struct->overheat_level > 0) {
+        can_struct->log(LOG_ERROR);
+        fault_occurred();
+    }
 }
 
 
