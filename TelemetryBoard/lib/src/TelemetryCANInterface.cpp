@@ -15,6 +15,7 @@ BufferedSerial xbee(RADIO_TX, RADIO_RX, 9600);
 SDBlockDevice sd(SPI2_MOSI, SPI2_MISO, SPI2_SCK, SD_SELECT);
 FATFileSystem fs("sd");
 AnalogIn brakePressureIn(BRAKE_PRESSURE);
+DigitalOut debug_led(DEBUG_LED_1);
 
 // Read and convert the brake pressure sensor voltage to PSI
 float TelemetryCANInterface::read_brake_pressure() {
@@ -218,6 +219,9 @@ void TelemetryCANInterface::message_handler() {
                     DashboardCommands s;
                     s.deserialize(&msg);
                     len = s.format(buf, sizeof(buf));
+                    debug_led = 1;
+                    ThisThread::sleep_for(50ms);
+                    debug_led = 0;
                     break;
                 }
                 case ECUMotorCommands_MESSAGE_ID: {
