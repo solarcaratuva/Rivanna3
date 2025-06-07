@@ -12,7 +12,11 @@ if [ "$1" == "riv2s" ]; then
     exit $?
 fi
 
-
+if [ "$1" == "telem" ]; then
+    echo "Compiling for Telemetry board"
+    mbed-tools compile -m TELEMETRY_BOARD -t GCC_ARM
+    exit $?
+fi
 
 if [ "$1" == "hil" ]; then
     echo "Compiling for Hardware-in-Loop Testing board"

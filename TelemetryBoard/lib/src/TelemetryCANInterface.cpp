@@ -14,6 +14,25 @@ BufferedSerial xbee(RADIO_TX, RADIO_RX, 9600);
 // BufferedSerial pc(USB_TX, USB_RX, 115200);
 SDBlockDevice sd(SPI2_MOSI, SPI2_MISO, SPI2_SCK, SD_SELECT);
 FATFileSystem fs("sd");
+AnalogIn brakePressureIn(BRAKE_PRESSURE);
+
+// Read and convert the brake pressure sensor voltage to PSI
+float TelemetryCANInterface::read_brake_pressure() {
+    // ADC reading 0.0–1.0 mapped to 0–3.3V
+    static constexpr float max_safe_voltage_adc = 3.3f;
+    float voltage_adc = brakePressureIn.read() * max_safe_voltage_adc;
+    // Divider: sensor output (0.5–4.5V) scaled to MCU pin (0.365–3.28V)
+    static constexpr float DIV_R = 3.28f / 5.0f;
+    float voltage_sensor = voltage_adc / DIV_R;
+    // Map 0.5–4.5V to 0–1000 PSI
+    static constexpr float voltage_min = 0.5f;
+    static constexpr float voltage_range = 4.0f;
+    static constexpr float pressure_range = 1000.0f;
+    float pressure = (voltage_sensor - voltage_min) / voltage_range * pressure_range;
+    // bound value between 0-1000 PSI
+    return pressure < 0 ? 0 : (pressure > pressure_range ? pressure_range : pressure);
+}
+
 
 TelemetryCANInterface::TelemetryCANInterface(PinName rd, PinName td,
                                      PinName standby_pin)
@@ -162,6 +181,13 @@ void TelemetryCANInterface::message_handler() {
             // send_to_sd(&msg, msg.id);
             char buf[128];
             size_t len = 0;
+
+            float pressure = read_brake_pressure();
+            log_debug("Brake pressure sensor reading: %.2f PSI", pressure);
+
+            char pressure_buf[64];
+            int pressure_len = snprintf(pressure_buf, sizeof(pressure_buf), "Brake Pressure: %.2f PSI\n", pressure);
+            xbee.write(pressure_buf, pressure_len);
 
             switch (msg.id) {
                 case BPSPackInformation_MESSAGE_ID: {

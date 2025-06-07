@@ -31,6 +31,7 @@ class TelemetryCANInterface : public CANInterface {
         int send(CANStruct *can_struct);
         int send_message(CANMessage *message);
         static void send_to_radio(CANMessage *message, uint16_t message_id);
+        float read_brake_pressure();
   
     private:
       void message_handler() override;

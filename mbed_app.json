@@ -11,8 +11,8 @@
       "platform.stdio-baud-rate": 921600,
       "platform.stdio-buffered-serial": 1,
       "platform.callback-nontrivial": true,
-      "target.stdio_uart_tx": "PC_12",
-      "target.stdio_uart_rx": "PD_2"
+      "target.stdio_uart_tx": "PC_10",
+      "target.stdio_uart_rx": "PC_11"
     },
     "*": {
       "platform.stdio-baud-rate": 921600,
