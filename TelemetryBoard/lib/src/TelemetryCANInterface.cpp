@@ -11,7 +11,7 @@
 #define LOG_LEVEL LOG_DEBUG
 
 BufferedSerial xbee(RADIO_TX, RADIO_RX, 9600);
-// BufferedSerial pc(USB_TX, USB_RX, 115200);
+BufferedSerial pc(USB_TX, USB_RX, 115200);
 SDBlockDevice sd(SPI2_MOSI, SPI2_MISO, SPI2_SCK, SD_SELECT);
 FATFileSystem fs("sd");
 AnalogIn brakePressureIn(BRAKE_PRESSURE);
@@ -174,6 +174,8 @@ void TelemetryCANInterface::message_handler() {
     xbee.set_format(8, BufferedSerial::None, 1);
     char *message = "got here";
     xbee.write(message, strlen(message));
+    const char *startup = ">>> handler entered\r\n";
+    pc.write(startup, strlen(startup));
     while (true) {
         ThisThread::flags_wait_all(0x1);
         CANMessage msg;
