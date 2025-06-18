@@ -51,6 +51,8 @@ TelemetryCANInterface::TelemetryCANInterface(PinName rd, PinName td,
     //     fclose(f_init);
     // }
     // strncpy(_logFilename, LOG_FILE, sizeof(_logFilename));
+    can_thread.start(callback(this,
+                              &TelemetryCANInterface::message_handler));
 }
 
 int TelemetryCANInterface::send_message(CANMessage *message) {
@@ -174,8 +176,7 @@ void TelemetryCANInterface::message_handler() {
     xbee.set_format(8, BufferedSerial::None, 1);
     char *message = "got here";
     xbee.write(message, strlen(message));
-    const char *startup = ">>> handler entered\r\n";
-    pc.write(startup, strlen(startup));
+    pc.write(message, strlen(message));
     while (true) {
         ThisThread::flags_wait_all(0x1);
         CANMessage msg;
