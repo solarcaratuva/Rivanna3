@@ -5,8 +5,8 @@
 #include "log.h"
 
 
-#define THROTTLE_VOLTAGE_LOW                 1.56 // voltage at 0% throttle
-#define THROTTLE_VOLTAGE_HIGH                2.66 // voltage at 100% throttle
+#define THROTTLE_VOLTAGE_LOW                 1.24 // voltage at 0% throttle
+#define THROTTLE_VOLTAGE_HIGH                5 // voltage at 100% throttle
 #define THROTTLR_VOLTAGE_DIFFERENCE          (THROTTLE_VOLTAGE_HIGH - THROTTLE_VOLTAGE_LOW) // voltage range
 
 #define BRAKE_VOLTAGE_LOW                    1.56 // voltage at 0% brake
