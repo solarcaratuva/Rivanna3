@@ -20,7 +20,7 @@ DigitalOut debug_led(DEBUG_LED_1);
 // Read and convert the brake pressure sensor voltage to PSI
 float TelemetryCANInterface::read_brake_pressure() {
     // ADC reading 0.0–1.0 mapped to 0–3.3V
-    static constexpr float max_safe_voltage_adc = 3.28f;
+    static constexpr float max_safe_voltage_adc = 3.3f;
     float voltage_adc = brakePressureIn.read() * max_safe_voltage_adc;
     // Divider: sensor output (0.5–4.5V) scaled to MCU pin (0.365–3.28V)
     static constexpr float DIV_R = 3.28f / 5.0f;
@@ -172,6 +172,7 @@ void TelemetryCANInterface::send_to_sd(CANMessage *message, uint16_t message_id)
 void TelemetryCANInterface::message_handler() {
     log_set_level(LOG_LEVEL);
     xbee.set_format(8, BufferedSerial::None, 1);
+    ThisThread::sleep_for(100ms);
     char *message = "got here";
     xbee.write(message, strlen(message));
     // pc.write(message, strlen(message));
