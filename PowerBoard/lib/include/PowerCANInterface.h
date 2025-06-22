@@ -1,7 +1,6 @@
 #ifndef POWER_CAN_INTERFACE_H
 #define POWER_CAN_INTERFACE_H
 
-#include "BPSCANStructs.h"
 #include "CANInterface.h"
 #include "ECUCANStructs.h"
 #include "MotorControllerCANStructs.h"
@@ -9,6 +8,7 @@
 #include "MotorCommandsCANStruct.h"
 #include "AUXBATTERYCANStructs.h"
 #include "HeartBeatCANStruct.h" // heartbeat
+#include "CANStructs.h"
 
 class PowerCANInterface : public CANInterface {
   public:

@@ -20,10 +20,8 @@
     MOTOR_CONTROLLER_MOTOR_CONTROLLER_DRIVE_STATUS_FRAME_ID
 #define MotorControllerError_MESSAGE_ID                                        \
     MOTOR_CONTROLLER_MOTOR_CONTROLLER_ERROR_FRAME_ID
-#define BPSPackInformation_MESSAGE_ID                  BPS_BPS_PACK_INFORMATION_FRAME_ID
-#define BPSError_MESSAGE_ID                            BPS_BPS_ERROR_FRAME_ID
-#define BPSCellVoltage_MESSAGE_ID                      BPS_BPS_CELL_VOLTAGE_FRAME_ID
-#define BPSCellTemperature_MESSAGE_ID                  BPS_BPS_CELL_TEMPERATURE_FRAME_ID
+#define BPSPackInformation_MESSAGE_ID                  1030
+#define BPSError_MESSAGE_ID                            262
 #define DASHBOARD_COMMANDS_ID           RIVANNA3_DASHBOARD_COMMANDS_FRAME_ID           
 #define HEARTBEAT_ID           RIVANNA3_HEARTBEAT_FRAME_ID           
 

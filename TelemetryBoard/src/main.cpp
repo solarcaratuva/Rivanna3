@@ -103,22 +103,6 @@ void TelemetryCANInterface::handle(BPSPackInformation* can_struct) {
     send_to_radio(&message, BPSPackInformation_MESSAGE_ID);
 }
 
-void TelemetryCANInterface::handle(BPSCellVoltage* can_struct) {
-    CANMessage message;
-    can_struct->serialize(&message);
-    log_debug("Handling BPSCellVoltage message, ID: %d", BPSCellVoltage_MESSAGE_ID);
-    send_to_sd(&message, BPSCellVoltage_MESSAGE_ID);
-    send_to_radio(&message, BPSCellVoltage_MESSAGE_ID);
-}
-
-void TelemetryCANInterface::handle(BPSCellTemperature* can_struct) {
-    CANMessage message;
-    can_struct->serialize(&message);
-    log_debug("Handling BPSCellTemperature message, ID: %d", BPSCellTemperature_MESSAGE_ID);
-    send_to_sd(&message, BPSCellTemperature_MESSAGE_ID);
-    send_to_radio(&message, BPSCellTemperature_MESSAGE_ID);
-}
-
 void TelemetryCANInterface::handle(MotorControllerPowerStatus* can_struct) {
     CANMessage message;
     can_struct->serialize(&message);

@@ -15,6 +15,7 @@
 #include "CruiseControl.h"
 #include "Precharge.h"
 #include "AUXBattery.h"
+#include "CANStructs.h"
 
 
 #define LOG_LEVEL                       LOG_DEBUG
@@ -250,7 +251,7 @@ void PowerCANInterface::handle(DashboardCommands *can_struct){
 void PowerCANInterface::handle(BPSPackInformation *can_struct) {
     discharge_relay_status = can_struct->discharge_relay_status;
     charge_relay_status = can_struct->charge_relay_status;
-    pack_voltage = can_struct->pack_voltage / 100.0;
+    pack_voltage = can_struct->pack_voltage / 10.0;
 }
 
 // Message_forwarder is called whenever the MotorControllerCANInterface gets a CAN message.
@@ -272,11 +273,11 @@ void MotorControllerCANInterface::handle(MotorControllerDriveStatus *can_struct)
 
 // BPSError CAN message handler
 void PowerCANInterface::handle(BPSError *can_struct) {
-    bms_error = can_struct->internal_communications_fault || can_struct-> low_cell_voltage_fault || can_struct->open_wiring_fault || can_struct->current_sensor_fault || can_struct->pack_voltage_sensor_fault || can_struct->thermistor_fault || can_struct->canbus_communications_fault || can_struct->high_voltage_isolation_fault || can_struct->charge_limit_enforcement_fault || can_struct->discharge_limit_enforcement_fault || can_struct->charger_safety_relay_fault || can_struct->internal_thermistor_fault || can_struct->internal_memory_fault;
-    if (bms_error) {
-        can_struct->log(LOG_ERROR);
-        fault_occurred();
-    }
+    // bms_error = can_struct->internal_communications_fault || can_struct-> low_cell_voltage_fault || can_struct->open_wiring_fault || can_struct->current_sensor_fault || can_struct->pack_voltage_sensor_fault || can_struct->thermistor_fault || can_struct->canbus_communications_fault || can_struct->high_voltage_isolation_fault || can_struct->charge_limit_enforcement_fault || can_struct->discharge_limit_enforcement_fault || can_struct->charger_safety_relay_fault || can_struct->internal_thermistor_fault || can_struct->internal_memory_fault;
+    // if (bms_error) {
+    //     can_struct->log(LOG_ERROR);
+    //     fault_occurred();
+    // }
 }
 
 void MotorControllerCANInterface::handle(MotorControllerError *can_struct) {
