@@ -10,10 +10,10 @@
 
 #define LOG_LEVEL LOG_DEBUG
 
-// BufferedSerial xbee(RADIO_TX, RADIO_RX, 9600);
-BufferedSerial pc(USB_TX, USB_RX, 115200);
-// SDBlockDevice sd(SPI2_MOSI, SPI2_MISO, SPI2_SCK, SD_SELECT);
-// FATFileSystem fs("sd");
+BufferedSerial xbee(RADIO_TX, RADIO_RX, 9600);
+// BufferedSerial pc(USB_TX, USB_RX, 115200);
+SDBlockDevice sd(SPI2_MOSI, SPI2_MISO, SPI2_SCK, SD_SELECT);
+FATFileSystem fs("sd");
 AnalogIn brakePressureIn(BRAKE_PRESSURE);
 DigitalOut debug_led(DEBUG_LED_1);
 
@@ -171,10 +171,10 @@ void TelemetryCANInterface::send_to_sd(CANMessage *message, uint16_t message_id)
 
 void TelemetryCANInterface::message_handler() {
     log_set_level(LOG_LEVEL);
-    // xbee.set_format(8, BufferedSerial::None, 1);
+    xbee.set_format(8, BufferedSerial::None, 1);
     char *message = "got here";
-    // xbee.write(message, strlen(message));
-    pc.write(message, strlen(message));
+    xbee.write(message, strlen(message));
+    // pc.write(message, strlen(message));
     while (true) {
         ThisThread::flags_wait_all(0x1);
         CANMessage msg;
@@ -189,7 +189,7 @@ void TelemetryCANInterface::message_handler() {
 
             char pressure_buf[64];
             int pressure_len = snprintf(pressure_buf, sizeof(pressure_buf), "Brake Pressure: %.2f PSI\n", pressure);
-            // xbee.write(pressure_buf, pressure_len);
+            xbee.write(pressure_buf, pressure_len);
 
             switch (msg.id) {
                 case BPSPackInformation_MESSAGE_ID: {
@@ -286,13 +286,13 @@ void TelemetryCANInterface::message_handler() {
 
             // send to radio
             if (len > 0) {
-                // xbee.write(buf, len);
-                pc.write(buf, len);
+                xbee.write(buf, len);
+                // pc.write(buf, len);
             }
             else {
                 char *zero_length = "length is 0";
-                // xbee.write(zero_length, strlen(zero_length));
-                pc.write(zero_length, strlen(zero_length));
+                xbee.write(zero_length, strlen(zero_length));
+                // pc.write(zero_length, strlen(zero_length));
             }
         }
     }
