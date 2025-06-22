@@ -10,17 +10,17 @@
 
 #define LOG_LEVEL LOG_DEBUG
 
-BufferedSerial xbee(RADIO_TX, RADIO_RX, 9600);
+// BufferedSerial xbee(RADIO_TX, RADIO_RX, 9600);
 BufferedSerial pc(USB_TX, USB_RX, 115200);
-SDBlockDevice sd(SPI2_MOSI, SPI2_MISO, SPI2_SCK, SD_SELECT);
-FATFileSystem fs("sd");
+// SDBlockDevice sd(SPI2_MOSI, SPI2_MISO, SPI2_SCK, SD_SELECT);
+// FATFileSystem fs("sd");
 AnalogIn brakePressureIn(BRAKE_PRESSURE);
 DigitalOut debug_led(DEBUG_LED_1);
 
 // Read and convert the brake pressure sensor voltage to PSI
 float TelemetryCANInterface::read_brake_pressure() {
     // ADC reading 0.0–1.0 mapped to 0–3.3V
-    static constexpr float max_safe_voltage_adc = 3.3f;
+    static constexpr float max_safe_voltage_adc = 3.28f;
     float voltage_adc = brakePressureIn.read() * max_safe_voltage_adc;
     // Divider: sensor output (0.5–4.5V) scaled to MCU pin (0.365–3.28V)
     static constexpr float DIV_R = 3.28f / 5.0f;
@@ -51,8 +51,6 @@ TelemetryCANInterface::TelemetryCANInterface(PinName rd, PinName td,
     //     fclose(f_init);
     // }
     // strncpy(_logFilename, LOG_FILE, sizeof(_logFilename));
-    can_thread.start(callback(this,
-                              &TelemetryCANInterface::message_handler));
 }
 
 int TelemetryCANInterface::send_message(CANMessage *message) {
@@ -173,9 +171,9 @@ void TelemetryCANInterface::send_to_sd(CANMessage *message, uint16_t message_id)
 
 void TelemetryCANInterface::message_handler() {
     log_set_level(LOG_LEVEL);
-    xbee.set_format(8, BufferedSerial::None, 1);
+    // xbee.set_format(8, BufferedSerial::None, 1);
     char *message = "got here";
-    xbee.write(message, strlen(message));
+    // xbee.write(message, strlen(message));
     pc.write(message, strlen(message));
     while (true) {
         ThisThread::flags_wait_all(0x1);
@@ -191,7 +189,7 @@ void TelemetryCANInterface::message_handler() {
 
             char pressure_buf[64];
             int pressure_len = snprintf(pressure_buf, sizeof(pressure_buf), "Brake Pressure: %.2f PSI\n", pressure);
-            xbee.write(pressure_buf, pressure_len);
+            // xbee.write(pressure_buf, pressure_len);
 
             switch (msg.id) {
                 case BPSPackInformation_MESSAGE_ID: {
@@ -222,9 +220,9 @@ void TelemetryCANInterface::message_handler() {
                     DashboardCommands s;
                     s.deserialize(&msg);
                     len = s.format(buf, sizeof(buf));
-                    debug_led = 1;
-                    ThisThread::sleep_for(50ms);
-                    debug_led = 0;
+                    // debug_led = 1;
+                    // ThisThread::sleep_for(50ms);
+                    // debug_led = 0;
                     break;
                 }
                 case ECUMotorCommands_MESSAGE_ID: {
@@ -288,11 +286,13 @@ void TelemetryCANInterface::message_handler() {
 
             // send to radio
             if (len > 0) {
-                xbee.write(buf, len);
+                // xbee.write(buf, len);
+                pc.write(buf, len);
             }
             else {
                 char *zero_length = "length is 0";
-                xbee.write(zero_length, strlen(zero_length));
+                // xbee.write(zero_length, strlen(zero_length));
+                pc.write(zero_length, strlen(zero_length));
             }
         }
     }

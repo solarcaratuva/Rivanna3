@@ -6,7 +6,7 @@ CANInterface::CANInterface(PinName rd, PinName td, PinName standby_pin)
         standby = 0;
     }
     can_thread.start(callback(this, &CANInterface::message_handler));
-    // can.attach(callback(this, &CANInterface::can_isr), CAN::RxIrq);
+    can.attach(callback(this, &CANInterface::can_isr), CAN::RxIrq);
 }
 
 void CANInterface::can_isr() { can_thread.flags_set(0x1); }
