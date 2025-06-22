@@ -23,7 +23,7 @@ float TelemetryCANInterface::read_brake_pressure() {
     static constexpr float max_safe_voltage_adc = 3.3f;
     float voltage_adc = brakePressureIn.read() * max_safe_voltage_adc;
     // Divider: sensor output (0.5–4.5V) scaled to MCU pin (0.365–3.28V)
-    static constexpr float DIV_R = 3.28f / 5.0f;
+    static constexpr float DIV_R = 3.3f / 5.0f;
     float voltage_sensor = voltage_adc / DIV_R;
     // Map 0.5–4.5V to 0–1000 PSI
     static constexpr float voltage_min = 0.5f;
@@ -175,22 +175,27 @@ void TelemetryCANInterface::message_handler() {
     ThisThread::sleep_for(100ms);
     char *message = "got here";
     xbee.write(message, strlen(message));
+    ThisThread::sleep_for(5ms);
     // pc.write(message, strlen(message));
     while (true) {
         ThisThread::flags_wait_all(0x1);
+
+        xbee.write("Brake Pressure Fake Message\n", strlen("Brake Pressure Fake Message\n"));
+        ThisThread::sleep_for(5ms);
+
+        float pressure = read_brake_pressure();
+        log_debug("Brake pressure sensor reading: %.2f PSI", pressure);
+        char pressure_buf[64];
+        int pressure_len = snprintf(pressure_buf, sizeof(pressure_buf), "Brake Pressure: %.2f PSI\n", pressure);
+        xbee.write(pressure_buf, pressure_len);
+        ThisThread::sleep_for(5ms);
+
         CANMessage msg;
         while (can.read(msg)) {
             // Always log to SD
             // send_to_sd(&msg, msg.id);
             char buf[128];
             size_t len = 0;
-
-            float pressure = read_brake_pressure();
-            log_debug("Brake pressure sensor reading: %.2f PSI", pressure);
-
-            char pressure_buf[64];
-            int pressure_len = snprintf(pressure_buf, sizeof(pressure_buf), "Brake Pressure: %.2f PSI\n", pressure);
-            xbee.write(pressure_buf, pressure_len);
 
             switch (msg.id) {
                 case BPSPackInformation_MESSAGE_ID: {
