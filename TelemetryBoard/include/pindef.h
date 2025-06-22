@@ -30,6 +30,7 @@
 #define LTE_TX          PB_6
 #define LTE_RX          PB_7
 #define DEBUG_LED_2     PB_9
+#define BRAKE_PRESSURE  PC_4
 
 // caused by having to include features/components in custom targets
 #undef MBED_CONF_SD_SPI_MOSI
