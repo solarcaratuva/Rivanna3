@@ -1,7 +1,6 @@
 #ifndef TELEMETRY_CAN_INTERFACE_H
 #define TELEMETRY_CAN_INTERFACE_H
 
-#include "BPSCANStructs.h"
 #include "CANInterface.h"
 #include "ECUCANStructs.h"
 #include "MotorControllerCANStructs.h"
@@ -22,8 +21,6 @@ class TelemetryCANInterface : public CANInterface {
         void handle(SolarVoltage *can_struct);
         void handle(SolarPhoto *can_struct);
         void handle(BPSPackInformation *can_struct);
-        void handle(BPSCellVoltage *can_struct);
-        void handle(BPSCellTemperature *can_struct);
         void handle(MotorControllerPowerStatus *can_struct);
         void handle(ECUPowerAuxCommands *can_struct);
 

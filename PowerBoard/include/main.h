@@ -26,8 +26,8 @@ extern AnalogIn aux_battery;
 // precharge
 extern bool discharge_relay_status;
 extern bool charge_relay_status;
-extern AnalogIn rc_voltage_motor;
-extern AnalogIn rc_voltage_battery;
+extern AnalogIn hal_effect_voltage_motor;
+extern AnalogIn hal_effect_voltage_mppt;
 extern AnalogIn cont_12;
 extern DigitalOut motor_precharge_en;
 extern DigitalOut discharge_en;

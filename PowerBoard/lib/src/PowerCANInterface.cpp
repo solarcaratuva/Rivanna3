@@ -3,7 +3,7 @@
 #include "log.h"
 #include "MotorCommandsCANStruct.h"
 #include "HeartBeatCANStruct.h"
-#include "BPSCANStructs.h"
+#include "CANStructs.h"
 
 
 PowerCANInterface::PowerCANInterface(PinName rd, PinName td,
@@ -63,9 +63,7 @@ void PowerCANInterface::message_handler() {
             // TODO: Write to serial message_id, message_data
 
             CANInterface::write_CAN_message_data_to_buffer(message_data, &message);
-            log_debug(
-                "Received CAN message with ID 0x%03X Length %d Data 0x%s ",
-                message.id, message.len, message_data);
+            log_debug("Received CAN message with ID 0x%03X Length %d Data 0x%s ", message.id, message.len, message_data);
             if (message.id == BPSError_MESSAGE_ID) {
                 BPSError can_struct;
                 can_struct.deserialize(&message);

@@ -15,6 +15,7 @@
 #include "CruiseControl.h"
 #include "Precharge.h"
 #include "AUXBattery.h"
+#include "CANStructs.h"
 
 
 #define LOG_LEVEL                       LOG_DEBUG
@@ -40,13 +41,12 @@ DigitalOut charge_en(CHARGE_EN);
 DigitalOut motor_precharge_en(MTR_PRE_EN);
 DigitalOut discharge_en(DIS_CHARGE_EN);
 
-AnalogIn throttle_pedal(THROTTLE_WIPER, 5.0f);
-AnalogIn brake_pedal(BRAKE_WIPER, 5.0f);
-AnalogIn contactor(CONT_12);
-AnalogIn aux_battery(AUX);
-AnalogIn rc_voltage_motor(RC_VOLTAGE_MOTOR);
-AnalogIn rc_voltage_battery(RC_VOLTAGE_BATTERY);
-AnalogIn cont_12(CONT_12);
+AnalogIn throttle_pedal(THROTTLE_WIPER, 3.3f);
+AnalogIn brake_pedal(BRAKE_WIPER, 3.3f);
+AnalogIn aux_battery(AUX, 3.3f);
+AnalogIn hal_effect_voltage_motor(MTR_HAL_SENSE, 3.3f);
+AnalogIn hal_effect_voltage_mppt(MPPT_HAL_SENSE, 3.3f);
+AnalogIn cont_12(CONT_12, 3.3f);
 
 I2C motor_control_serial_bus(MTR_SDA, MTR_SCL);
 MotorInterface motor_interface(motor_control_serial_bus);
@@ -250,7 +250,7 @@ void PowerCANInterface::handle(DashboardCommands *can_struct){
 void PowerCANInterface::handle(BPSPackInformation *can_struct) {
     discharge_relay_status = can_struct->discharge_relay_status;
     charge_relay_status = can_struct->charge_relay_status;
-    pack_voltage = can_struct->pack_voltage / 100.0;
+    pack_voltage = can_struct->pack_voltage / 10.0;
 }
 
 // Message_forwarder is called whenever the MotorControllerCANInterface gets a CAN message.
@@ -272,7 +272,7 @@ void MotorControllerCANInterface::handle(MotorControllerDriveStatus *can_struct)
 
 // BPSError CAN message handler
 void PowerCANInterface::handle(BPSError *can_struct) {
-    bms_error = can_struct->internal_communications_fault || can_struct-> low_cell_voltage_fault || can_struct->open_wiring_fault || can_struct->current_sensor_fault || can_struct->pack_voltage_sensor_fault || can_struct->thermistor_fault || can_struct->canbus_communications_fault || can_struct->high_voltage_isolation_fault || can_struct->charge_limit_enforcement_fault || can_struct->discharge_limit_enforcement_fault || can_struct->charger_safety_relay_fault || can_struct->internal_thermistor_fault || can_struct->internal_memory_fault;
+    bms_error = can_struct->dtc_p0_a1_f_internal_cell_communication_fault || can_struct->weak_cell_fault || can_struct->low_cell_voltage_fault || can_struct->cell_open_wiring_fault || can_struct->current_sensor_fault || can_struct->weak_pack_fault || can_struct->thermistor_fault || can_struct->can_communication_fault || can_struct->redundant_power_supply_fault || can_struct->high_voltage_isolation_fault || can_struct->charge_enable_relay_fault || can_struct->discharge_enable_relay_fault || can_struct->internal_hardware_fault || can_struct->dtc_p0_a0_a_internal_heatsink_thermistor_fault || can_struct->internal_logic_fault || can_struct->dtc_p0_a0_c_highest_cell_voltage_too_high_fault || can_struct->dtc_p0_a0_e_lowest_cell_voltage_too_low_fault || can_struct->pack_too_hot_fault;
     if (bms_error) {
         can_struct->log(LOG_ERROR);
         fault_occurred();

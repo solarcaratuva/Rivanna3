@@ -122,16 +122,6 @@ void MainCANInterface::message_handler() {
                 BPSError can_struct;
                 can_struct.deserialize(&message);
                 handle(&can_struct);
-            } else if (message.id == BPSCellVoltage_MESSAGE_ID) {
-                send_to_pi(&message, message.id);
-                BPSCellVoltage can_struct;
-                can_struct.deserialize(&message);
-                handle(&can_struct);
-            } else if (message.id == BPSCellTemperature_MESSAGE_ID) {
-                send_to_pi(&message, message.id);
-                BPSCellTemperature can_struct;
-                can_struct.deserialize(&message);
-                handle(&can_struct);
             }
         }
     }

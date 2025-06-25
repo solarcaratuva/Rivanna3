@@ -66,30 +66,18 @@ void TelemetryCANInterface::send_to_sd(CANMessage *message, uint16_t message_id)
     size_t len = 0;
 
     switch (message_id) {
-        case BPSPackInformation_MESSAGE_ID: {
-            BPSPackInformation s;
-            s.deserialize(message);
-            len = s.format(buf, sizeof(buf));
-            break;
-        }
-        case BPSError_MESSAGE_ID: {
-            BPSError s;
-            s.deserialize(message);
-            len = s.format(buf, sizeof(buf));
-            break;
-        }
-        case BPSCellVoltage_MESSAGE_ID: {
-            BPSCellVoltage s;
-            s.deserialize(message);
-            len = s.format(buf, sizeof(buf));
-            break;
-        }
-        case BPSCellTemperature_MESSAGE_ID: {
-            BPSCellTemperature s;
-            s.deserialize(message);
-            len = s.format(buf, sizeof(buf));
-            break;
-        }
+        // case BPSPackInformation_MESSAGE_ID: {
+        //     BPSPackInformation s;
+        //     s.deserialize(message);
+        //     len = s.format(buf, sizeof(buf));
+        //     break;
+        // }
+        // case BPSError_MESSAGE_ID: {
+        //     BPSError s;
+        //     s.deserialize(message);
+        //     len = s.format(buf, sizeof(buf));
+        //     break;
+        // }
         case RIVANNA3_DASHBOARD_COMMANDS_FRAME_ID: {
             DashboardCommands s;
             s.deserialize(message);
@@ -193,30 +181,18 @@ void TelemetryCANInterface::message_handler() {
             xbee.write(pressure_buf, pressure_len);
 
             switch (msg.id) {
-                case BPSPackInformation_MESSAGE_ID: {
-                    BPSPackInformation s;
-                    s.deserialize(&msg);
-                    len = s.format(buf, sizeof(buf));
-                    break;
-                }
-                case BPSError_MESSAGE_ID: {
-                    BPSError s;
-                    s.deserialize(&msg);
-                    len = s.format(buf, sizeof(buf));
-                    break;
-                }
-                case BPSCellVoltage_MESSAGE_ID: {
-                    BPSCellVoltage s;
-                    s.deserialize(&msg);
-                    len = s.format(buf, sizeof(buf));
-                    break;
-                }
-                case BPSCellTemperature_MESSAGE_ID: {
-                    BPSCellTemperature s;
-                    s.deserialize(&msg);
-                    len = s.format(buf, sizeof(buf));
-                    break;
-                }
+                // case BPSPackInformation_MESSAGE_ID: {
+                //     BPSPackInformation s;
+                //     s.deserialize(&msg);
+                //     len = s.format(buf, sizeof(buf));
+                //     break;
+                // }
+                // case BPSError_MESSAGE_ID: {
+                //     BPSError s;
+                //     s.deserialize(&msg);
+                //     len = s.format(buf, sizeof(buf));
+                //     break;
+                // }
                 case RIVANNA3_DASHBOARD_COMMANDS_FRAME_ID: {
                     DashboardCommands s;
                     s.deserialize(&msg);
