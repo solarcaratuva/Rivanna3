@@ -41,13 +41,12 @@ DigitalOut charge_en(CHARGE_EN);
 DigitalOut motor_precharge_en(MTR_PRE_EN);
 DigitalOut discharge_en(DIS_CHARGE_EN);
 
-AnalogIn throttle_pedal(THROTTLE_WIPER, 5.0f);
-AnalogIn brake_pedal(BRAKE_WIPER, 5.0f);
-AnalogIn contactor(CONT_12);
-AnalogIn aux_battery(AUX);
-AnalogIn rc_voltage_motor(RC_VOLTAGE_MOTOR);
-AnalogIn rc_voltage_battery(RC_VOLTAGE_BATTERY);
-AnalogIn cont_12(CONT_12);
+AnalogIn throttle_pedal(THROTTLE_WIPER, 3.3f);
+AnalogIn brake_pedal(BRAKE_WIPER, 3.3f);
+AnalogIn aux_battery(AUX, 3.3f);
+AnalogIn hal_effect_voltage_motor(MTR_HAL_SENSE, 3.3f);
+AnalogIn hal_effect_voltage_mppt(MPPT_HAL_SENSE, 3.3f);
+AnalogIn cont_12(CONT_12, 3.3f);
 
 I2C motor_control_serial_bus(MTR_SDA, MTR_SCL);
 MotorInterface motor_interface(motor_control_serial_bus);
