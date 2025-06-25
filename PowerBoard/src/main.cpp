@@ -272,11 +272,11 @@ void MotorControllerCANInterface::handle(MotorControllerDriveStatus *can_struct)
 
 // BPSError CAN message handler
 void PowerCANInterface::handle(BPSError *can_struct) {
-    // bms_error = can_struct->internal_communications_fault || can_struct-> low_cell_voltage_fault || can_struct->open_wiring_fault || can_struct->current_sensor_fault || can_struct->pack_voltage_sensor_fault || can_struct->thermistor_fault || can_struct->canbus_communications_fault || can_struct->high_voltage_isolation_fault || can_struct->charge_limit_enforcement_fault || can_struct->discharge_limit_enforcement_fault || can_struct->charger_safety_relay_fault || can_struct->internal_thermistor_fault || can_struct->internal_memory_fault;
-    // if (bms_error) {
-    //     can_struct->log(LOG_ERROR);
-    //     fault_occurred();
-    // }
+    bms_error = can_struct->dtc_p0_a1_f_internal_cell_communication_fault || can_struct->weak_cell_fault || can_struct->low_cell_voltage_fault || can_struct->cell_open_wiring_fault || can_struct->current_sensor_fault || can_struct->weak_pack_fault || can_struct->thermistor_fault || can_struct->can_communication_fault || can_struct->redundant_power_supply_fault || can_struct->high_voltage_isolation_fault || can_struct->charge_enable_relay_fault || can_struct->discharge_enable_relay_fault || can_struct->internal_hardware_fault || can_struct->dtc_p0_a0_a_internal_heatsink_thermistor_fault || can_struct->internal_logic_fault || can_struct->dtc_p0_a0_c_highest_cell_voltage_too_high_fault || can_struct->dtc_p0_a0_e_lowest_cell_voltage_too_low_fault || can_struct->pack_too_hot_fault;
+    if (bms_error) {
+        can_struct->log(LOG_ERROR);
+        fault_occurred();
+    }
 }
 
 void MotorControllerCANInterface::handle(MotorControllerError *can_struct) {

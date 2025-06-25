@@ -21,6 +21,7 @@ void fault_trap(){
         charge_en.write(0);
         motor_precharge_en.write(0);
         mppt_precharge_en.write(0);
+        log_debug("fault in precharge");
         while(true) {
             ThisThread::sleep_for(0xFFFFFFFFms); // wait forever
         }
@@ -38,7 +39,6 @@ void motor_precharge() {
     while (pack_voltage == 0 || cont_12.read() < CONT_12_LOGIC_THRESHOLD)
     {
         ThisThread::sleep_for(SLEEP_TICK);
-        fault_trap();
     }
 
     log_debug("Motor precharge now waiting on the HAL effect sensor");
@@ -91,7 +91,6 @@ void mppt_precharge(){
     while (pack_voltage == 0 || cont_12.read() < CONT_12_LOGIC_THRESHOLD)
     {
         ThisThread::sleep_for(SLEEP_TICK);
-        fault_trap();
     }
 
     log_debug("MPPT precharge now waiting on the HAL effect sensor");
