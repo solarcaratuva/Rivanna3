@@ -168,6 +168,10 @@ void TelemetryCANInterface::message_handler() {
         ThisThread::flags_wait_all(0x1);
         CANMessage msg;
         while (can.read(msg)) {
+            char message_data[17];
+            CANInterface::write_CAN_message_data_to_buffer(message_data, &msg);
+            log_debug("Received CAN message with ID 0x%03X Length %d Data 0x%s ", msg.id, msg.len, message_data);
+
             // Always log to SD
             // send_to_sd(&msg, msg.id);
             char buf[128];
