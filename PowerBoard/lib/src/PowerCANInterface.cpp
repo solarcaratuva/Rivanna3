@@ -84,6 +84,11 @@ void PowerCANInterface::message_handler() {
                 can_struct.deserialize(&message);
                 handle(&can_struct);
             }
+            else if (message.id == CHARGING_MODE_MESSAGE_ID) {
+                ChargingMode can_struct;
+                can_struct.deserialize(&message);
+                handle(&can_struct);
+            }
         }
     }
 }

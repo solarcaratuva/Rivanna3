@@ -1,74 +1,51 @@
-import sys
+#!/usr/bin/env python3
+
 import argparse
 import platform
 import subprocess
-import time
-import re
-try:
-    from serial import Serial
-    import serial.tools.list_ports
-except ImportError:
-    print("ERROR: \"pyserial\" must be installed. See the Readme for instructions.")
-    exit(1)
-
+import shutil
+import os
+import sys
 
 OS = platform.system()
+
+if OS != "Linux":
+    try:
+        from serial import Serial
+        import serial.tools.list_ports
+    except ImportError:
+        print(f"ERROR: 'pyserial' is not installed on {OS}. Please install it using 'pip install pyserial' on {OS}.")
+        sys.exit(1)
 
 
 def get_args():
     parser = argparse.ArgumentParser(description="Monitor a board's debug log through a ST-Link")
-    parser.add_argument("-s", "--silent", action="store_true", help="Suppress monitor output")
-    parser.add_argument("-p", "--sudo", help="WSL sudo password, required for monitoring on Windows computers")
     parser.add_argument("-l", "--log", type=str, help="Log file path")
+    parser.add_argument("-f", "--filter", type=str, help="Filter out messages without this string, use '|' to separate multiple strings")
     return parser.parse_args()
 
-def get_stlink() -> str:
-    """Get the busid of the ST-Link device"""
+def compress_args(args):
+    s = ""
+    if args.log:
+        args.log = os.path.abspath(args.log)
+        process = subprocess.run(f"wslpath -w {args.log}", capture_output=True, shell=True, text=True, check=True)
+        path = process.stdout.strip()
+        path = path.replace("\\", "\\\\")  # Escape backslashes for Windows command line
+        s += f" --log {path}"
+    if args.filter:
+        s += f" --filter {args.filter}"
+    return s
 
-    cmd = "usbipd.exe list" # .exe runs the program in Windows from WSL
-    process = subprocess.run(cmd, shell=True, capture_output=True, check=False)
-    if process.returncode != 0: # if error...
-        if process.stdout: print(process.stdout.decode())
-        if process.stderr: print(process.stderr.decode())
-        exit(process.returncode)
+def copy_file_to_windows(wsl_path: str) -> None:
+    path = "/" + os.path.join("mnt", "c", "Windows", "Temp", "monitor.py")
+    shutil.copy(wsl_path, path)
 
-    lines = process.stdout.decode().split('\n')
-    for line in lines[2:]: # skip first two lines (headers)
-        if 'Persisted:' in line: # end of list
-            break
-        if 'ST-Link' in line:
-            stlink_id = re.search(r'^(\d+-\d+)', line).group(1)
-            return stlink_id
-
-    print("No ST-Link found")
-    exit(1)
-
-
-def attach_stlink(stlink_id: str) -> None:
-    """Attach the ST-Link device to WSL"""
-
-    cmd = f"usbipd.exe attach --busid {stlink_id} --wsl"
-    process = subprocess.run(cmd, shell=True, capture_output=True, check=False)
-    if process.returncode != 0 and "usbipd: error: Device is not shared;" in process.stderr.decode(): # if not bound error
-        print("Run the following command in a WINDOWS command prompt with ADMIN privileges to make the ST-Link available. Then rerun this script:")
-        print(f"usbipd bind --busid {stlink_id}")
-        exit(1)
-    elif process.returncode != 0: # if other error
-        if process.stdout: print(process.stdout.decode())
-        if process.stderr: print(process.stderr.decode())
-        exit(process.returncode)
-
-
-def detach_stlink(stlink_id: str) -> None:
-    """Detach the ST-Link device from WSL"""
-
-    cmd = f"usbipd.exe detach --busid {stlink_id}"
-    process = subprocess.run(cmd, shell=True, capture_output=True, check=False)
-    if process.returncode != 0: # if error...
-        if process.stdout: print(process.stdout.decode())
-        if process.stderr: print(process.stderr.decode())
-        exit(process.returncode)
-
+def token_in_line(line: str, tokens: str) -> bool:
+    token_list = tokens.split("|")
+    for token in token_list:
+        if token in line:
+            return True
+    return False
 
 def get_correct_port() -> str:
     ports = serial.tools.list_ports.comports()
@@ -76,7 +53,7 @@ def get_correct_port() -> str:
         if "stlink" in port.description.lower() or "st-link" in port.description.lower():
             return port.device
     
-    print("ERROR: ST-Link could not be found in WSL. Something is wrong.")
+    print("ERROR: ST-Link could not be found")
     sys.exit(1)
 
 
@@ -95,8 +72,9 @@ def log(args, port: str) -> None:
             except Exception as e:
                 text = f"EXCEPTION THROWN: {e}"
                 errorCount += 1
-            if not args.silent:
-                print(text)
+            if args.filter and not token_in_line(text, args.filter):
+                continue
+            print(text)
             if args.log:
                 with open(args.log, "a", encoding="utf-8") as logFile:
                     logFile.write(text + "\n")
@@ -109,29 +87,13 @@ def main() -> None:
     args = get_args()
 
     if OS == "Linux": # WSL, actually Windows
-        sudo = args.sudo if args.sudo else None
-        if not sudo:
-            print("ERROR: Sudo password required for monitoring on Windows computers")
-            sys.exit(1)
+        copy_file_to_windows(os.path.abspath(__file__))
+        args_str = compress_args(args)
+        subprocess.run(f"cmd.exe /c start \"\" cmd /k python C:\\\\Windows\\\\Temp\\\\monitor.py {args_str}", capture_output=True, shell=True, check=True)
 
-        stlink_id = get_stlink()
-        attach_stlink(stlink_id)
-        time.sleep(1)
-        
-        port = get_correct_port()
-        process = subprocess.run(f"echo {sudo} | sudo -S chmod 666 {port}", shell=True, capture_output=False, check=False) # give access to the serial port to WSL user accounts 
-        if process.returncode != 0: sys.exit(1)
-
-        log(args, port)
-
-        detach_stlink(stlink_id)
-
-    elif OS == "Darwin": # Mac
+    elif OS == "Darwin" or OS == "Windows":
         port = get_correct_port()
         log(args, port)
-    
-    elif OS == "Windows":
-        print("ERROR: This script must be run in WSL")
 
 
 if __name__ == "__main__":

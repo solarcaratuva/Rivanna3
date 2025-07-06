@@ -7,7 +7,6 @@
 #include "PowerCANInterface.h"
 
 extern AnalogIn throttle_pedal;
-extern AnalogIn brake_pedal;
 
 extern MotorInterface motor_interface;
 
@@ -33,5 +32,6 @@ extern DigitalOut motor_precharge_en;
 extern DigitalOut discharge_en;
 extern DigitalOut mppt_precharge_en;
 extern DigitalOut charge_en;
+extern bool cont_12_error;
 
 #endif

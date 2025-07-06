@@ -23,7 +23,8 @@
 #define BPSPackInformation_MESSAGE_ID                  1030
 #define BPSError_MESSAGE_ID                            262
 #define DASHBOARD_COMMANDS_ID           RIVANNA3_DASHBOARD_COMMANDS_FRAME_ID           
-#define HEARTBEAT_ID           RIVANNA3_HEARTBEAT_FRAME_ID           
+#define HEARTBEAT_ID           RIVANNA3_HEARTBEAT_FRAME_ID     
+#define CHARGING_MODE_MESSAGE_ID RIVANNA3_CHARGING_MODE_FRAME_ID      
 
 
 // Motor Controller message IDs

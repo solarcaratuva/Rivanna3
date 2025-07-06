@@ -4,16 +4,16 @@
 #include "MotorCommandsCANStruct.h"
 #include "log.h"
 #include "pindef.h"
-#include "FATFileSystem.h"
-#include "SDBlockDevice.h"
+// #include "FATFileSystem.h"
+// #include "SDBlockDevice.h"
 #include "CANStruct.h"
 
 #define LOG_LEVEL LOG_DEBUG
 
 BufferedSerial xbee(RADIO_TX, RADIO_RX, 9600);
 // BufferedSerial pc(USB_TX, USB_RX, 115200);
-SDBlockDevice sd(SPI2_MOSI, SPI2_MISO, SPI2_SCK, SD_SELECT);
-FATFileSystem fs("sd");
+// SDBlockDevice sd(SPI2_MOSI, SPI2_MISO, SPI2_SCK, SD_SELECT);
+// FATFileSystem fs("sd");
 AnalogIn brakePressureIn(BRAKE_PRESSURE);
 DigitalOut debug_led(DEBUG_LED_1);
 

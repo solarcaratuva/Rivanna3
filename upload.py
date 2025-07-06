@@ -1,134 +1,64 @@
+#!/usr/bin/env python3
+
 import platform
 import subprocess
 import argparse
-import re
-import time
+import sys
+import shutil
+import os
 
 
 BOARD_MAP = {
-    "driver": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/DriverBoard/DriverBoard.bin",
-    "battery": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/BatteryBoard/BatteryBoard.bin",
-    "motor": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/Motor/Motor.bin",
-    "power": "cmake_build/POWER_BOARD/develop/GCC_ARM/PowerBoard/PowerBoard.bin",
+    "power": "cmake_build/NUCLEO_F413ZH/develop/GCC_ARM/PowerBoard/PowerBoard.bin",
     "telemetry": "cmake_build/POWER_BOARD/develop/GCC_ARM/TelemetryBoard/TelemetryBoard.bin",}
 
 HIL_BOARD_MAP = {} # board path map specific to the HIL testing system server
-
+CMD_ARGS_ERASE = "-c port=SWD mode=UR -e all"
+CMD_ARGS_FLASH = "-c port=SWD mode=UR -rst -d"
 OS = platform.system()
+EXE_PATH = r"C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_Programmer_CLI.exe"
 
 
 def get_args():
     parser = argparse.ArgumentParser(description="Upload firmware to the board through a ST-Link")
     parser.add_argument("board", type=str, help="Name of the board to upload firmware to")
     parser.add_argument("-s", "--silent", action="store_true", help="Suppress upload output")
-    parser.add_argument("-p", "--sudo", help="WSL sudo password, required for uploading on Windows computers")
     parser.add_argument("--hil", action="store_true", help="Upload firmware to the HIL testing system")
     return parser.parse_args()
 
-def get_stlink() -> str:
-    """Get the busid of the ST-Link device"""
-
-    cmd = "usbipd.exe list" # .exe runs the program in Windows from WSL
-    process = subprocess.run(cmd, shell=True, capture_output=True, check=False)
-    if process.returncode != 0: # if error...
-        if process.stdout: print(process.stdout.decode())
-        if process.stderr: print(process.stderr.decode())
-        exit(process.returncode)
-
-    lines = process.stdout.decode().split('\n')
-    for line in lines[2:]: # skip first two lines (headers)
-        if 'Persisted:' in line: # end of list
-            break
-        if 'ST-Link' in line:
-            stlink_id = re.search(r'^(\d+-\d+)', line).group(1)
-            return stlink_id
-
-    print("No ST-Link found")
-    exit(1)
-
-
-def attach_stlink(stlink_id: str) -> None:
-    """Attach the ST-Link device to WSL"""
-
-    cmd = f"usbipd.exe attach --busid {stlink_id} --wsl"
-    process = subprocess.run(cmd, shell=True, capture_output=True, check=False)
-    if process.returncode != 0 and "usbipd: error: Device is not shared;" in process.stderr.decode(): # if not bound error
-        print("Run the following command in a WINDOWS command prompt with ADMIN privileges to make the ST-Link available. Then rerun this script:")
-        print(f"usbipd bind --busid {stlink_id}")
-        exit(1)
-    elif process.returncode != 0: # if other error
-        if process.stdout: print(process.stdout.decode())
-        if process.stderr: print(process.stderr.decode())
-        exit(process.returncode)
-
-
-def detach_stlink(stlink_id: str) -> None:
-    """Detach the ST-Link device from WSL"""
-
-    cmd = f"usbipd.exe detach --busid {stlink_id}"
-    process = subprocess.run(cmd, shell=True, capture_output=True, check=False)
-    if process.returncode != 0: # if error...
-        if process.stdout: print(process.stdout.decode())
-        if process.stderr: print(process.stderr.decode())
-        exit(process.returncode)
-
-
-def upload(path: str, silent: bool) -> int:
-    """Run the ST-Tools upload command to upload the firmware to the board"""
-
-    cmd = f"st-flash --connect-under-reset --reset write {path} 0x8000000"
-    process = subprocess.run(cmd, shell=True, check=False, capture_output=silent)
-    if silent and process.returncode != 0:
-        print("Upload failed")
-    return process.returncode
-
-def upload_as_sudo(path: str, silent: bool, sudo: str) -> int:
-    """Run the ST-Tools upload command AS SUDO to upload the firmware to the board"""
-
-    cmd = f"echo {sudo} | sudo -S st-flash --connect-under-reset --reset write {path} 0x8000000"
-    process = subprocess.run(cmd, shell=True, check=False, capture_output=silent)
-    if silent and process.returncode != 0:
-        print("Upload failed")
-    return process.returncode
+def copy_file_to_windows(wsl_path: str) -> None:
+    path = "/" + os.path.join("mnt", "c", "Windows", "Temp", "firmware.bin")
+    shutil.copy(wsl_path, path)
 
 
 def main() -> None:
     args = get_args()
-    sudo = args.sudo if args.sudo else None
     board = args.board.lower().replace("board", "")
     if board not in BOARD_MAP:
-        print(f"ERROR: Invalid board name given. Valid board names are: {', '.join(BOARD_MAP.keys())}")
-        exit(1)
+        print(f"ERROR: '{args.board}' is not a valid board. Valid boards are [{', '.join(BOARD_MAP)}]")
+        sys.exit(1)
 
-    if OS == "Linux" and not args.hil: # WSL, actually Windows
-        if not sudo:
-            print("ERROR: Sudo password required for uploading on Windows computers")
-            exit(1)
+    match OS:
+        case "Linux": # actually WSL in Windows 
+            copy_file_to_windows(BOARD_MAP[board])
+            cmd_erase = f"powershell.exe \"& '{EXE_PATH}' {CMD_ARGS_ERASE}\""
+            cmd_flash = f"powershell.exe \"& '{EXE_PATH}' {CMD_ARGS_FLASH} C:\\Windows\\Temp\\firmware.bin 0x08000000\""
+        case "Darwin": # Mac:
+            path = BOARD_MAP[board]
+            cmd_erase = f"STM32_Programmer_CLI {CMD_ARGS_ERASE}"
+            cmd_flash = f"STM32_Programmer_CLI {CMD_ARGS_FLASH} {path} 0x08000000"
+        case "Windows":
+            print("ERROR: run this command in WSL")
+            sys.exit(2)
+        case _:
+            print("ERROR: Unknown OS")
+            sys.exit(3)
 
-        stlink_id = get_stlink()
-        attach_stlink(stlink_id)
-        time.sleep(1)
-
-        exit_code = upload_as_sudo(BOARD_MAP[board], args.silent, sudo)
-
-        detach_stlink(stlink_id)
-        exit(exit_code)
-
-    elif OS == "Linux" and args.hil: # HIL testing system server
-        exit_code = upload(HIL_BOARD_MAP[board], False)
-        exit(exit_code)
-
-    elif OS == "Darwin": # Mac
-        exit_code = upload(BOARD_MAP[board], args.silent)
-        exit(exit_code)
-
-    elif OS == "Windows":
-        print("ERROR: This script must be run in WSL")
-        exit(1)
-
-    else:
-        print("ERROR: Unknown OS")
-        exit(1)
+    process_erase = subprocess.run(cmd_erase, capture_output=args.silent, check=False, shell=True)
+    if process_erase.returncode != 0:
+        sys.exit(process_erase.returncode)
+    process_flash = subprocess.run(cmd_flash, capture_output=args.silent, check=False, shell=True)
+    sys.exit(process_flash.returncode)
 
 
 if __name__ == "__main__":

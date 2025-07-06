@@ -7,5 +7,6 @@
 #include "SolarCANStructs.h"
 #include "MSGID_0X106CANStruct.h"
 #include "MSGID_0X406CANStruct.h"
+#include "ChargingModeCANStruct.h"
 
 #endif
