@@ -3,6 +3,7 @@
 if [ $# -eq 0 ]; then
     echo "Compiling for Rivanna3 boards"
     mbed-tools compile -m NUCLEO_F413ZH -t GCC_ARM
+    mbed-tools compile -m POWER_BOARD -t GCC_ARM
     exit $?
 fi
 
