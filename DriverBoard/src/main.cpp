@@ -270,7 +270,7 @@ int main() {
 
     while (true){
         log_debug("Main thread loop");
-        // vehicle_can_interface.send(&bps_error);
+        vehicle_can_interface.send(&bps_error);
         ThisThread::sleep_for(MAIN_LOOP_PERIOD);
     }
 
