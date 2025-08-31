@@ -20,13 +20,11 @@ EXE_PATH = r"C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\b
 
 
 def get_args():
-    parser = argparse.ArgumentParser(
-        description="Upload firmware to the board through a ST-Link")
+    parser = argparse.ArgumentParser(description="Upload firmware to the board through a ST-Link")
     parser.add_argument("board", type=str, help="Name of the board to upload firmware to")
     parser.add_argument("-s", "--silent", action="store_true", help="Suppress upload output")
     parser.add_argument("--hil", action="store_true", help="Upload firmware to the HIL testing system")
     return parser.parse_args()
-
 
 def copy_file_to_windows(wsl_path: str) -> None:
     path = "/" + os.path.join("mnt", "c", "Windows", "Temp", "firmware.bin")
@@ -34,8 +32,7 @@ def copy_file_to_windows(wsl_path: str) -> None:
 
 def is_wsl() -> bool:
     try:
-        # Check uname release for "microsoft" (common in WSL1/WSL2)
-        if "microsoft" in platform.uname().release.lower():
+        if "microsoft" in platform.uname().release.lower(): # Check uname release for "microsoft" (common in WSL1/WSL2)
             return True
         if "WSL_INTEROP" in os.environ:
             return True
