@@ -19,9 +19,15 @@ if [ "$1" == "telem" ]; then
     exit $?
 fi
 
-if [ "$1" == "hil" ]; then
-    echo "Compiling for Hardware-in-Loop Testing board"
-    echo "placeholder"
+if [ "$1" == "hil743" ]; then
+    echo "Compiling for Hardware-in-Loop Testing board (Nucleo H743ZI2)"
+    mbed-tools compile -m NUCLEO_H743ZI2 -t GCC_ARM
+    exit $?
+fi
+
+if [ "$1" == "hil413" ]; then
+    echo "Compiling for Hardware-in-Loop Testing board (Nucleo F413ZH)"
+    mbed-tools compile -m NUCLEO_F413ZH -t GCC_ARM
     exit $?
 fi
 
