@@ -30,6 +30,18 @@ def copy_file_to_windows(wsl_path: str) -> None:
     path = "/" + os.path.join("mnt", "c", "Windows", "Temp", "firmware.bin")
     shutil.copy(wsl_path, path)
 
+def is_wsl() -> bool:
+    try:
+        if "microsoft" in platform.uname().release.lower(): # Check uname release for "microsoft" (common in WSL1/WSL2)
+            return True
+        if "WSL_INTEROP" in os.environ:
+            return True
+        with open("/proc/version", "r") as f:  # Check /proc/version for "Microsoft"
+            if "microsoft" in f.read().lower():
+                return True
+    except Exception:
+        pass
+    return False
 
 def main() -> None:
     args = get_args()
@@ -39,11 +51,16 @@ def main() -> None:
         sys.exit(1)
 
     match OS:
-        case "Linux": # actually WSL in Windows 
-            copy_file_to_windows(BOARD_MAP[board])
-            cmd_erase = f"powershell.exe \"& '{EXE_PATH}' {CMD_ARGS_ERASE}\""
-            cmd_flash = f"powershell.exe \"& '{EXE_PATH}' {CMD_ARGS_FLASH} C:\\Windows\\Temp\\firmware.bin 0x08000000\""
-        case "Darwin": # Mac:
+        case "Linux":
+            if not is_wsl():  # non-WSL linux
+                path = BOARD_MAP[board]
+                cmd_erase = f"STM32_Programmer_CLI {CMD_ARGS_ERASE}"
+                cmd_flash = f"STM32_Programmer_CLI {CMD_ARGS_FLASH} {path} 0x08000000"
+            else:  # actually WSL in Windows
+                copy_file_to_windows(BOARD_MAP[board])
+                cmd_erase = f"powershell.exe \"& '{EXE_PATH}' {CMD_ARGS_ERASE}\""
+                cmd_flash = f"powershell.exe \"& '{EXE_PATH}' {CMD_ARGS_FLASH} C:\\Windows\\Temp\\firmware.bin 0x08000000\""
+        case "Darwin":  # Mac:
             path = BOARD_MAP[board]
             cmd_erase = f"STM32_Programmer_CLI {CMD_ARGS_ERASE}"
             cmd_flash = f"STM32_Programmer_CLI {CMD_ARGS_FLASH} {path} 0x08000000"
