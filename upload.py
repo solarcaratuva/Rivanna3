@@ -30,6 +30,28 @@ def copy_file_to_windows(wsl_path: str) -> None:
     path = "/" + os.path.join("mnt", "c", "Windows", "Temp", "firmware.bin")
     shutil.copy(wsl_path, path)
 
+def is_wsl() -> bool:
+    """
+    Returns True if running inside Windows Subsystem for Linux (WSL), False otherwise.
+    """
+    try:
+        # Check uname release for "microsoft" (common in WSL1/WSL2)
+        if "microsoft" in platform.uname().release.lower():
+            return True
+        
+        # WSL2 often exposes this env var
+        if "WSL_INTEROP" in os.environ:
+            return True
+        
+        # Check /proc/version for "Microsoft"
+        with open("/proc/version", "r") as f:
+            if "microsoft" in f.read().lower():
+                return True
+    except Exception:
+        pass
+    
+    return False
+
 
 def main() -> None:
     args = get_args()
@@ -40,9 +62,14 @@ def main() -> None:
 
     match OS:
         case "Linux": # actually WSL in Windows 
-            copy_file_to_windows(BOARD_MAP[board])
-            cmd_erase = f"powershell.exe \"& '{EXE_PATH}' {CMD_ARGS_ERASE}\""
-            cmd_flash = f"powershell.exe \"& '{EXE_PATH}' {CMD_ARGS_FLASH} C:\\Windows\\Temp\\firmware.bin 0x08000000\""
+            if not is_wsl():
+                path = BOARD_MAP[board]
+                cmd_erase = f"STM32_Programmer_CLI {CMD_ARGS_ERASE}"
+                cmd_flash = f"STM32_Programmer_CLI {CMD_ARGS_FLASH} {path} 0x08000000"
+            else: 
+                copy_file_to_windows(BOARD_MAP[board])
+                cmd_erase = f"powershell.exe \"& '{EXE_PATH}' {CMD_ARGS_ERASE}\""
+                cmd_flash = f"powershell.exe \"& '{EXE_PATH}' {CMD_ARGS_FLASH} C:\\Windows\\Temp\\firmware.bin 0x08000000\""
         case "Darwin": # Mac:
             path = BOARD_MAP[board]
             cmd_erase = f"STM32_Programmer_CLI {CMD_ARGS_ERASE}"
@@ -59,6 +86,7 @@ def main() -> None:
         sys.exit(process_erase.returncode)
     process_flash = subprocess.run(cmd_flash, capture_output=args.silent, check=False, shell=True)
     sys.exit(process_flash.returncode)
+
 
 
 if __name__ == "__main__":
