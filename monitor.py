@@ -40,6 +40,19 @@ def copy_file_to_windows(wsl_path: str) -> None:
     path = "/" + os.path.join("mnt", "c", "Windows", "Temp", "monitor.py")
     shutil.copy(wsl_path, path)
 
+def is_wsl() -> bool:
+    try:
+        if "microsoft" in platform.uname().release.lower(): # Check uname release for "microsoft" (common in WSL1/WSL2)
+            return True
+        if "WSL_INTEROP" in os.environ:
+            return True
+        with open("/proc/version", "r") as f:  # Check /proc/version for "Microsoft"
+            if "microsoft" in f.read().lower():
+                return True
+    except Exception:
+        pass
+    return False
+
 def colorize(text: str) -> str:
     if len(text) < 20:
         return text
@@ -114,12 +127,12 @@ def log(args, port: str) -> None:
 def main() -> None:
     args = get_args()
 
-    if OS == "Linux": # WSL, actually Windows
+    if OS == "Linux" and is_wsl(): # WSL, actually Windows
         copy_file_to_windows(os.path.abspath(__file__))
         args_str = compress_args(args)
         subprocess.run(f"cmd.exe /c start \"\" cmd /k python C:\\\\Windows\\\\Temp\\\\monitor.py {args_str}", capture_output=True, shell=True, check=True)
 
-    elif OS == "Darwin" or OS == "Windows":
+    else: # Mac, Windows, non-WSL Linux
         port = get_correct_port()
         log(args, port)
 
