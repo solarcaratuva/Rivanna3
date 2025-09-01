@@ -49,6 +49,9 @@ def main() -> None:
     if board not in BOARD_MAP:
         print(f"ERROR: '{args.board}' is not a valid board. Valid boards are [{', '.join(BOARD_MAP)}]")
         sys.exit(1)
+    if not os.path.exists(BOARD_MAP[board]):
+        print("ERROR: Firmware file does not exist. You need to compile.")
+        sys.exit(4)
 
     match OS:
         case "Linux":
