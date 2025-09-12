@@ -79,13 +79,41 @@ HeartBeatSystem heartbeatSystem(fault_occurred, &queue, HB_POWER_BOARD);
  * Uses values of global control variables for logic.
  * Writes directly to the DigitalOut pins for the left and right turn signals.
  */
-void signal_flash_handler() {
+void signal_flash_handler(bool FlashHazards, bool flashLeftTurnSignal, bool flashRightTurnSignal) {
     /** HERE: reimplement the logic for this function
      * 
      *  INPUTS: flashHazards, flashLeftTurnSignal, and flashRightTurnSignal
      *  OUTPUTS: left_turn_signal and right_turn_signal pins 
      *  ADDITIONALLY: bms_error should cause bms_strobe to flash (toggle)
-     */
+     */ 
+    // Functino called every SIGNAL_FLASH_PERIOD
+    static bool blinking_state = true; 
+    blinking_state = !blinking_state; 
+
+    if (FlashHazards){
+        // Blinking both turn signals
+        left_turn_signal.write(blinking_state ? PIN_ON :  PIN_OFF);
+        right_turn_signal.write(blinking_state ? PIN_ON :PIN_OFF);
+
+    } else if  (flashLeftTurnSignal){
+        // Blinking only the red light 
+        right_turn_signal.write(PIN_OFF); 
+        left_turn_signal.write(blinking_state ? PIN_ON :PIN_OFF); 
+
+    } else if (flashRightTurnSignal){
+        right_turn_signal.write(blinking_state ? PIN_ON :PIN_OFF); 
+        left_turn_signal.write(PIN_OFF); 
+    } else{
+        left_turn_signal.write(PIN_OFF); 
+        right_turn_signal.write(PIN_OFF); 
+    }
+
+    // BMS ERROR
+    if (bms_error){
+        bms_strobe.write(blinking_state ? PIN_ON :PIN_OFF);
+    } else{
+        bms_strobe.write(PIN_OFF);
+    }
 }
 
 
