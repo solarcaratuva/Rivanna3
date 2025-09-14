@@ -49,6 +49,7 @@ DigitalOut rightTurnSignal(RIGHT_TURN_OUT);
 DigitalOut drl(DRL_OUT);
 DigitalOut bms_strobe(BMS_STROBE_OUT);
 DigitalOut debug_CANBUS(PB_7);
+DigitalOut test_output(PC_10);
 
 DigitalIn brakeLightsSwitch(MECHANICAL_BRAKE_IN);
 DigitalIn leftTurnSwitch(LEFT_TURN_IN);
