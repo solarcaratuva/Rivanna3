@@ -12,3 +12,4 @@ target_include_directories(mbed-power-board
 )
 
 target_link_libraries(mbed-power-board INTERFACE mbed-stm32g473xe)
+

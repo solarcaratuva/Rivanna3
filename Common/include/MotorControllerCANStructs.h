@@ -38,6 +38,14 @@ typedef struct MotorControllerFrameRequest
                      "drive_status_frame %u, error_frame %u",
                      power_status_frame, drive_status_frame, error_frame);
     }
+
+    size_t format(char* buf, size_t buf_sz) const {
+        return std::snprintf(buf, buf_sz,
+            "MCReq: pwr=%u, drv=%u, err=%u\n",
+            power_status_frame, drive_status_frame, error_frame
+        );
+    }
+
 } MotorControllerFrameRequest;
 
 /**
@@ -75,6 +83,14 @@ typedef struct MotorControllerPowerStatus
             battery_voltage, battery_current, battery_current_direction,
             motor_current, fet_temp, motor_rpm, pwm_duty, lead_angle);
     }
+
+    size_t format(char* buf, size_t buf_sz) const {
+        return std::snprintf(buf, buf_sz,
+            "MCPwr: V=%u, I=%u, dir=%u, rpm=%u, pwm=%u\n",
+            battery_voltage, battery_current, battery_current_direction, motor_rpm, pwm_duty
+        );
+    }
+
 } MotorControllerPowerStatus;
 
 /**
@@ -113,6 +129,14 @@ typedef struct MotorControllerDriveStatus
                      regen_vr_position, digital_sw_position,
                      output_target_value, motor_status, regen_status);
     }
+
+    size_t format(char* buf, size_t buf_sz) const {
+        return std::snprintf(buf, buf_sz,
+            "MCDrv: pwrMd=%u, ctrlMd=%u, accel=%u, regen=%u, out=%u\n",
+            power_mode, control_mode, accelerator_vr_position, regen_vr_position, output_target_value
+        );
+    }
+
 } MotorControllerDriveStatus;
 
 /**
@@ -164,6 +188,14 @@ typedef struct MotorControllerError
             overcurrent_limit, motor_system_err, motor_lock, hall_sensor_short,
             hall_sensor_open, overheat_level);
     }
+
+    size_t format(char* buf, size_t buf_sz) const {
+        return std::snprintf(buf, buf_sz,
+            "MCErr: analog=%u, pwrErr=%u, oC=%u, oV=%u, lim=%u\n",
+            analog_sensor_err, power_system_err, overcurrent_err, overvoltage_err, overcurrent_limit
+        );
+    }
+
 } MotorControllerError;
 
 #endif

@@ -2,6 +2,7 @@
 
 if [ $# -eq 0 ]; then
     echo "Compiling for Rivanna3 boards"
+    mbed-tools compile -m NUCLEO_F413ZH -t GCC_ARM
     mbed-tools compile -m POWER_BOARD -t GCC_ARM
     exit $?
 fi
@@ -12,11 +13,20 @@ if [ "$1" == "riv2s" ]; then
     exit $?
 fi
 
+if [ "$1" == "telem" ]; then
+    echo "Compiling for Telemetry board"
+    mbed-tools compile -m TELEMETRY_BOARD -t GCC_ARM
+    exit $?
+fi
+
 if [ "$1" == "hil" ]; then
     echo "Compiling for Hardware-in-Loop Testing board"
      mbed-tools compile -m NUCLEO_F413ZH -t GCC_ARM
     exit $?
 fi
+
+
+
 
 echo "did not recognize '$1'"
 exit 1

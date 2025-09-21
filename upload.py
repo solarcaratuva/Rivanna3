@@ -1,69 +1,88 @@
-import sys
-import os
+#!/usr/bin/env python3
+
 import platform
 import subprocess
+import argparse
+import sys
+import shutil
+import os
+
 
 BOARD_MAP = {
-    "driver": {"cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/DriverBoard/DriverBoard.bin 0x8000000"},
-    "battery": {"cmd": "st-flash",  "args":"--connect-under-reset --reset write", "path": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/BatteryBoard/BatteryBoard.bin 0x8000000"},
-    "motor": {"cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/Motor/Motor.bin 0x8000000"},
-    "nucleo": {"cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/NUCLEO_F413ZH/develop/GCC_ARM/DriverBoard/DriverBoard.bin 0x8000000"}}
-op_sys = platform.system()
+    "power": "cmake_build/NUCLEO_F413ZH/develop/GCC_ARM/PowerBoard/PowerBoard.bin",
+    "telemetry": "cmake_build/POWER_BOARD/develop/GCC_ARM/TelemetryBoard/TelemetryBoard.bin",
+    "driver": "cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/DriverBoard/DriverBoard.bin 0x8000000",
+    "battery": "cmd": "st-flash",  "args":"--connect-under-reset --reset write", "path": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/BatteryBoard/BatteryBoard.bin 0x8000000",
+    "motor": "cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/Motor/Motor.bin 0x8000000",
+    "nucleo": "cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/NUCLEO_F413ZH/develop/GCC_ARM/DriverBoard/DriverBoard.bin 0x8000000"}
 
-def create_net_map() -> None:
-    """
-    Runs the `net` command in Windows (yes even in WSL) to mount the WSL filesystem path as a network drive in Windows, named `W:`
-    """
-    cmd = f"powershell.exe -Command \"net.exe use W: \\\\\\\\wsl$\\\\{os.getenv('WSL_DISTRO_NAME')}\""
-    process = subprocess.run(cmd, shell=True, check=False, capture_output=True)
-    if process.returncode != 0:
-        if process.stdout:
-            print(process.stdout.decode())
-        if process.stderr:
-            print(process.stderr.decode())
-        sys.exit(1)
+HIL_BOARD_MAP = {} # board path map specific to the HIL testing system server
+CMD_ARGS_ERASE = "-c port=SWD mode=UR -e all"
+CMD_ARGS_FLASH = "-c port=SWD mode=UR -rst -d"
+OS = platform.system()
+EXE_PATH = r"C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_Programmer_CLI.exe"
 
-def delete_net_map() -> None:
-    """
-    Deletes the network drive mount `W:`
-    """
-    cmd = "powershell.exe -Command \"net.exe use W: /delete \""
-    process = subprocess.run(cmd, shell=True, check=False, capture_output=True)
-    if process.returncode != 0:
-        if process.stdout:
-            print(process.stdout.decode())
-        if process.stderr:
-            print(process.stderr.decode())
+
+def get_args():
+    parser = argparse.ArgumentParser(description="Upload firmware to the board through a ST-Link")
+    parser.add_argument("board", type=str, help="Name of the board to upload firmware to")
+    parser.add_argument("-s", "--silent", action="store_true", help="Suppress upload output")
+    parser.add_argument("--hil", action="store_true", help="Upload firmware to the HIL testing system")
+    return parser.parse_args()
+
+def copy_file_to_windows(wsl_path: str) -> None:
+    path = "/" + os.path.join("mnt", "c", "Windows", "Temp", "firmware.bin")
+    shutil.copy(wsl_path, path)
+
+def is_wsl() -> bool:
+    try:
+        if "microsoft" in platform.uname().release.lower(): # Check uname release for "microsoft" (common in WSL1/WSL2)
+            return True
+        if "WSL_INTEROP" in os.environ:
+            return True
+        with open("/proc/version", "r") as f:  # Check /proc/version for "Microsoft"
+            if "microsoft" in f.read().lower():
+                return True
+    except Exception:
+        pass
+    return False
 
 def main() -> None:
-    if len(sys.argv) != 2:
-        print("ERROR: 1 command line argument required: name of the board to upload to")
-        sys.exit(1)
-    
-    board = sys.argv[1].lower().replace("board", "")
+    args = get_args()
+    board = args.board.lower().replace("board", "")
     if board not in BOARD_MAP:
-        print(f"ERROR: Invalid board name given. Valid board names are: {', '.join(BOARD_MAP.keys())}")
+        print(f"ERROR: '{args.board}' is not a valid board. Valid boards are [{', '.join(BOARD_MAP)}]")
         sys.exit(1)
+    if not os.path.exists(BOARD_MAP[board]):
+        print("ERROR: Firmware file does not exist. You need to compile.")
+        sys.exit(4)
 
-    if op_sys == "Linux": # WSL, actually Windows
-        create_net_map()
+    match OS:
+        case "Linux":
+            if not is_wsl():  # non-WSL linux
+                path = BOARD_MAP[board]
+                cmd_erase = f"STM32_Programmer_CLI {CMD_ARGS_ERASE}"
+                cmd_flash = f"STM32_Programmer_CLI {CMD_ARGS_FLASH} {path} 0x08000000"
+            else:  # actually WSL in Windows
+                copy_file_to_windows(BOARD_MAP[board])
+                cmd_erase = f"powershell.exe \"& '{EXE_PATH}' {CMD_ARGS_ERASE}\""
+                cmd_flash = f"powershell.exe \"& '{EXE_PATH}' {CMD_ARGS_FLASH} C:\\Windows\\Temp\\firmware.bin 0x08000000\""
+        case "Darwin":  # Mac:
+            path = BOARD_MAP[board]
+            cmd_erase = f"STM32_Programmer_CLI {CMD_ARGS_ERASE}"
+            cmd_flash = f"STM32_Programmer_CLI {CMD_ARGS_FLASH} {path} 0x08000000"
+        case "Windows":
+            print("ERROR: run this command in WSL")
+            sys.exit(2)
+        case _:
+            print("ERROR: Unknown OS")
+            sys.exit(3)
 
-        cmdlts = BOARD_MAP[board]
-        cmd = f"powershell.exe -Command \"{cmdlts['cmd']}.exe {cmdlts['args']} W:{os.getcwd()}/{cmdlts['path']}\"".replace("/", "\\\\")
-        process = subprocess.run(cmd, shell=True, check=False)
-
-        delete_net_map()
-        sys.exit(process.returncode)
-
-    elif op_sys == "Darwin": # Mac
-        cmdlts = BOARD_MAP[board]
-        cmd = f"{cmdlts['cmd']} {cmdlts['args']} {cmdlts['path']}"
-        process = subprocess.run(cmd, shell=True, check=False)
-        sys.exit(process.returncode)
-
-    elif op_sys == "Windows":
-        print("ERROR: This script must be run in WSL")
-        sys.exit(1)
+    process_erase = subprocess.run(cmd_erase, capture_output=args.silent, check=False, shell=True)
+    if process_erase.returncode != 0:
+        sys.exit(process_erase.returncode)
+    process_flash = subprocess.run(cmd_flash, capture_output=args.silent, check=False, shell=True)
+    sys.exit(process_flash.returncode)
 
 
 if __name__ == "__main__":

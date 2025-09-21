@@ -38,8 +38,6 @@ class MainCANInterface : public CANInterface {
     virtual void handle(MotorControllerError *can_struct) {}
     virtual void handle(BPSPackInformation *can_struct) {}
     virtual void handle(BPSError *can_struct) {}
-    virtual void handle(BPSCellVoltage *can_struct) {}
-    virtual void handle(BPSCellTemperature *can_struct) {}
 
   private:
     void message_handler() override;
