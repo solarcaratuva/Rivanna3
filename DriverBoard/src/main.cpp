@@ -11,6 +11,7 @@
 
 #define LOG_LEVEL          LOG_ERROR
 #define MAIN_LOOP_PERIOD   1s
+#define TESTING_LONG_PERIOD 10s
 #define MOTOR_LOOP_PERIOD  10ms
 #define ERROR_CHECK_PERIOD 100ms
 #define FLASH_PERIOD       500ms
@@ -59,7 +60,7 @@ DigitalIn leftTurnSwitch(LEFT_TURN_IN);
 DigitalIn rightTurnSwitch(RIGHT_TURN_IN);
 DigitalIn hazardsSwitch(HAZARDS_IN);
 DigitalIn regenSwitch(REGEN_IN);
-DigitalIn gpioInput(PC_11)
+DigitalIn gpioInput(PC_11);
 
 //TODO: add pins for cruise control
 DigitalIn cruiseControlSwitch(CRUISE_ENABLED);
@@ -276,22 +277,26 @@ int main() {
     while (true){
         log_debug("Main thread loop");
 
+        //Testing CAN
+        LED2_PIN = PIN_ON;
         gpioOutput = PIN_OFF;
         //Testing GPIO
         if (gpioInput){
             gpioOutput = PIN_ON;
-            ThisThread::sleep_for(MAIN_LOOP_PERIOD);
+            ThisThread::sleep_for(TESTING_LONG_PERIOD);
+            // LED2_PIN = PIN_OFF;
+            // ThisThread::sleep_for(FLASH_PERIOD);
             gpioOutput = PIN_OFF;
+            ThisThread::sleep_for(TESTING_LONG_PERIOD);
+
         }
 
-        //Testing CAN
-        LED2_PIN = PIN_ON;
         //Reading from Raspberry Pi to Nucleo
-        if (vehicle_can_interface.CANRead(message)){
-            ThisThread::sleep_for(FLASH_PERIOD);
-            LED2_PIN = PIN_OFF;
-            ThisThread::sleep_for(FLASH_PERIOD);
-        }
+        // if (vehicle_can_interface.CANRead(message)){
+        //     ThisThread::sleep_for(FLASH_PERIOD);
+        //     LED2_PIN = PIN_OFF;
+        //     ThisThread::sleep_for(FLASH_PERIOD);
+        // }
         // vehicle_can_interface.send(&bps_error); //Uncomment to send to Raspberry Pi
     }
 
