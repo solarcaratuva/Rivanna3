@@ -80,6 +80,26 @@ HeartBeatSystem heartbeatSystem(fault_occurred, &queue, HB_POWER_BOARD);
  * Writes directly to the DigitalOut pins for the left and right turn signals.
  */
 void signal_flash_handler() {
+    
+    static bool flash_turn = left_turn_signal.read();
+    static bool flash_bms = bms_strobe.read();
+    flash_turn = !flash_turn;
+    flash_bms = !flash_bms;
+
+    if(flashHazards){
+        left_turn_signal.write(flash_turn);
+        right_turn_signal.write(flash_turn);
+    }else{
+        left_turn_signal.write(flashLeftTurnSignal && flash_turn);
+        right_turn_signal.write(flashRightTurnSignal && flash_turn);
+    }
+
+    if(bms_error){
+        bms_strobe.write(flash_bms);
+    }else{
+        bms_strobe.write(PIN_OFF);
+    }
+
     /** HERE: reimplement the logic for this function
      * 
      *  INPUTS: flashHazards, flashLeftTurnSignal, and flashRightTurnSignal
