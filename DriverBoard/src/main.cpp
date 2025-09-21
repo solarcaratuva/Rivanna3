@@ -7,6 +7,8 @@
 #include <mbed.h>
 #include <rtos.h>
 
+#include "CANInterface.h"
+
 #define LOG_LEVEL          LOG_ERROR
 #define MAIN_LOOP_PERIOD   1s
 #define MOTOR_LOOP_PERIOD  10ms
@@ -48,14 +50,16 @@ DigitalOut leftTurnSignal(LEFT_TURN_OUT);
 DigitalOut rightTurnSignal(RIGHT_TURN_OUT);
 DigitalOut drl(DRL_OUT);
 DigitalOut bms_strobe(BMS_STROBE_OUT);
-DigitalOut debug_CANBUS(PB_7);
-DigitalOut test_output(PC_10);
+DigitalOut LED2_PIN(PB_7);
+DigitalOut LED1_PIN(PB_0);
+DigitalOut gpioOutput(PC_10);
 
 DigitalIn brakeLightsSwitch(MECHANICAL_BRAKE_IN);
 DigitalIn leftTurnSwitch(LEFT_TURN_IN);
 DigitalIn rightTurnSwitch(RIGHT_TURN_IN);
 DigitalIn hazardsSwitch(HAZARDS_IN);
 DigitalIn regenSwitch(REGEN_IN);
+DigitalIn gpioInput(PC_11)
 
 //TODO: add pins for cruise control
 DigitalIn cruiseControlSwitch(CRUISE_ENABLED);
@@ -271,8 +275,24 @@ int main() {
 
     while (true){
         log_debug("Main thread loop");
-        vehicle_can_interface.send(&bps_error);
-        ThisThread::sleep_for(MAIN_LOOP_PERIOD);
+
+        gpioOutput = PIN_OFF;
+        //Testing GPIO
+        if (gpioInput){
+            gpioOutput = PIN_ON;
+            ThisThread::sleep_for(MAIN_LOOP_PERIOD);
+            gpioOutput = PIN_OFF;
+        }
+
+        //Testing CAN
+        LED2_PIN = PIN_ON;
+        //Reading from Raspberry Pi to Nucleo
+        if (vehicle_can_interface.CANRead(message)){
+            ThisThread::sleep_for(FLASH_PERIOD);
+            LED2_PIN = PIN_OFF;
+            ThisThread::sleep_for(FLASH_PERIOD);
+        }
+        // vehicle_can_interface.send(&bps_error); //Uncomment to send to Raspberry Pi
     }
 
     // motor_thread.start(motor_message_handler);
@@ -286,7 +306,7 @@ int main() {
     //     if (CANRead(message) == 1){
 
     //     }
-        // read_inputs();
+    //     read_inputs();
 
     //     to_motor.throttle = 1;
     //     to_motor.cruise_control_speed = 16;
@@ -316,9 +336,11 @@ void DriverCANInterface::handle(MotorControllerPowerStatus *can_struct) {
 
 void DriverCANInterface::handle(BPSError *can_struct) {
     bms_error = can_struct->internal_communications_fault || can_struct-> low_cell_voltage_fault || can_struct->open_wiring_fault || can_struct->current_sensor_fault || can_struct->pack_voltage_sensor_fault || can_struct->thermistor_fault || can_struct->canbus_communications_fault || can_struct->high_voltage_isolation_fault || can_struct->charge_limit_enforcement_fault || can_struct->discharge_limit_enforcement_fault || can_struct->charger_safety_relay_fault || can_struct->internal_thermistor_fault || can_struct->internal_memory_fault;
-    debug_CANBUS = PIN_ON;
-    ThisThread::sleep_for(FLASH_PERIOD);
-    debug_CANBUS = PIN_OFF;
+    // LED2_PIN = PIN_ON;
+    // ThisThread::sleep_for(FLASH_PERIOD);
+    // LED2_PIN = PIN_OFF;
+    // ThisThread::sleep_for(FLASH_PERIOD);
+
 }
 
 void DriverCANInterface::handle(ECUPowerAuxCommands *can_struct) {

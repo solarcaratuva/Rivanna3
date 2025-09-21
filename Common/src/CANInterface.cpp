@@ -61,7 +61,7 @@ int CANInterface::CANRead(CANMessage &message) {
     for (int i = 0; i < (int) message.len; i++) {
         message.data[i] = serial_buffer[i + 2];
     }
-
+    
     log_debug("THIS IS THE MESSAGE ID: %d \n THIS IS THE MESSAGE LENGTH: %d \n THIS IS THE MESSAGE: %d", message.id, message.len, message.data[0]);
 
     return 1;
