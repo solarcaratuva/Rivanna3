@@ -1,7 +1,7 @@
 #ifndef PINDEF_H
 #define PINDEF_H
 
-#ifdef TARGET_POWER_BOARD // if compiling for PowerBoard
+#ifdef TARGET_NUCLEO_F413ZH // if compiling for PowerBoard
 
 #define DEBUG_LED_1         PE_11
 // #define DEBUG_LED_2         PE_15

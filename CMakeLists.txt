@@ -21,8 +21,6 @@ add_subdirectory(Common)
 
 add_subdirectory(TelemetryBoard)
 add_subdirectory(PowerBoard)
-add_subdirectory(WheelBoard)
-add_subdirectory(DriverBoard)
 
 
 option(VERBOSE_BUILD "Have a verbose build process")
