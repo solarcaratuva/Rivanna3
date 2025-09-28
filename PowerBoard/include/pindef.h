@@ -1,7 +1,7 @@
 #ifndef PINDEF_H
 #define PINDEF_H
 
-#ifdef TARGET_NUCLEO_F413ZH // if compiling for PowerBoard
+#ifdef TARGET_POWER_BOARD // if compiling for PowerBoard
 
 #define DEBUG_LED_1         PE_11
 // #define DEBUG_LED_2         PE_15
@@ -33,6 +33,33 @@
 #define MAIN_CAN_STBY       NC
 #define MAIN_CAN_RX         PB_12
 #define MAIN_CAN_TX         PB_13
+
+
+#elif defined(TARGET_NUCLEO_F413ZH)
+// Nucleo pins
+#define CRUISE_ENABLED PB_14
+#define CRUISE_INC PB_13
+#define CRUISE_DEC PA_7
+
+
+#define LEFT_TURN_IN PC_11
+#define RIGHT_TURN_IN PA_9
+#define HAZARDS_IN PB_0
+#define MECHANICAL_BRAKE_IN PA_8
+#define REGEN_IN PB_11
+#define THROTTLE_VALUE_IN PC_3
+#define FORWARD_REVERSE_IN NC  // only one not done
+
+#define LEFT_TURN_OUT PC_10
+#define RIGHT_TURN_OUT PA_1
+#define BRAKE_LIGHTS_OUT PA_4
+
+#define DRL_OUT PA_0
+#define BMS_STROBE_OUT PA_3
+
+#define CAN_RX PA_11
+#define CAN_TX PA_12
+#define CAN_STBY PB_10
 
 
 #else // if not compiling for PowerBoard
@@ -77,19 +104,3 @@
 #endif
 
 
-#ifdef TARGET_NUCLEO_F413ZH // if compiling for HIL testing board
-// Nucleo pins
-#define MTR_CAN_TX      PA_12
-#define MTR_CAN_RX      PA_11
-#define ACCEL_SCL       PA_9
-#define ACCEL_SDA       PA_8
-#define REGEN_SDA       PC_9
-#define REGEN_SCL       PC_8
-#define MPPT_PRE_EN     PC_6
-#define CHARGE_EN       PB_15
-#define MTR_PRE_EN      PB_14
-#define DIS_CHARGE_EN   PB_13
-#define CONT_12         PB_12
-#define AUX             PB_11
-// Nucleo pins
-#endif
