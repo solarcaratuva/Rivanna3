@@ -11,10 +11,9 @@ import os
 BOARD_MAP = {
     "power": "cmake_build/NUCLEO_F413ZH/develop/GCC_ARM/PowerBoard/PowerBoard.bin",
     "telemetry": "cmake_build/POWER_BOARD/develop/GCC_ARM/TelemetryBoard/TelemetryBoard.bin",
-    "driver": "cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/DriverBoard/DriverBoard.bin 0x8000000",
-    "battery": "cmd": "st-flash",  "args":"--connect-under-reset --reset write", "path": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/BatteryBoard/BatteryBoard.bin 0x8000000",
-    "motor": "cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/Motor/Motor.bin 0x8000000",
-    "nucleo": "cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/NUCLEO_F413ZH/develop/GCC_ARM/DriverBoard/DriverBoard.bin 0x8000000"}
+    "battery": {"cmd": "st-flash",  "args":"--connect-under-reset --reset write", "path": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/BatteryBoard/BatteryBoard.bin 0x8000000"},
+    "motor": {"cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/Motor/Motor.bin 0x8000000"},
+    "nucleo": "cmake_build/NUCLEO_F413ZH/develop/GCC_ARM/PowerBoard/PowerBoard.bin"}
 
 HIL_BOARD_MAP = {} # board path map specific to the HIL testing system server
 CMD_ARGS_ERASE = "-c port=SWD mode=UR -e all"
