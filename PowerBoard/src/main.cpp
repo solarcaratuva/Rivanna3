@@ -55,6 +55,8 @@ AnalogIn hal_effect_voltage_motor(MTR_HAL_SENSE, 3.3f);
 AnalogIn hal_effect_voltage_mppt(MPPT_HAL_SENSE, 3.3f);
 AnalogIn cont_12(CONT_12, 3.3f);
 
+AnalogIn hil_testing_pin_analog(PC_5, 3.3f);
+
 I2C motor_control_serial_bus(MTR_SDA, MTR_SCL);
 MotorInterface motor_interface(motor_control_serial_bus);
 
@@ -209,6 +211,17 @@ void send_powerboard_heartbeat() {
 int main() {
     CANMessage message;
 
+    char buffer[64];
+    //Testing Analog
+    while (true){
+        log_debug("START OF INFINITE LOOP");
+        ThisThread::sleep_for(FLASH_PERIOD);
+
+        sprintf(buffer, "%f", hil_testing_pin_analog.read());
+        log_debug(buffer);
+    }
+
+    //Testing Digital and CAN
     while (true){
         log_debug("SOMETHING");
         //Testing CAN
