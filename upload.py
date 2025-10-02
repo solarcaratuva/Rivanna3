@@ -9,7 +9,7 @@ import os
 
 
 BOARD_MAP = {
-    "power": "cmake_build/NUCLEO_F413ZH/develop/GCC_ARM/PowerBoard/PowerBoard.bin",
+    "power": "cmake_build/POWER_BOARD/develop/GCC_ARM/PowerBoard/PowerBoard.bin",
     "telemetry": "cmake_build/POWER_BOARD/develop/GCC_ARM/TelemetryBoard/TelemetryBoard.bin",}
 
 HIL_BOARD_MAP = {} # board path map specific to the HIL testing system server
