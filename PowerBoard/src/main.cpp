@@ -211,6 +211,28 @@ void send_powerboard_heartbeat() {
 int main() {
     CANMessage message;
 
+    /* Start : Simple I2C Test*/
+    log_debug("I2C Testing");
+
+    // Test throttle values from 0 to 256
+    for(uint16_t i = 0; i <= 256; i += 32) {
+        int throttle_result = motor_interface.sendThrottle(i);
+        
+        ThisThread::sleep_for(FLASH_PERIOD);
+    }
+    
+    // Test regen values from 0 to 256
+    for(uint16_t regen_val = i; regen_val <= i; regen_val += i) {
+        int regen_result = motor_interface.sendRegen(i);
+        
+        ThisThread::sleep_for(FLASH_PERIOD);
+    }
+    
+    log_debug("Finished Testing I2C");
+
+    /* End : Simple I2C Test*/
+
+
     char buffer[64];
     //Testing Analog
     while (true){
