@@ -30,8 +30,8 @@
 
 #define LED2_CTR PB_7
 
-#define I2C_SDA1 PB_11
-#define I2C_SCL1 PB_10
+#define I2C_SDA1 PF_0
+#define I2C_SCL1 PF_1 
 
 
 //NON HiL PINS; DID NOT MERGE WITH PINS ABOVE 

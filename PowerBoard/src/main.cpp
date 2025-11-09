@@ -59,8 +59,8 @@ AnalogIn hil_testing_pin_analog(PC_5, 3.3f);
 
 
 #define I2C_TEST_MODE 0 //0 = Throttle, 1 = Regen
-// I2C motor_control_serial_bus(I2C_SDA1, I2C_SCL1); // comment out for implementation with powerboard
-I2C motor_control_serial_bus(MTR_SDA, MTR_SCL); // comment in for implementation with powerboard
+// I2C motor_control_serial_bus(MTR_SDA, MTR_SCL)// comment out for implementation with powerboard
+I2C motor_control_serial_bus(I2C_SDA1, I2C_SCL1); // comment in for implementation with powerboard
 MotorInterface motor_interface(motor_control_serial_bus);
 
 PowerCANInterface vehicle_can_interface(CAN_RX, CAN_TX, CAN_STBY);
@@ -216,23 +216,28 @@ int main() {
 
     /* Start : Simple I2C Test*/
     log_debug("I2C Testing");
-    // Test throttle values from 0 to 256
-    if (I2C_TEST_MODE == 0) {
-        for(int i = 0; i <= 256; i += 32) {
-            motor_interface.sendThrottle(i);
-            ThisThread::sleep_for(FLASH_PERIOD);
-        } 
-    } else if (I2C_TEST_MODE ==1){
-    // Test regen values from 0 to 256
-    for(int i =0; i <= 256; i += 32) {
-        motor_interface.sendRegen(i);
-        ThisThread::sleep_for(FLASH_PERIOD);
-    }
+    LED2_PIN = PIN_ON; 
+    while(true){ 
+        // Test throttle values from 0 to 256
+        if (I2C_TEST_MODE == 0) {
+            LED2_PIN = !LED2_PIN;  
+            ThisThread::sleep_for(100);
+            for(int i = 0; i <= 256; i += 32) {
+                motor_interface.sendThrottle(i);
+                ThisThread::sleep_for(FLASH_PERIOD);
+            } 
+        } else if (I2C_TEST_MODE ==1){
+            // Test regen values from 0 to 256
+            for(int i =0; i <= 256; i += 32) {
+                motor_interface.sendRegen(i);
+                ThisThread::sleep_for(FLASH_PERIOD);
+            }
     } else {
         log_error("Invalid I2C test mode");
     }
     log_debug("Finished Testing I2C");
-
+    ThisThread::sleep_for(FLASH_PERIOD); 
+}
     /* End : Simple I2C Test*/
 
 
@@ -250,7 +255,7 @@ int main() {
     while (true){
         log_debug("SOMETHING");
         //Testing CAN
-        LED2_PIN = PIN_ON;
+        // LED2_PIN = PIN_ON;
         //Reading from Raspberry Pi to Nucleo
         log_debug("HERE");
         if (vehicle_can_interface.CANRead(message)){
