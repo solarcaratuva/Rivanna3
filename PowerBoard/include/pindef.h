@@ -56,8 +56,8 @@
 #define CHARGE_EN           PF_0
 #define MPPT_PRE_EN         PD_0
 
-#define MTR_SDA             PB_11
-#define MTR_SCL             PB_10
+#define MTR_SDA             PF_0 
+#define MTR_SCL             PF_1
 
 #define MTR_CAN_RX          PG_0
 #define MTR_CAN_TX          PD_1
