@@ -83,30 +83,30 @@ class DriverBoardTests(unittest.TestCase):
         self.assertTrue(right_turn_signal)
 
     def test_throttle(self):
-            def expected_throttle_value(voltage: float):
-                raw_value = voltage * 256.0
-                
-                ### Quantization logic 
-                if raw_value - math.floor(raw_value) < 0.5:
-                    raw_value = math.floor(raw_value)
-                else:
-                    raw_value = math.ceil(raw_value)
-                
-                #Calculate normalized value from quantized raw
-                norm_value = raw_value / 256.0
-                return norm_value, raw_value
+        def expected_throttle_value(voltage: float):
+            raw_value = voltage * 256.0
+            
+            ### Quantization logic 
+            if raw_value - math.floor(raw_value) < 0.5:
+                raw_value = math.floor(raw_value)
+            else:
+                raw_value = math.ceil(raw_value)
+            
+            #Calculate normalized value from quantized raw
+            norm_value = raw_value / 256.0
+            return norm_value, raw_value
 
-            motor_interface =  MotorInterfaceTest()
-            throttle_pin = AnalogOutput("THROTTLE_ADR")
-            testing_voltages = [0,0.33,0.5,0.66,1]
-            for tv in testing_voltages:
-                throttle_pin.write(tv)
-                time.sleep(0.5)
-                exp_norm,exp_raw = expected_throttle_value(tv)
-                norm, raw = motor_interface.get_throttle(), motor_interface.get_throttle_raw()
-                self.assertAlmostEqual(exp_norm, norm, delta = 0.1, msg=f"Throttle Values from [0-1] failed, expected : {exp_norm} recieved : {norm}")
-                self.assertAlmostEqual(exp_raw, raw, delta = 0.1*256, msg=f"Throttle Values from [0-256] failed, expected : {exp_norm} recieved : {norm}")
-                time.sleep(2)
+        motor_interface =  MotorInterfaceTest()
+        throttle_pin = AnalogOutput("THROTTLE_ADR")
+        testing_voltages = [0,0.33,0.5,0.66,1]
+        for tv in testing_voltages:
+            throttle_pin.write(tv)
+            time.sleep(0.5)
+            exp_norm,exp_raw = expected_throttle_value(tv)
+            norm, raw = motor_interface.get_throttle(), motor_interface.get_throttle_raw()
+            self.assertAlmostEqual(exp_norm, norm, delta = 0.1, msg=f"Throttle Values from [0-1] failed, expected : {exp_norm} recieved : {norm}")
+            self.assertAlmostEqual(exp_raw, raw, delta = 0.1*256, msg=f"Throttle Values from [0-256] failed, expected : {exp_norm} recieved : {norm}")
+            time.sleep(2)
 
     def test_regen(self):
         def expected_regen_value(voltage: float):
