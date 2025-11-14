@@ -4,7 +4,7 @@ import os
 import time
 import math
 
-from gpioPins import DigitalInput, DigitalOutput, Analogoutput
+from gpioPins import DigitalInput, DigitalOutput, AnalogOutput
 from CANMessage import CanMessage
 from CANPi import writeOut
 from MotorInterfaceTest import MotorInterfaceTest
