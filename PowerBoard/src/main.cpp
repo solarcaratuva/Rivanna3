@@ -222,10 +222,12 @@ int main() {
         if (I2C_TEST_MODE == 0) {
             LED2_PIN = !LED2_PIN;  
             ThisThread::sleep_for(100);
-            for(int i = 0; i <= 256; i += 32) {
-                motor_interface.sendThrottle(i);
-                ThisThread::sleep_for(FLASH_PERIOD);
-            } 
+            motor_interface.sendThrottle(128);
+            ThisThread::sleep_for(FLASH_PERIOD);
+            // for(int i = 0; i <= 256; i += 32) {
+            //     motor_interface.sendThrottle(i);
+            //     ThisThread::sleep_for(FLASH_PERIOD);
+            // } 
         } else if (I2C_TEST_MODE ==1){
             // Test regen values from 0 to 256
             for(int i =0; i <= 256; i += 32) {
