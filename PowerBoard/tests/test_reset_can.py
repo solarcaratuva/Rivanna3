@@ -22,7 +22,7 @@ class TestPowerBoardBasic(unittest.TestCase):
         for msg in self.bus.CANBusDict.keys():
             # reset can queue
             self.bus.clearReceivedMessages(msg)
-        printf("Cleared CAN messages")
+        #printf("Cleared CAN messages")
 
         for msg in self.bus.CANBusDict:
             self.assertEqual(len(bus.getReceivedMessages(msg)), 0, f"CAN queue '{msg}' not empty after clearing")
