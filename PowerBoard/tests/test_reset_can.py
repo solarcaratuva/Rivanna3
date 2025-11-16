@@ -1,8 +1,13 @@
 import unittest
 import time
+import os
+import sys
 
-from Testing_Library.gpiopins import reset_nucleo
-from Testing_Library.canbus import CANBus
+# Absolute path to the correct Testing_Library directory
+testing_lib_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "HiL_Testing", "Testing_Library"))
+sys.path.insert(0, testing_lib_path)
+
+from gpioPins import reset_nucleo
 
 
 class TestPowerBoardBasic(unittest.TestCase):
