@@ -15,16 +15,15 @@ class TestPowerBoardBasic(unittest.TestCase):
     def setUp(self):
         # reset Nucleo before each test
         reset_nucleo()
+        printf("Reset nucleo")
 
         # clear CAN messages
         self.bus = CANBus()
         for msg in self.bus.CANBusDict.keys():
             # reset can queue
             self.bus.clearReceivedMessages(msg)
+        printf("Cleared CAN messages")
 
         # Give firmware time to reboot
         time.sleep(0.2)
-
-    def system_check(self):
-        self.assertEqual(2 + 2, 4)
 
