@@ -7,9 +7,10 @@ import sys
 import shutil
 import os
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 BOARD_MAP = {
-    "power": "cmake_build/NUCLEO_F413ZH/develop/GCC_ARM/PowerBoard/PowerBoard.bin",
+    "power": os.path.join(SCRIPT_DIR, "cmake_build/NUCLEO_F413ZH/develop/GCC_ARM/PowerBoard/PowerBoard.bin"),
     "telemetry": "cmake_build/POWER_BOARD/develop/GCC_ARM/TelemetryBoard/TelemetryBoard.bin",
     "battery": {"cmd": "st-flash",  "args":"--connect-under-reset --reset write", "path": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/BatteryBoard/BatteryBoard.bin 0x8000000"},
     "motor": {"cmd": "st-flash", "args": "--connect-under-reset --reset write", "path": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/Motor/Motor.bin 0x8000000"},
@@ -53,6 +54,7 @@ def main() -> None:
         print(f"ERROR: '{args.board}' is not a valid board. Valid boards are [{', '.join(BOARD_MAP)}]")
         sys.exit(1)
     if not os.path.exists(BOARD_MAP[board]):
+        print(f"[DEBUG] Script loooking for firmware at: {os.path.abspath(BOARD_MAP[board])}")
         print("ERROR: Firmware file does not exist. You need to compile.")
         sys.exit(4)
 
