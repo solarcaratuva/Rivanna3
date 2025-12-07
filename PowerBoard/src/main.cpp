@@ -25,6 +25,8 @@
 #define MOTOR_REQUEST_FRAMES_PERIOD     10ms
 #define AUX_BATTERY_PERIOD              1s
 #define MAX_REGEN                       256
+#define FLASH_PERIOD       500ms
+
 
 const bool PIN_ON = true;
 const bool PIN_OFF = false;
@@ -40,19 +42,28 @@ DigitalOut mppt_precharge_en(MPPT_PRE_EN);
 DigitalOut charge_en(CHARGE_EN);
 DigitalOut motor_precharge_en(MTR_PRE_EN);
 DigitalOut discharge_en(DIS_CHARGE_EN);
+DigitalOut LED2_PIN(PB_7);
+DigitalOut gpioOutput(PC_10);
+
+DigitalIn gpioInput(PC_11);
+DigitalIn brake_pedal(BRAKE_WIPER);
+
 
 AnalogIn throttle_pedal(THROTTLE_WIPER, 3.3f);
-DigitalIn brake_pedal(BRAKE_WIPER);
 AnalogIn aux_battery(AUX, 3.3f);
 AnalogIn hal_effect_voltage_motor(MTR_HAL_SENSE, 3.3f);
 AnalogIn hal_effect_voltage_mppt(MPPT_HAL_SENSE, 3.3f);
 AnalogIn cont_12(CONT_12, 3.3f);
 
+AnalogIn hil_testing_pin_analog(PC_5, 3.3f);
+
 I2C motor_control_serial_bus(MTR_SDA, MTR_SCL);
 MotorInterface motor_interface(motor_control_serial_bus);
 
-PowerCANInterface vehicle_can_interface(MAIN_CAN_RX, MAIN_CAN_TX, MAIN_CAN_STBY);
+PowerCANInterface vehicle_can_interface(CAN_RX, CAN_TX, CAN_STBY);
 MotorControllerCANInterface motor_controller_can_interface(MTR_CAN_RX, MTR_CAN_TX, MAIN_CAN_STBY);
+
+BPSError bps_error;
 
 // these are global control variables, mostly set by received CAN messages
 bool flashLeftTurnSignal = false;
@@ -198,25 +209,34 @@ void send_powerboard_heartbeat() {
 
 // main method
 int main() {
-    log_set_level(LOG_LEVEL);
-    log_info("PowerBoard starting up");
+    CANMessage message;
 
-    drl.write(PIN_ON); // the digital running light is always on
+    char buffer[64];
+    //Testing Analog
+    while (true){
+        log_debug("START OF INFINITE LOOP");
+        ThisThread::sleep_for(FLASH_PERIOD);
 
-    heartbeatSystem.initializeTimeouts(false, false, false); // set initial heartbeat timer (Call handle_powerborad_timeout in 100ms)
-    queue.call_every(50ms, send_powerboard_heartbeat); // Send powerboard heartbeat out every 50 ms
+        sprintf(buffer, "%f", hil_testing_pin_analog.read());
+        log_debug(buffer);
+    }
 
-    queue.call_every(MOTOR_CONTROL_PERIOD, set_motor_status);
-    queue.call_every(SIGNAL_FLASH_PERIOD, signal_flash_handler); // 2 calls to signal_flash_handler() is a full period
-    queue.call_every(BRAKE_LIGHTS_UPDATE_PERIOD, set_brake_lights);
-    queue.call_every(MOTOR_REQUEST_FRAMES_PERIOD, request_motor_frames);
-    queue.call_every(AUX_BATTERY_PERIOD, update_aux_battery);
-    
-   
-    motor_precharge_thread.start(motor_precharge);
-    mppt_precharge_thread.start(mppt_precharge);
-
-    queue.dispatch_forever();
+    //Testing Digital and CAN
+    while (true){
+        log_debug("SOMETHING");
+        //Testing CAN
+        LED2_PIN = PIN_ON;
+        //Reading from Raspberry Pi to Nucleo
+        log_debug("HERE");
+        if (vehicle_can_interface.CANRead(message)){
+            ThisThread::sleep_for(FLASH_PERIOD);
+            LED2_PIN = PIN_OFF;
+            ThisThread::sleep_for(FLASH_PERIOD);
+        }
+        log_debug("BEFORE");
+        vehicle_can_interface.send(&bps_error); //Uncomment to send to Raspberry Pi
+        log_debug("AFTER");
+    }
 }
 
 // CAN Message handlers
