@@ -1,9 +1,10 @@
 # Rivanna3
-test git push
 Codebase for the embedded code that runs on the Solar Car. Rivanna3 design cycle. <br>
 This code was made by and for the Solar Car Team at UVA. Use elsewhere is not recommended. 
 
 ## Resources on the Team Wiki
+
+**Warning**: The team wiki has been updated for the current design cycle. See `compile_upload.md` and `dev_guide.md` in this repo for archived versions of those pages that are accurate for *Rivanna3*. 
 
 Team Wiki: [https://solarcaratuva.github.io/](https://solarcaratuva.github.io/) <br>
 
