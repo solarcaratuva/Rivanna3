@@ -83,53 +83,77 @@ class DriverBoardTests(unittest.TestCase):
         self.assertTrue(right_turn_signal)
 
     def test_throttle(self):
-        def expected_throttle_value(voltage: float):
-            raw_value = voltage * 256.0
+        def expected_throttle_value(voltage):
+            THROTTLE_LOW = 0.82
+            THROTTLE_HIGH = 3.3
+            THROTTLE_DIFF = THROTTLE_HIGH - THROTTLE_LOW
             
-            ### Quantization logic 
-            if raw_value - math.floor(raw_value) < 0.5:
-                raw_value = math.floor(raw_value)
+            if voltage <= THROTTLE_LOW:
+                raw_value = 0
+            elif voltage >= THROTTLE_HIGH:
+                raw_value = 256
             else:
-                raw_value = math.ceil(raw_value)
+                adjusted = (voltage - THROTTLE_LOW) / THROTTLE_DIFF
+                raw_value = math.floor(adjusted * 256.0)
             
-            #Calculate normalized value from quantized raw
             norm_value = raw_value / 256.0
             return norm_value, raw_value
 
         motor_interface =  MotorInterfaceTest()
-        throttle_pin = AnalogOutput("THROTTLE_ADR")
-        testing_voltages = [0,0.33,0.5,0.66,1]
+        # Use THROTTLE_WIPER (PA_6) mapped in server_config.json
+        throttle_pin = AnalogOutput("THROTTLE_WIPER") 
+        
+        testing_voltages = [0.5, 1.5, 3.0]
+        
         for tv in testing_voltages:
-            throttle_pin.write(tv)
+            throttle_pin.write_voltage(tv)
             time.sleep(0.5)
-            exp_norm,exp_raw = expected_throttle_value(tv)
+            exp_norm, exp_raw = expected_throttle_value(tv)
             norm, raw = motor_interface.get_throttle(), motor_interface.get_throttle_raw()
-            self.assertAlmostEqual(exp_norm, norm, delta = 0.1, msg=f"Throttle Values from [0-1] failed, expected : {exp_norm} recieved : {norm}")
-            self.assertAlmostEqual(exp_raw, raw, delta = 0.1*256, msg=f"Throttle Values from [0-256] failed, expected : {exp_norm} recieved : {norm}")
-            time.sleep(2)
+            
+            self.assertAlmostEqual(exp_norm, norm, delta=0.05, 
+                msg=f"Throttle Norm failed at {tv}V. Exp: {exp_norm}, Got: {norm}")
+            self.assertAlmostEqual(exp_raw, raw, delta=1.0, 
+                msg=f"Throttle Raw failed at {tv}V. Exp: {exp_raw}, Got: {raw}")
 
     def test_regen(self):
-        def expected_regen_value(voltage: float):
-            raw_value = voltage * 256.0
+        # Regen logic from main.cpp
+        def expected_regen_from_throttle(voltage):
+            THROTTLE_LOW = 0.82
+            THROTTLE_HIGH = 3.3
+            THROTTLE_DIFF = THROTTLE_HIGH - THROTTLE_LOW
             
-            ### Quantization logic 
-            if raw_value - math.floor(raw_value) < 0.5:
-                raw_value = math.floor(raw_value)
+            if voltage <= THROTTLE_LOW:
+                raw_value = 0
+            elif voltage >= THROTTLE_HIGH:
+                raw_value = 256
             else:
-                raw_value = math.ceil(raw_value)
-            
-            # Calculate normalized value from quantized raw    
-            norm_value = raw_value / 256.0
-            return norm_value, raw_value
+                adjusted = (voltage - THROTTLE_LOW) / THROTTLE_DIFF
+                raw_value = math.floor(adjusted * 256.0)
+
+            if raw_value <= 50:
+                val = 79.159 * math.pow(50 - raw_value, 0.3)
+                norm = val / 256.0
+                return norm, val
+            return 0.0, 0.0
 
         motor_interface = MotorInterfaceTest()
-        regen_pin = AnalogOutput("REGEN_ADR")
-        testing_voltages = [0,0.33,0.5,0.66,1]
+        throttle_pin = AnalogOutput("THROTTLE_WIPER")
+
+        # Rivanna3.dbc has ID 768 or hex 0x300 for DashboardCommands 
+        cmd_msg = CanMessage(name="DashboardCommands", id=0x300, signals={"regen_en": 1}, timestamp=time.time())
+        writeOut(cmd_msg)
+        time.sleep(0.1) 
+
+        testing_voltages = [0.85] # 0.85V => ~3 raw => High Regen
         for tv in testing_voltages:
-            regen_pin.write(tv)
+            throttle_pin.write_voltage(tv)
             time.sleep(0.5)
-            exp_norm,exp_raw = expected_regen_value(tv)
+
+            exp_norm, exp_raw = expected_regen_from_throttle(tv)
             norm, raw = motor_interface.get_regen(), motor_interface.get_regen_raw()
-            self.assertAlmostEqual(exp_norm, norm, delta = 0.1, msg=f"Regen Values from [0-1] failed, expected : {exp_norm} recieved : {norm}")
-            self.assertAlmostEqual(exp_raw, raw, delta = 0.1*256, msg=f"Regen Values from [0-256] failed, expected : {exp_norm} recieved : {norm}")
-            time.sleep(2)
+            
+            self.assertAlmostEqual(exp_norm, norm, delta=0.05, 
+                msg=f"Regen Norm failed at {tv}V. Exp: {exp_norm}, Got: {norm}")
+            self.assertAlmostEqual(exp_raw, raw, delta=1.0, 
+                msg=f"Regen Raw failed at {tv}V. Exp: {exp_raw}, Got: {raw}")
