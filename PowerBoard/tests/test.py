@@ -112,7 +112,7 @@ class DriverBoardTests(unittest.TestCase):
         
         motor_interface =  MotorInterfaceTest()
         # Use THROTTLE_WIPER (PA_6) mapped in server_config.json
-        throttle_pin = AnalogOutput("31") 
+        throttle_pin = AnalogOutput("6") 
         
         testing_voltages = [0.5, 1.5, 3.0]
         
@@ -155,7 +155,7 @@ class DriverBoardTests(unittest.TestCase):
         # See MotorInterface.cpp sendRegen() - it sends swap to THROTTLE_ADR first
         
         motor_interface = MotorInterfaceTest()
-        throttle_pin = AnalogOutput("31")
+        throttle_pin = AnalogOutput("6")
 
         # Rivanna3.dbc has ID 768 or hex 0x300 for DashboardCommands 
         cmd_msg = CanMessage(name="DashboardCommands", id=0x300, signals={"regen_en": 1}, timestamp=time.time())
