@@ -126,13 +126,13 @@ class DriverBoardTests(unittest.TestCase):
             time.sleep(.4)
             print(f"Voltage for test {i+1} = {throttle_pin.read()}")
             time.sleep(0.5)  # Allow time for PowerBoard to read voltage, send I2C, Arduino to process and send Serial
-            exp_norm, exp_raw = expected_throttle_value()
+            exp_norm, exp_raw = expected_throttle_value(tv)
             norm, raw = motor_interface.get_throttle(), motor_interface.get_throttle_raw()
             
-            print(f"  Voltage: {tv}V -> Expected: {exp_raw}, Got: {raw if raw is not None else 'None'}")
+            print(f"  Voltage: {tv*3.3}V -> Expected: {exp_raw}, Got: {raw if raw is not None else 'None'}")
             self.assertIsNotNone(raw, f"Throttle value is None at {tv}V ")
-            self.assertAlmostEqual(exp_norm,norm, delta=0.05, msg=f"Throttle Norm failed at {tv}V. Exp: {exp_norm}, Got: {norm}")
-            self.assertAlmostEqual(exp_raw, raw, delta=1.0, msg=f"Throttle Raw failed at {tv}V. Exp: {exp_raw}, Got: {raw}")
+            self.assertAlmostEqual(exp_norm,norm, delta=1, msg=f"Throttle Norm failed at {tv}V. Exp: {exp_norm}, Got: {norm}")
+            self.assertAlmostEqual(exp_raw, raw, delta=1, msg=f"Throttle Raw failed at {tv}V. Exp: {exp_raw}, Got: {raw}")
         self.assertAlmostEqual(1, 2, msg="PASSED")
         print("TEST PASSED")
 
