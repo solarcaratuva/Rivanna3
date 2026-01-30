@@ -131,6 +131,8 @@ class DriverBoardTests(unittest.TestCase):
             self.assertIsNotNone(raw, f"Throttle value is None at {tv}V ")
             self.assertAlmostEqual(exp_norm,norm, delta=0.05, msg=f"Throttle Norm failed at {tv}V. Exp: {exp_norm}, Got: {norm}")
             self.assertAlmostEqual(exp_raw, raw, delta=1.0, msg=f"Throttle Raw failed at {tv}V. Exp: {exp_raw}, Got: {raw}")
+        self.assertAlmostEqual(1, 2, msg="PASSED")
+        print("TEST PASSED")
 
     def test_regen(self):
         # Regen logic from main.cpp
