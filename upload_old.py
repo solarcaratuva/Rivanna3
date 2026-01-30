@@ -2,14 +2,16 @@ import platform
 import subprocess
 import argparse
 import re
+import os
 import time
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 BOARD_MAP = {
     "driver": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/DriverBoard/DriverBoard.bin",
     "battery": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/BatteryBoard/BatteryBoard.bin",
     "motor": "cmake_build/UVA_SOLAR_CAR/develop/GCC_ARM/Motor/Motor.bin",
-    "power": "cmake_build/POWER_BOARD/develop/GCC_ARM/PowerBoard/PowerBoard.bin",
+    "power": os.path.join(SCRIPT_DIR, "cmake_build/NUCLEO_F413ZH/develop/GCC_ARM/PowerBoard/PowerBoard.bin"),
     "telemetry": "cmake_build/POWER_BOARD/develop/GCC_ARM/TelemetryBoard/TelemetryBoard.bin",}
 
 HIL_BOARD_MAP = {} # board path map specific to the HIL testing system server
@@ -115,7 +117,7 @@ def main() -> None:
         exit(exit_code)
 
     elif OS == "Linux" and args.hil: # HIL testing system server
-        exit_code = upload(HIL_BOARD_MAP[board], False)
+        exit_code = upload(BOARD_MAP[board], False)
         exit(exit_code)
 
     elif OS == "Darwin": # Mac
