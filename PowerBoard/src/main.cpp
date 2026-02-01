@@ -212,30 +212,46 @@ int main() {
     CANMessage message;
 
     char buffer[64];
-    //Testing Analog
+    char can_buffer[128];
+
+    //Testing Digital, Analog and CAN
     while (true){
         log_debug("START OF INFINITE LOOP");
-        ThisThread::sleep_for(FLASH_PERIOD);
-
-        sprintf(buffer, "%f", hil_testing_pin_analog.read());
-        log_debug(buffer);
-    }
-
-    //Testing Digital and CAN
-    while (true){
-        log_debug("SOMETHING");
         //Testing CAN
         LED2_PIN = PIN_ON;
+        ThisThread::sleep_for(FLASH_PERIOD);
+
+        log_debug("READING ANALOG PIN");
+        // Testing Analog through debug
+        sprintf(buffer, "%f", hil_testing_pin_analog.read());
+        log_debug(buffer);
+        ThisThread::sleep_for(FLASH_PERIOD);
+
+        log_debug("READING CAN MESSAGE");
         //Reading from Raspberry Pi to Nucleo
-        log_debug("HERE");
         if (vehicle_can_interface.CANRead(message)){
-            ThisThread::sleep_for(FLASH_PERIOD);
+            snprintf(can_buffer, sizeof(can_buffer), "ID: 0x%03X DLC: %d", message.id, message.len);
+            log_debug(can_buffer);
             LED2_PIN = PIN_OFF;
-            ThisThread::sleep_for(FLASH_PERIOD);
         }
-        log_debug("BEFORE");
+        ThisThread::sleep_for(FLASH_PERIOD);
+
+        log_debug("SENDING CAN MESSAGE TO RASPBERRY PI");
         vehicle_can_interface.send(&bps_error); //Uncomment to send to Raspberry Pi
-        log_debug("AFTER");
+        log_debug("SENT CAN MESSAGE");
+        ThisThread::sleep_for(FLASH_PERIOD);
+
+        log_debug("READING DIGITAL INPUT");
+        if (gpioInput.read()){
+            log_debug("READ VALUE 1");
+        }
+        ThisThread::sleep_for(FLASH_PERIOD);        
+        log_debug("SENDING DIGITAL OUTPUT 1");
+        gpioOutput.write(1);
+        ThisThread::sleep_for(FLASH_PERIOD);
+        log_debug("SENDING DIGITAL OUTPUT 0");
+        gpioOutput.write(0);
+        ThisThread::sleep_for(FLASH_PERIOD);
     }
 }
 
