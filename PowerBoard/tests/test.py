@@ -12,7 +12,6 @@ from MotorInterfaceTest import MotorInterfaceTest
 # I2C Test Mode: 0 = Throttle only, 1 = Regen only, 2 = Both (tests swap)
 # Set this to match I2C_TEST_MODE in main.cpp
 # Note: The PowerBoard (STM32 Nucleo) is the I2C master and automatically sends
-# swap commands before sending throttle/regen data (see MotorInterface.cpp)
 I2C_TEST_MODE = 0
 
 
@@ -91,6 +90,7 @@ class DriverBoardTests(unittest.TestCase):
     def test_throttle(self):
         """Test throttle reading. Only runs when I2C_TEST_MODE is 0 or 2."""
         def expected_throttle_value(voltage):
+            # Derived from PowerBoard/lib/src/ReadPedals.cpp
             THROTTLE_LOW = 0.82
             THROTTLE_HIGH = 3.3
             THROTTLE_DIFF = THROTTLE_HIGH - THROTTLE_LOW
@@ -107,11 +107,10 @@ class DriverBoardTests(unittest.TestCase):
             return norm_value, raw_value
 
         print(f"\n[I2C_TEST_MODE={I2C_TEST_MODE}] Testing throttle...")
-        # Note: PowerBoard (STM32) automatically sends swap command before sending throttle data
-        # See MotorInterface.cpp sendThrottle() - it sends swap to REGEN_ADR first
         
         motor_interface =  MotorInterfaceTest()
-        # Use THROTTLE_WIPER (PA_6) mapped in server_config.json
+        # GPIO pin 6 of the Raspberry Pi is mapped to the Throttle Wiper (PA_6)
+        # server_config.json --> {nucleo_pin_name_to_number_mapping} --> {PA_6} --> 6
         throttle_pin = AnalogOutput("6") 
         
         testing_voltages = [0.5, 1.5, 3.0]
@@ -124,10 +123,8 @@ class DriverBoardTests(unittest.TestCase):
             
             print(f"  Voltage: {tv}V -> Expected: {exp_raw}, Got: {raw if raw is not None else 'None'}")
             self.assertIsNotNone(raw, f"Throttle value is None at {tv}V - check Serial connection and Arduino")
-            self.assertAlmostEqual(exp_norm, norm, delta=0.05, 
-                msg=f"Throttle Norm failed at {tv}V. Exp: {exp_norm}, Got: {norm}")
-            self.assertAlmostEqual(exp_raw, raw, delta=1.0, 
-                msg=f"Throttle Raw failed at {tv}V. Exp: {exp_raw}, Got: {raw}")
+            self.assertAlmostEqual(exp_norm, norm, delta=0.05, msg=f"Throttle Norm failed at {tv}V. Exp: {exp_norm}, Got: {norm}")
+            self.assertAlmostEqual(exp_raw, raw, delta=1.0, msg=f"Throttle Raw failed at {tv}V. Exp: {exp_raw}, Got: {raw}")
 
     def test_regen(self):
         # Regen logic from main.cpp
@@ -145,19 +142,21 @@ class DriverBoardTests(unittest.TestCase):
                 raw_value = math.floor(adjusted * 256.0)
 
             if raw_value <= 50:
+                # derived from PowerBoard/src/main.cpp regen_drive() function
                 val = 79.159 * math.pow(50 - raw_value, 0.3)
                 norm = val / 256.0
                 return norm, val
             return 0.0, 0.0
 
         print(f"\n[I2C_TEST_MODE={I2C_TEST_MODE}] Testing regen...")
-        # Note: PowerBoard (STM32) automatically sends swap command before sending regen data
-        # See MotorInterface.cpp sendRegen() - it sends swap to THROTTLE_ADR first
-        
+       
         motor_interface = MotorInterfaceTest()
         throttle_pin = AnalogOutput("6")
 
         # Rivanna3.dbc has ID 768 or hex 0x300 for DashboardCommands 
+        # send regen_en signal to enable regen
+        # WriteOut sends via UART to Nucleo
+        # look at first 'mbed_serial' in CANPi.py
         cmd_msg = CanMessage(name="DashboardCommands", id=0x300, signals={"regen_en": 1}, timestamp=time.time())
         writeOut(cmd_msg)
         time.sleep(0.1) 
@@ -170,9 +169,7 @@ class DriverBoardTests(unittest.TestCase):
             exp_norm, exp_raw = expected_regen_from_throttle(tv)
             norm, raw = motor_interface.get_regen(), motor_interface.get_regen_raw()
             
-            print(f"  Voltage: {tv}V -> Expected: {exp_raw}, Got: {raw if raw is not None else 'None'}")
+            print(f"Voltage:{tv}V -> Expected: {exp_raw}, Got: {raw if raw is not None else 'None'}")
             self.assertIsNotNone(raw, f"Regen value is None at {tv}V - check Serial connection, Arduino, and regen_en CAN message")
-            self.assertAlmostEqual(exp_norm, norm, delta=0.05, 
-                msg=f"Regen Norm failed at {tv}V. Exp: {exp_norm}, Got: {norm}")
-            self.assertAlmostEqual(exp_raw, raw, delta=1.0, 
-                msg=f"Regen Raw failed at {tv}V. Exp: {exp_raw}, Got: {raw}")
+            self.assertAlmostEqual(exp_norm, norm, delta=0.05, msg=f"Regen Norm failed at {tv}V. Exp: {exp_norm}, Got: {norm}")
+            self.assertAlmostEqual(exp_raw, raw, delta=1.0, msg=f"Regen Raw failed at {tv}V. Exp: {exp_raw}, Got: {raw}")

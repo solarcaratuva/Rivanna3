@@ -230,10 +230,10 @@ int main() {
             // } 
         } else if (I2C_TEST_MODE ==1){
             // Test regen values from 0 to 256
-            for(int i =0; i <= 256; i += 32) {
-                motor_interface.sendRegen(i);
-                ThisThread::sleep_for(FLASH_PERIOD);
-            }
+            // for(int i =0; i <= 256; i += 32) {
+            //     motor_interface.sendRegen(i);
+            //     ThisThread::sleep_for(FLASH_PERIOD);
+            // }
     } else {
         log_error("Invalid I2C test mode");
     }
