@@ -220,20 +220,22 @@ int main() {
     while(true){ 
         // Test throttle values from 0 to 256
         if (I2C_TEST_MODE == 0) {
-            LED2_PIN = !LED2_PIN;  
-            ThisThread::sleep_for(100);
-            motor_interface.sendThrottle(128);
-            ThisThread::sleep_for(FLASH_PERIOD);
+            uint16_t i = read_throttle();
+            motor_interface.sendThrottle(i);
+            // LED2_PIN = !LED2_PIN;  
+            // ThisThread::sleep_for(100);
+            // motor_interface.sendThrottle(128);
+            // ThisThread::sleep_for(FLASH_PERIOD);
             // for(int i = 0; i <= 256; i += 32) {
             //     motor_interface.sendThrottle(i);
-            //     ThisThread::sleep_for(FLASH_PERIOD);
-            // } 
+            //     ThisThread::sleep_for(FLASH_PERIOD);}
         } else if (I2C_TEST_MODE ==1){
+            uint16_t i = read_throttle();
+            motor_interface.sendThrottle(i);
             // Test regen values from 0 to 256
             // for(int i =0; i <= 256; i += 32) {
             //     motor_interface.sendRegen(i);
             //     ThisThread::sleep_for(FLASH_PERIOD);
-            // }
     } else {
         log_error("Invalid I2C test mode");
     }

@@ -113,17 +113,17 @@ class DriverBoardTests(unittest.TestCase):
         # server_config.json --> {nucleo_pin_name_to_number_mapping} --> {PA_6} --> 6
         throttle_pin = AnalogOutput("6") 
         
-        testing_voltages = [0.5, 1.5, 3.0]
+        testing_voltages = [0,0.5, 1.0]
         
         for tv in testing_voltages:
-            throttle_pin.write_voltage(tv)
+            throttle_pin.write(tv)
             time.sleep(0.5)  # Allow time for PowerBoard to read voltage, send I2C, Arduino to process and send Serial
             exp_norm, exp_raw = expected_throttle_value(tv)
             norm, raw = motor_interface.get_throttle(), motor_interface.get_throttle_raw()
             
             print(f"  Voltage: {tv}V -> Expected: {exp_raw}, Got: {raw if raw is not None else 'None'}")
-            self.assertIsNotNone(raw, f"Throttle value is None at {tv}V - check Serial connection and Arduino")
-            self.assertAlmostEqual(exp_norm, norm, delta=0.05, msg=f"Throttle Norm failed at {tv}V. Exp: {exp_norm}, Got: {norm}")
+            self.assertIsNotNone(raw, f"Throttle value is None at {tv}V ")
+            self.assertAlmostEqual(exp_norm,norm, delta=0.05, msg=f"Throttle Norm failed at {tv}V. Exp: {exp_norm}, Got: {norm}")
             self.assertAlmostEqual(exp_raw, raw, delta=1.0, msg=f"Throttle Raw failed at {tv}V. Exp: {exp_raw}, Got: {raw}")
 
     def test_regen(self):
@@ -163,7 +163,7 @@ class DriverBoardTests(unittest.TestCase):
 
         testing_voltages = [0.85] # 0.85V => ~3 raw => High Regen
         for tv in testing_voltages:
-            throttle_pin.write_voltage(tv)
+            throttle_pin.write(tv)
             time.sleep(0.5)
 
             exp_norm, exp_raw = expected_regen_from_throttle(tv)
