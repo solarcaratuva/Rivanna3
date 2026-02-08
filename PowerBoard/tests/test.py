@@ -119,10 +119,10 @@ class DriverBoardTests(unittest.TestCase):
         
         testing_voltages = [0.5, 1.5, 3.0]
 
-        for tv in testing_voltages:
+        for i,tv in enumerate(testing_voltages):
             throttle_pin.write_voltage(tv)  
             time.sleep(.4)
-            print(throttle_pin.read())
+            print(f"Voltage for test {i+1} = {throttle_pin.read()}")
             time.sleep(0.5)  # Allow time for PowerBoard to read voltage, send I2C, Arduino to process and send Serial
             exp_norm, exp_raw = expected_throttle_value(tv)
             norm, raw = motor_interface.get_throttle(), motor_interface.get_throttle_raw()
