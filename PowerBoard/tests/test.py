@@ -118,14 +118,20 @@ class DriverBoardTests(unittest.TestCase):
         throttle_pin = AnalogOutput("6") 
         
         testing_voltages = [0.3, 1.2, 2.7]
+        i = 1
         while(True):
-            throttle_pin.write_voltage(1.5)
-            time.sleep(4)
-            throttle_pin.read()
-            time.sleep(.4)
-            throttle_pin.off()
-            time.sleep(.4)
-            
+            if i%2 == 0:
+                throttle_pin.write_voltage(0.1)
+                time.sleep(0.4)
+                throttle_pin.read()
+                throttle_pin.off()
+            else: 
+                throttle_pin.write_voltage(0.9)
+                throttle_pin.sleep(0.4)
+                throttle_pin.read()
+                throttle_pin.off()
+            time.sleep(0.4)
+            i+=1  
         for i,tv in enumerate(testing_voltages):
             throttle_pin.write_voltage(tv)  
             time.sleep(.4)
