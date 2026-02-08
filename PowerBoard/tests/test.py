@@ -89,7 +89,11 @@ class DriverBoardTests(unittest.TestCase):
 
     def test_throttle(self):
         """Test throttle reading. Only runs when I2C_TEST_MODE is 0 or 2."""
-        def expected_throttle_value(voltage):
+        PI_GPIO_VOLTAGE = 3.3
+        def voltage_to_duty(voltage: float) -> float:
+            return voltage / PI_GPIO_VOLTAGE
+
+        def expected_throttle_value(voltage: float):
             # Derived from PowerBoard/lib/src/ReadPedals.cpp
             THROTTLE_LOW = 0.82
             THROTTLE_HIGH = 3.3
@@ -113,10 +117,10 @@ class DriverBoardTests(unittest.TestCase):
         # server_config.json --> {nucleo_pin_name_to_number_mapping} --> {PA_6} --> 6
         throttle_pin = AnalogOutput("6") 
         
-        testing_voltages = [0,0.5, 1.0]
-        
+        testing_voltages = [0.5, 1.5, 3.0]
+
         for tv in testing_voltages:
-            throttle_pin.write(tv)
+            throttle_pin.write(voltage_to_duty(tv))  
             time.sleep(0.5)  # Allow time for PowerBoard to read voltage, send I2C, Arduino to process and send Serial
             exp_norm, exp_raw = expected_throttle_value(tv)
             norm, raw = motor_interface.get_throttle(), motor_interface.get_throttle_raw()
@@ -128,6 +132,10 @@ class DriverBoardTests(unittest.TestCase):
 
     def test_regen(self):
         # Regen logic from main.cpp
+        PI_GPIO_VOLTAGE = 3.3
+        def voltage_to_duty(voltage: float) -> float:
+            return voltage / PI_GPIO_VOLTAGE
+
         def expected_regen_from_throttle(voltage):
             THROTTLE_LOW = 0.82
             THROTTLE_HIGH = 3.3
@@ -163,7 +171,7 @@ class DriverBoardTests(unittest.TestCase):
 
         testing_voltages = [0.85] # 0.85V => ~3 raw => High Regen
         for tv in testing_voltages:
-            throttle_pin.write(tv)
+            throttle_pin.write(voltage_to_duty(tv))
             time.sleep(0.5)
 
             exp_norm, exp_raw = expected_regen_from_throttle(tv)
