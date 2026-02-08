@@ -127,7 +127,7 @@ class DriverBoardTests(unittest.TestCase):
                 throttle_pin.off()
             else: 
                 throttle_pin.write_voltage(0.9)
-                throttle_pin.sleep(0.4)
+                time.sleep(0.4)
                 throttle_pin.read()
                 throttle_pin.off()
             time.sleep(0.4)
