@@ -120,7 +120,7 @@ class DriverBoardTests(unittest.TestCase):
         testing_voltages = [0.5, 1.5, 3.0]
 
         for tv in testing_voltages:
-            throttle_pin.write(voltage_to_duty(tv))  
+            throttle_pin.write_voltage(tv)  
             time.sleep(0.5)  # Allow time for PowerBoard to read voltage, send I2C, Arduino to process and send Serial
             exp_norm, exp_raw = expected_throttle_value(tv)
             norm, raw = motor_interface.get_throttle(), motor_interface.get_throttle_raw()
@@ -169,9 +169,9 @@ class DriverBoardTests(unittest.TestCase):
         writeOut(cmd_msg)
         time.sleep(0.1) 
 
-        testing_voltages = [0.85] # 0.85V => ~3 raw => High Regen
+        testing_voltages = [1.75] # 0.85V => ~3 raw => High Regen
         for tv in testing_voltages:
-            throttle_pin.write(voltage_to_duty(tv))
+            throttle_pin.write_voltage(tv)
             time.sleep(0.5)
 
             exp_norm, exp_raw = expected_regen_from_throttle(tv)
