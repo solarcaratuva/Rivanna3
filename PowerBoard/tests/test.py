@@ -117,7 +117,7 @@ class DriverBoardTests(unittest.TestCase):
         # server_config.json --> {nucleo_pin_name_to_number_mapping} --> {PA_6} --> 6
         throttle_pin = AnalogOutput("6") 
         
-        testing_voltages = [0.5, 1.5, 3.0]
+        testing_voltages = [0.3, 1.2, 2.7]
 
         for i,tv in enumerate(testing_voltages):
             throttle_pin.write_voltage(tv)  
