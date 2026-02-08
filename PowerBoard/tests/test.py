@@ -120,7 +120,7 @@ class DriverBoardTests(unittest.TestCase):
         testing_voltages = [0.25,.5,.75]
 
         for i,tv in enumerate(testing_voltages):
-            throttle_pin.write_voltage(tv)  
+            throttle_pin.write(tv)  
             time.sleep(.4)
             print(f"Voltage for test {i+1} = {throttle_pin.read()}")
             time.sleep(0.5)  # Allow time for PowerBoard to read voltage, send I2C, Arduino to process and send Serial
