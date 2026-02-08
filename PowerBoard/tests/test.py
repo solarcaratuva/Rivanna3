@@ -122,8 +122,10 @@ class DriverBoardTests(unittest.TestCase):
             throttle_pin.write_voltage(1.5)
             time.sleep(4)
             throttle_pin.read()
+            time.sleep(.4)
             throttle_pin.off()
-
+            time.sleep(.4)
+            
         for i,tv in enumerate(testing_voltages):
             throttle_pin.write_voltage(tv)  
             time.sleep(.4)
