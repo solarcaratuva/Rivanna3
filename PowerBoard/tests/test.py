@@ -90,8 +90,6 @@ class DriverBoardTests(unittest.TestCase):
     def test_throttle(self):
         """Test throttle reading. Only runs when I2C_TEST_MODE is 0 or 2."""
         PI_GPIO_VOLTAGE = 3.3
-        def voltage_to_duty(voltage: float) -> float:
-            return voltage / PI_GPIO_VOLTAGE
 
         # Voltgae between 0-1
         def expected_throttle_value(voltage: float):
@@ -136,14 +134,11 @@ class DriverBoardTests(unittest.TestCase):
             # 24.75 is 7.5% error of 2.56
             self.assertAlmostEqual(exp_raw, raw, delta=24.75, msg=f"Throttle Raw failed at {tv}V. Exp: {exp_raw}, Got: {raw}")
         self.assertAlmostEqual(1, 2, msg="PASSED")
-        print("TEST PASSED")
 
     def test_regen(self):
         # Regen logic from main.cpp
         PI_GPIO_VOLTAGE = 3.3
-        def voltage_to_duty(voltage: float) -> float:
-            return voltage / PI_GPIO_VOLTAGE
-
+        
         def expected_regen_from_throttle(voltage):
             THROTTLE_LOW = 0.82
             THROTTLE_HIGH = 3.3
@@ -177,12 +172,14 @@ class DriverBoardTests(unittest.TestCase):
         writeOut(cmd_msg)
         time.sleep(0.1) 
 
-        testing_voltages = [1.75] # 0.85V => ~3 raw => High Regen
-        for tv in testing_voltages:
-            throttle_pin.write_voltage(tv)
-            throttle_pin.on()
+         
+        # [0.33, 1.65, 2.475]
+        testing_voltages = [0.1,.5,.75]
+        for i,tv in enumerate(testing_voltages):
+            throttle_pin.write(tv)
             time.sleep(0.5)
-
+            print(f"Voltage for test {i+1} = {throttle_pin.read()}")
+            time.sleep(0.5)
             exp_norm, exp_raw = expected_regen_from_throttle(tv)
             norm, raw = motor_interface.get_regen(), motor_interface.get_regen_raw()
             
