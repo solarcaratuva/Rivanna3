@@ -139,7 +139,8 @@ class DriverBoardTests(unittest.TestCase):
         # Regen logic from main.cpp
         PI_GPIO_VOLTAGE = 3.3
         
-        def expected_regen_from_throttle(voltage):
+        def expected_regen_from_throttle(voltage: float):
+            voltage *= 3.3
             THROTTLE_LOW = 0.82
             THROTTLE_HIGH = 3.3
             THROTTLE_DIFF = THROTTLE_HIGH - THROTTLE_LOW
@@ -183,7 +184,7 @@ class DriverBoardTests(unittest.TestCase):
             exp_norm, exp_raw = expected_regen_from_throttle(tv)
             norm, raw = motor_interface.get_regen(), motor_interface.get_regen_raw()
             
-            print(f"Voltage:{tv}V -> Expected: {exp_raw}, Got: {raw if raw is not None else 'None'}")
-            self.assertIsNotNone(raw, f"Regen value is None at {tv}V - check Serial connection, Arduino, and regen_en CAN message")
+            print(f"  Voltage: {tv*3.3}V -> Expected: {exp_raw}, Got: {raw if raw is not None else 'None'}")
+            self.assertIsNotNone(raw, f"Regen value is None at {tv*3.3}V - check Serial connection, Arduino, and regen_en CAN message")
             self.assertAlmostEqual(exp_norm, norm, delta=0.05, msg=f"Regen Norm failed at {tv}V. Exp: {exp_norm}, Got: {norm}")
             self.assertAlmostEqual(exp_raw, raw, delta=1.0, msg=f"Regen Raw failed at {tv}V. Exp: {exp_raw}, Got: {raw}")

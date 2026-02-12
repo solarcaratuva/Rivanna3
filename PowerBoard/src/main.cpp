@@ -58,7 +58,7 @@ AnalogIn cont_12(CONT_12, 3.3f);
 AnalogIn hil_testing_pin_analog(PC_5, 3.3f);
 
 
-#define I2C_TEST_MODE 0 //0 = Throttle, 1 = Regen
+#define I2C_TEST_MODE 1 //0 = Throttle, 1 = Regen
 // I2C motor_control_serial_bus(MTR_SDA, MTR_SCL)// comment out for implementation with powerboard
 I2C motor_control_serial_bus(I2C_SDA1, I2C_SCL1); // comment in for implementation with powerboard
 MotorInterface motor_interface(motor_control_serial_bus);
