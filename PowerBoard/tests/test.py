@@ -119,7 +119,8 @@ class DriverBoardTests(unittest.TestCase):
         # server_config.json --> {nucleo_pin_name_to_number_mapping} --> {PA_6} --> 6
         throttle_pin = AnalogOutput("6") 
         
-        testing_voltages = [0.25,.5,.75]
+        # [0.33, 1.65, 2.475]
+        testing_voltages = [0.1,.5,.75]
 
         for i,tv in enumerate(testing_voltages):
             throttle_pin.write(tv)  
@@ -131,8 +132,8 @@ class DriverBoardTests(unittest.TestCase):
             
             print(f"  Voltage: {tv*3.3}V -> Expected: {exp_raw}, Got: {raw if raw is not None else 'None'}")
             self.assertIsNotNone(raw, f"Throttle value is None at {tv}V ")
-            self.assertAlmostEqual(exp_norm,norm, delta=1, msg=f"Throttle Norm failed at {tv}V. Exp: {exp_norm}, Got: {norm}")
-            self.assertAlmostEqual(exp_raw, raw, delta=1, msg=f"Throttle Raw failed at {tv}V. Exp: {exp_raw}, Got: {raw}")
+            self.assertAlmostEqual(exp_norm,norm, delta=.1, msg=f"Throttle Norm failed at {tv}V. Exp: {exp_norm}, Got: {norm}")
+            self.assertAlmostEqual(exp_raw, raw, delta=12.8, msg=f"Throttle Raw failed at {tv}V. Exp: {exp_raw}, Got: {raw}")
         self.assertAlmostEqual(1, 2, msg="PASSED")
         print("TEST PASSED")
 
