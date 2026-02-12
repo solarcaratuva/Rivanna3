@@ -229,14 +229,15 @@ int main() {
             // for(int i = 0; i <= 256; i += 32) {
             //     motor_interface.sendThrottle(i);
             //     ThisThread::sleep_for(FLASH_PERIOD);}
-        } else if (I2C_TEST_MODE ==1){
-            uint16_t i = read_throttle();
-            motor_interface.sendThrottle(i);
-            // Test regen values from 0 to 256
-            // for(int i =0; i <= 256; i += 32) {
-            //     motor_interface.sendRegen(i);
-            //     ThisThread::sleep_for(FLASH_PERIOD);
-    } else {
+        } else if (I2C_TEST_MODE == 1) {
+            // Regen test: compute regen from throttle (same as regen_drive) and send to REGEN_ADDR (0x2E).
+            // Arduino in TEST_MODE 1 listens on 0x2E and echoes regen over Serial.
+            uint16_t throttle = read_throttle();
+            uint16_t regen = 0;
+            MotorCommands motor_CAN_struct = MotorCommands();
+            regen_drive(&motor_CAN_struct, &throttle, &regen);
+            motor_interface.sendRegen(regen);
+        } else {
         log_error("Invalid I2C test mode");
     }
     log_debug("Finished Testing I2C");

@@ -82,7 +82,7 @@ class DriverBoardTests(unittest.TestCase):
         self.assertTrue(right_turn_signal)
 
     def test_throttle(self):
-        """Test throttle reading. Only runs when I2C_TEST_MODE is 0 or 2."""
+        """Test throttle reading. Only runs when I2C_TEST_MODE is 0."""
         PI_GPIO_VOLTAGE = 3.3
 
         # Voltgae between 0-1
@@ -103,7 +103,7 @@ class DriverBoardTests(unittest.TestCase):
             
             norm_value = raw_value / 256.0
             return norm_value, raw_value
-
+        
         print(f"\nTesting throttle...")
         
         motor_interface =  MotorInterfaceTest()
@@ -121,13 +121,10 @@ class DriverBoardTests(unittest.TestCase):
             time.sleep(0.5)  # Allow time for PowerBoard to read voltage, send I2C, Arduino to process and send Serial
             exp_norm, exp_raw = expected_throttle_value(tv)
             norm, raw = motor_interface.get_throttle(), motor_interface.get_throttle_raw()
-            
-            print(f"  Voltage: {tv*3.3}V -> Expected: {exp_raw}, Got: {raw if raw is not None else 'None'}")
             self.assertIsNotNone(raw, f"Throttle value is None at {tv}V ")
             self.assertAlmostEqual(exp_norm,norm, delta=.075, msg=f"Throttle Norm failed at {tv}V. Exp: {exp_norm}, Got: {norm}")
             # 24.75 is 7.5% error of 2.56
             self.assertAlmostEqual(exp_raw, raw, delta=24.75, msg=f"Throttle Raw failed at {tv}V. Exp: {exp_raw}, Got: {raw}")
-        self.assertAlmostEqual(1, 2, msg="PASSED")
 
     def test_regen(self):
         """Test regen reading. Requires I2C_TEST_MODE=1 in main.cpp, TEST_MODE=1 in Arduino, and this file I2C_TEST_MODE=1. Sends DashboardCommands regen_en=1 via CAN."""
@@ -155,8 +152,6 @@ class DriverBoardTests(unittest.TestCase):
                 return norm, val
             return 0.0, 0.0
 
-        print(f"\nTesting throttle...")
- 
         motor_interface = MotorInterfaceTest()
         throttle_pin = AnalogOutput("6")
 
@@ -168,7 +163,7 @@ class DriverBoardTests(unittest.TestCase):
         writeOut(cmd_msg)
         time.sleep(0.1) 
 
-        # [0.33, 1.65, 2.475]
+        # In terms of Voltage : [0.33, 1.65, 2.475]
         testing_voltages = [0.1,.5,.75]
         for i,tv in enumerate(testing_voltages):
             throttle_pin.write(tv)
@@ -177,9 +172,7 @@ class DriverBoardTests(unittest.TestCase):
             time.sleep(0.5)
             exp_norm, exp_raw = expected_regen_from_throttle(tv)
             norm, raw = motor_interface.get_regen(), motor_interface.get_regen_raw()
-            
             print(f"  Voltage: {tv*3.3}V -> Expected: {exp_raw}, Got: {raw if raw is not None else 'None'}")
             self.assertIsNotNone(raw, f"Regen value is None at {tv*3.3}V - check Serial connection, Arduino, and regen_en CAN message")
             self.assertAlmostEqual(exp_norm, norm, delta=0.05, msg=f"Regen Norm failed at {tv}V. Exp: {exp_norm}, Got: {norm}")
             self.assertAlmostEqual(exp_raw, raw, delta=1.0, msg=f"Regen Raw failed at {tv}V. Exp: {exp_raw}, Got: {raw}")
-            self.assertAlmostEqual(1, 2, msg="PASSED")
