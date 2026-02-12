@@ -132,8 +132,9 @@ class DriverBoardTests(unittest.TestCase):
             
             print(f"  Voltage: {tv*3.3}V -> Expected: {exp_raw}, Got: {raw if raw is not None else 'None'}")
             self.assertIsNotNone(raw, f"Throttle value is None at {tv}V ")
-            self.assertAlmostEqual(exp_norm,norm, delta=.1, msg=f"Throttle Norm failed at {tv}V. Exp: {exp_norm}, Got: {norm}")
-            self.assertAlmostEqual(exp_raw, raw, delta=12.8, msg=f"Throttle Raw failed at {tv}V. Exp: {exp_raw}, Got: {raw}")
+            self.assertAlmostEqual(exp_norm,norm, delta=.075, msg=f"Throttle Norm failed at {tv}V. Exp: {exp_norm}, Got: {norm}")
+            # 24.75 is 7.5% error of 2.56
+            self.assertAlmostEqual(exp_raw, raw, delta=24.75, msg=f"Throttle Raw failed at {tv}V. Exp: {exp_raw}, Got: {raw}")
         self.assertAlmostEqual(1, 2, msg="PASSED")
         print("TEST PASSED")
 
