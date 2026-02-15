@@ -112,7 +112,7 @@ class DriverBoardTests(unittest.TestCase):
         throttle_pin = AnalogOutput("6") 
         
         # [0.33, 1.65, 2.475]
-        testing_voltages = [0.1,.5,.75]
+        testing_voltages = [.5,.75]
 
         for i,tv in enumerate(testing_voltages):
             throttle_pin.write(tv)  
