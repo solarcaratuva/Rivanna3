@@ -125,7 +125,7 @@ class DriverBoardTests(unittest.TestCase):
             self.assertAlmostEqual(exp_norm,norm, delta=.075, msg=f"Throttle Norm failed at {tv}V. Exp: {exp_norm}, Got: {norm}")
             # 24.75 is 7.5% error of 2.56
             self.assertAlmostEqual(exp_raw, raw, delta=24.75, msg=f"Throttle Raw failed at {tv}V. Exp: {exp_raw}, Got: {raw}")
-
+            time.sleep(2)
     def test_regen(self):
         """Test regen reading. Requires I2C_TEST_MODE=1 in main.cpp, TEST_MODE=1 in Arduino, and this file I2C_TEST_MODE=1. Sends DashboardCommands regen_en=1 via CAN."""
         # Regen logic from main.cpp
