@@ -107,6 +107,7 @@ class DriverBoardTests(unittest.TestCase):
         print(f"\nTesting throttle...")
         
         motor_interface =  MotorInterfaceTest()
+        self.addCleanup(motor_interface.close)
         # GPIO pin 6 of the Raspberry Pi is mapped to the Throttle Wiper (PA_6)
         # server_config.json --> {nucleo_pin_name_to_number_mapping} --> {PA_6} --> 6
         throttle_pin = AnalogOutput("6") 
@@ -153,6 +154,7 @@ class DriverBoardTests(unittest.TestCase):
             return 0.0, 0.0
 
         motor_interface = MotorInterfaceTest()
+        self.addCleanup(motor_interface.close)
         throttle_pin = AnalogOutput("6")
 
         # Rivanna3.dbc has ID 768 or hex 0x300 for DashboardCommands 
