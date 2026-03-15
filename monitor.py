@@ -7,6 +7,9 @@ import shutil
 import os
 import sys
 import datetime
+import serial
+from serial import Serial
+import serial.tools.list_ports
 
 OS = platform.system()
 
