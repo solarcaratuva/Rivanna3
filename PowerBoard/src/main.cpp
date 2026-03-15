@@ -86,6 +86,17 @@ void signal_flash_handler() {
      *  OUTPUTS: left_turn_signal and right_turn_signal pins 
      *  ADDITIONALLY: bms_error should cause bms_strobe to flash (toggle)
      */
+	if (flashHazards) {
+		left_turn_signal.write(!left_turn_signal.read());
+		right_turn_signal.write(left_turn_signal.read());
+	}
+	else {
+		left_turn_signal.write(!left_turn_signal.read() & flashLeftTurnSignal);
+		right_turn_signal.write(!right_turn_signal.read() & flashRightTurnSignal);
+	}
+	bms_strobe.write(!bms_strobe.read() & bms_error);
+	
+
 }
 
 
