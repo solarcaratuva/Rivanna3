@@ -60,7 +60,7 @@ AnalogIn hil_testing_pin_analog(PA_6, 3.3f);
 I2C motor_control_serial_bus(MTR_SDA, MTR_SCL);
 MotorInterface motor_interface(motor_control_serial_bus);
 
-PowerCANInterface vehicle_can_interface(CAN_RX, CAN_TX, CAN_STBY);
+PowerCANInterface vehicle_can_interface(CAN_RX, CAN_TX, CAN_STBY); // CAN_RX and CAN_TX are dummy variables. Actually defined in CANInterface
 MotorControllerCANInterface motor_controller_can_interface(MTR_CAN_RX, MTR_CAN_TX, MAIN_CAN_STBY);
 
 BPSError bps_error;
@@ -219,44 +219,49 @@ int main() {
     // No need to test digital separately since it will be used in synchronization. Receive 1 and send 0 to tell RP as an ACK
     // Analog and CAN will be output to be monitored. Run monitor.sh and check output for validation. Will use LED for quick validation
     while (true){
-        // log_debug("START OF INFINITE LOOP");
+        log_debug("START OF INFINITE LOOP");
         // //Testing CAN
-        // LED2_PIN = PIN_ON;
-        // // Set output to 0 to indicate CAN Testing
-        // gpioOutput.write(0);
+        LED2_PIN = PIN_ON;
+        // Set output to 0 to indicate CAN Testing
+        gpioOutput.write(0);
 
-        // log_debug("--------WAITING FOR CAN MESSAGE--------");
-        // while (!gpioInput.read()){} //Wait until raspberry pi is ready
-        // log_debug("--------STARTING CAN TESTING--------");
-        // ThisThread::sleep_for(AUX_BATTERY_PERIOD); // Wait for Raspberry Pi to change gpioInput
+        log_debug("--------WAITING FOR CAN MESSAGE--------");
+        while (!gpioInput.read()){} //Wait until raspberry pi is ready
+        log_debug("--------STARTING CAN TESTING--------");
+        ThisThread::sleep_for(AUX_BATTERY_PERIOD); // Wait for Raspberry Pi to send CAN
 
-        // //Reading from Raspberry Pi to Nucleo
-        // if (vehicle_can_interface.CANRead(message)){
-        //     snprintf(can_buffer, sizeof(can_buffer), "ID: 0x%03X DLC: %d", message.id, message.len);
-        //     log_debug(can_buffer);
-        //     LED2_PIN = PIN_OFF;
-        // } else log_debug("ERROR IN RECEIVING MESSAGE.");
-        // ThisThread::sleep_for(FLASH_PERIOD);
-        // LED2_PIN = PIN_ON;
+        //Reading from Raspberry Pi to Nucleo
+        if (vehicle_can_interface.CANRead(message)){
+            snprintf(can_buffer, sizeof(can_buffer), "ID: 0x%03X DLC: %d", message.id, message.len);
+            log_debug(can_buffer);
+            LED2_PIN = PIN_OFF;
+        } else log_debug("ERROR IN RECEIVING MESSAGE.");
+        ThisThread::sleep_for(FLASH_PERIOD);
+        LED2_PIN = PIN_ON;
 
-        // gpioOutput.write(1); // Tell RP to start receiving
+        gpioOutput.write(1); // Tell RP to start receiving
 
         log_debug("SENDING CAN MESSAGE TO RASPBERRY PI");
         vehicle_can_interface.send(&bps_error);
         log_debug("SENT CAN MESSAGE");
 
         // Wait for RP to finish reading CAN
-        // while (!gpioInput.read()){log_debug("WAITING FOR RP TO START ANALOG");}
-        // gpioOutput.write(0); // Reset for Analog
-        ThisThread::sleep_for(AUX_BATTERY_PERIOD); // Wait for Raspberry Pi to change gpioInput
+        log_debug("--------WAITING FOR ANALOG--------");
+        while (!gpioInput.read()){}
 
+        gpioOutput.write(0); // Reset for Analog
 
-        // log_debug("--------TESTING ANALOG-------");
-        // // Testing Analog through debug
-        // sprintf(buffer, "%f", hil_testing_pin_analog.read());
-        // log_debug(buffer);
-        // LED2_PIN = PIN_OFF;
-        // ThisThread::sleep_for(FLASH_PERIOD);
+        log_debug("--------TESTING ANALOG--------");
+        ThisThread::sleep_for(AUX_BATTERY_PERIOD); // Wait for Raspberry Pi to send Analog
+        LED2_PIN = PIN_OFF;
+
+        // Testing Analog through debug
+        sprintf(buffer, "%f", hil_testing_pin_analog.read());
+        log_debug(buffer);
+        LED2_PIN = PIN_OFF;
+        ThisThread::sleep_for(FLASH_PERIOD);
+
+        log_debug("--------END OF TEST | RESETTING--------");
     }
 }
 
