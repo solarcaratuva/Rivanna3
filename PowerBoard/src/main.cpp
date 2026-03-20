@@ -25,6 +25,8 @@
 #define MOTOR_REQUEST_FRAMES_PERIOD     10ms
 #define AUX_BATTERY_PERIOD              1s
 #define MAX_REGEN                       256
+#define FLASH_PERIOD       500ms
+
 
 const bool PIN_ON = true;
 const bool PIN_OFF = false;
@@ -40,19 +42,28 @@ DigitalOut mppt_precharge_en(MPPT_PRE_EN);
 DigitalOut charge_en(CHARGE_EN);
 DigitalOut motor_precharge_en(MTR_PRE_EN);
 DigitalOut discharge_en(DIS_CHARGE_EN);
+DigitalOut LED2_PIN(PB_7);
+DigitalOut gpioOutput(PC_10);
+
+DigitalIn gpioInput(PC_11);
+DigitalIn brake_pedal(BRAKE_WIPER);
+
 
 AnalogIn throttle_pedal(THROTTLE_WIPER, 3.3f);
-DigitalIn brake_pedal(BRAKE_WIPER);
 AnalogIn aux_battery(AUX, 3.3f);
 AnalogIn hal_effect_voltage_motor(MTR_HAL_SENSE, 3.3f);
 AnalogIn hal_effect_voltage_mppt(MPPT_HAL_SENSE, 3.3f);
 AnalogIn cont_12(CONT_12, 3.3f);
 
+AnalogIn hil_testing_pin_analog(PA_6, 3.3f);
+
 I2C motor_control_serial_bus(MTR_SDA, MTR_SCL);
 MotorInterface motor_interface(motor_control_serial_bus);
 
-PowerCANInterface vehicle_can_interface(MAIN_CAN_RX, MAIN_CAN_TX, MAIN_CAN_STBY);
+PowerCANInterface vehicle_can_interface(CAN_RX, CAN_TX, CAN_STBY); // CAN_RX and CAN_TX are dummy variables. Actually defined in CANInterface
 MotorControllerCANInterface motor_controller_can_interface(MTR_CAN_RX, MTR_CAN_TX, MAIN_CAN_STBY);
+
+BPSError bps_error;
 
 // these are global control variables, mostly set by received CAN messages
 bool flashLeftTurnSignal = false;
@@ -196,27 +207,62 @@ void send_powerboard_heartbeat() {
     vehicle_can_interface.send(&power_board_hb);
 }
 
-// main method
+// Main method
 int main() {
-    log_set_level(LOG_LEVEL);
-    log_info("PowerBoard starting up");
+    CANMessage message;
 
-    drl.write(PIN_ON); // the digital running light is always on
+    char buffer[64];
+    char can_buffer[128];
 
-    heartbeatSystem.initializeTimeouts(false, false, false); // set initial heartbeat timer (Call handle_powerborad_timeout in 100ms)
-    queue.call_every(50ms, send_powerboard_heartbeat); // Send powerboard heartbeat out every 50 ms
+    // Testing Analog and CAN
+    // Use PC_11 to toggle between Analog and CAN communication
+    // No need to test digital separately since it will be used in synchronization. Receive 1 and send 0 to tell RP as an ACK
+    // Analog and CAN will be output to be monitored. Run monitor.sh and check output for validation. Will use LED for quick validation
+    while (true){
+        log_debug("START OF INFINITE LOOP");
+        // //Testing CAN
+        LED2_PIN = PIN_ON;
+        // Set output to 0 to indicate CAN Testing
+        gpioOutput.write(0);
 
-    queue.call_every(MOTOR_CONTROL_PERIOD, set_motor_status);
-    queue.call_every(SIGNAL_FLASH_PERIOD, signal_flash_handler); // 2 calls to signal_flash_handler() is a full period
-    queue.call_every(BRAKE_LIGHTS_UPDATE_PERIOD, set_brake_lights);
-    queue.call_every(MOTOR_REQUEST_FRAMES_PERIOD, request_motor_frames);
-    queue.call_every(AUX_BATTERY_PERIOD, update_aux_battery);
-    
-   
-    motor_precharge_thread.start(motor_precharge);
-    mppt_precharge_thread.start(mppt_precharge);
+        log_debug("--------WAITING FOR CAN MESSAGE--------");
+        while (!gpioInput.read()){} //Wait until raspberry pi is ready
+        log_debug("--------STARTING CAN TESTING--------");
+        ThisThread::sleep_for(AUX_BATTERY_PERIOD); // Wait for Raspberry Pi to send CAN
 
-    queue.dispatch_forever();
+        //Reading from Raspberry Pi to Nucleo
+        if (vehicle_can_interface.CANRead(message)){
+            snprintf(can_buffer, sizeof(can_buffer), "ID: 0x%03X DLC: %d", message.id, message.len);
+            log_debug(can_buffer);
+            LED2_PIN = PIN_OFF;
+        } else log_debug("ERROR IN RECEIVING MESSAGE.");
+        ThisThread::sleep_for(FLASH_PERIOD);
+        LED2_PIN = PIN_ON;
+
+        gpioOutput.write(1); // Tell RP to start receiving
+
+        log_debug("SENDING CAN MESSAGE TO RASPBERRY PI");
+        vehicle_can_interface.send(&bps_error);
+        log_debug("SENT CAN MESSAGE");
+
+        // Wait for RP to finish reading CAN
+        log_debug("--------WAITING FOR ANALOG--------");
+        while (!gpioInput.read()){}
+
+        gpioOutput.write(0); // Reset for Analog
+
+        log_debug("--------TESTING ANALOG--------");
+        ThisThread::sleep_for(AUX_BATTERY_PERIOD); // Wait for Raspberry Pi to send Analog
+        LED2_PIN = PIN_OFF;
+
+        // Testing Analog through debug
+        sprintf(buffer, "%f", hil_testing_pin_analog.read());
+        log_debug(buffer);
+        LED2_PIN = PIN_OFF;
+        ThisThread::sleep_for(FLASH_PERIOD);
+
+        log_debug("--------END OF TEST | RESETTING--------");
+    }
 }
 
 // CAN Message handlers
