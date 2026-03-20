@@ -16,7 +16,8 @@ int PowerCANInterface::send(CANStruct *can_struct) {
     CANMessage message;
     can_struct->serialize(&message);
     message.id = can_struct->get_message_ID();
-    int result = can.write(message);
+    // int result = can.write(message);
+    int result = CANWrite(message);
 
     char message_data[17];
 
