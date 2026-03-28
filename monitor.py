@@ -6,6 +6,10 @@ import subprocess
 import shutil
 import os
 import sys
+import datetime
+import serial
+from serial import Serial
+import serial.tools.list_ports
 
 OS = platform.system()
 
@@ -124,8 +128,41 @@ def log(args, port: str) -> None:
             print(f"{filteredCount} messages passed the filter '{args.filter}'")
         return
     
+
+
+# create new folder if not created alr
+def ensure_log_file(args):
+    # if user already provided --log, return
+    if args.log:
+        return
+
+    # create logs directory if it doesn't exist
+    log_dir = os.path.join(os.getcwd(), "logs")
+    os.makedirs(log_dir, exist_ok=True)
+
+    # gen timestamped filename
+    filename = date_name()
+    full_path = os.path.join(log_dir, filename)
+
+    # assign to args.log
+    args.log = full_path
+
+    print(f"Logging automatically to: {args.log}")
+
+
+# new method to calculate day ^ time * concatentate that with output.txt
+def date_name():
+    current_datetime = datetime.datetime.now()
+    datetime_string = current_datetime.strftime("%Y-%m-%d_%H-%M-%S")
+    final_string = f"{datetime_string}_output.txt"
+    return final_string
+
+
+    
 def main() -> None:
     args = get_args()
+
+    ensure_log_file(args)
 
     if OS == "Linux" and is_wsl(): # WSL, actually Windows
         copy_file_to_windows(os.path.abspath(__file__))
